@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/games") // La URL base será http://localhost:8080/api/games
-@CrossOrigin(origins = "*")   // ¡IMPORTANTE! Permite que React se conecte después
+@CrossOrigin(origins = "*")   // 
 public class GameController {
 
     @Autowired

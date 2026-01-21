@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GameRepository extends JpaRepository<Game, Integer> {
-    // Aquí no hace falta escribir nada más por ahora.
+
 }
