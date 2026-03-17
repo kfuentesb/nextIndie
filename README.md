@@ -18,32 +18,11 @@ cd backend
 docker compose up -d
 -(esto crea las tablas automáticamente)
 mvn spring-boot:run
--(Abre nuevocmd, inserta lo de init.sql en el terminal)
+-(Abre nuevocmd)
 docker exec -it nextindie_db psql -U admin -d nextindie_db
 ```
 
-Iniciar Angular front
-```
-cd ../nextIndie-web
-ng serve --open
-- http://localhost:4200/
-```
-
-| Archivo                   | Descripción                                       |
-| ------------------------- | ------------------------------------------------- |
-| `Genre.java`              | Entidad para géneros de juegos                    |
-| `GameLike.java`           | Entidad para likes de usuarios a juegos           |
-| `GameSave.java`           | Entidad para juegos guardados por usuarios        |
-| `User.java`               | Entidad de usuario (requerida por las relaciones) |
-| `Game.java`               | Entidad Game actualizada con relaciones           |
-| `GenreRepository.java`    | Repositorio para géneros                          |
-| `GameLikeRepository.java` | Repositorio para likes con queries útiles         |
-| `GameSaveRepository.java` | Repositorio para guardados con notificaciones     |
-| `GameCalendarDTO.java`    | DTO para vista de calendario                      |
-| `GameDTO.java`            | DTO para listados de juegos                       |
-| `GameDetailDTO.java`      | DTO para detalle de juego                         |
-
-# Comandos para crear los archivos de ANGULAR
+# Comandos de REACT
 ```
 # Opción A: Crear React con Vite (más rápido y ligero)
 npm create vite@latest . -- --template react-ts
@@ -51,6 +30,7 @@ npm create vite@latest . -- --template react-ts
 # Instalar dependencias
 npm install
 
+# En caso de proyecto clonado, proceder desde aquí
 # Instalar dependencias adicionales necesarias
 npm install react-router-dom axios
 
