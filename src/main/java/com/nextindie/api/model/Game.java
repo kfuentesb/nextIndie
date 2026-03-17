@@ -1,45 +1,71 @@
 package com.nextindie.api.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "Games") // Nombre de la tabla en MySQL
-@Data                  // Genera Getters, Setters, Equals, HashCode y ToString (Lombok)
-@NoArgsConstructor    // Constructor vacío obligatorio para JPA
-@AllArgsConstructor   // Constructor con todos los campos
+@Getter @Setter
+@NoArgsConstructor
+@Table(name = "games")
 public class Game {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_game")
-    private Integer idGame;
+    private Long id;
 
     @Column(nullable = false)
-    private String titulo;
+    private String title;
 
-    @Column(columnDefinition = "TEXT") // Mapea específicamente al tipo TEXT de MySQL
-    private String descripcion;
+    @Column(length = 2000)
+    private String description;
 
-    @Column(name = "fecha_lanzamiento")
-    private LocalDate fechaLanzamiento;
+    @Column(name = "short_synopsis", length = 1000)
+    private String synopsis;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "genre_id")
+    private Genre genre;
+
+    private String developer;
+    private String publisher;
+
+    @Column(name = "release_date")
+    private LocalDate releaseDate;
+
+    @Column(name = "player_mode")
+    private String playerMode; // SINGLE_PLAYER, MULTIPLAYER, BOTH
 
     @Column(name = "trailer_url")
     private String trailerUrl;
 
-    @Column(name = "imagen_portada")
-    private String imagenPortada;
+    @Column(name = "thumbnail_url")
+    private String thumbnailUrl;
 
-    @Column(name = "empresa_desarrolladora")
-    private String empresaDesarrolladora;
+    @Column(name = "website_url")
+    private String websiteUrl;
 
-    @CreationTimestamp // Spring rellena esto automáticamente al crear el registro
-    @Column(name = "fecha_creacion_registro", updatable = false)
-    private LocalDateTime fechaCreacionRegistro;
+    @Column(name = "steam_url")
+    private String steamUrl;
+
+    @Column(name = "status")
+    private String status; // RELEASED, COMING_SOON, EARLY_ACCESS
+
+    @Column(name = "likes_count")
+    private Integer likesCount = 0;
+
+    @Column(name = "saves_count")
+    private Integer savesCount = 0;
+
+    @OneToMany(mappedBy = "game", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<GameLike> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "game", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<GameSave> savedBy = new ArrayList<>();
+
 }
