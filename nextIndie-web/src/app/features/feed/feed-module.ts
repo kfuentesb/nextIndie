@@ -1,10 +1,25 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule, Routes } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { FeedPageComponent } from './pages/feed-page/feed-page.component';
+import { VideoFeedComponent } from './components/video-feed/video-feed.component';
+import { CommentsSectionComponent } from './components/comments-section/comments-section.component';
 
-import { FeedRoutingModule } from './feed-routing-module';
+const routes: Routes = [
+  { path: '', component: FeedPageComponent }
+];
 
 @NgModule({
-  declarations: [],
-  imports: [CommonModule, FeedRoutingModule],
+  declarations: [
+    FeedPageComponent,
+    VideoFeedComponent,
+    CommentsSectionComponent
+  ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule.forChild(routes)
+  ]
 })
-export class FeedModule {}
+export class FeedModule { }
