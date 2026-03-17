@@ -1,15 +1,12 @@
 package com.nextindie.api.model.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 public class LoginRequest {
-    @NotBlank
-    private String usernameOrEmail;
-
-    @NotBlank
+    private String username;
     private String password;
 
 }
