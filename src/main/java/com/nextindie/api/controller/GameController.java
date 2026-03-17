@@ -1,27 +1,30 @@
 package com.nextindie.api.controller;
 
-import com.nextindie.api.model.Game;
+import com.nextindie.api.model.dto.GameDTO;
 import com.nextindie.api.service.GameService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/games") // La URL base será http://localhost:8080/api/games
-@CrossOrigin(origins = "*")   // 
+@RequestMapping("/api/games")
+@CrossOrigin(origins = "http://localhost:4200")
 public class GameController {
 
-    @Autowired
-    private GameService gameService;
+    private final GameService gameService;
 
-    @GetMapping
-    public List<Game> listarJuegos() {
-        return gameService.obtenerTodosLosJuegos();
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
     }
 
-    @PostMapping
-    public Game crearJuego(@RequestBody Game game) {
-        return gameService.guardarJuego(game);
+    @GetMapping
+    public ResponseEntity<List<GameDTO>> getAllGames() {
+        return ResponseEntity.ok(gameService.getAllGames());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GameDTO> getGameById(@PathVariable Long id) {
+        return ResponseEntity.ok(gameService.getGameById(id));
     }
 }

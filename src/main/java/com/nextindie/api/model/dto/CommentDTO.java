@@ -1,18 +1,23 @@
+// model/dto/CommentDTO.java
 package com.nextindie.api.model.dto;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.time.LocalDateTime;
+@Getter
+@Setter @NoArgsConstructor
 public class CommentDTO {
     private Long id;
     private String content;
     private String username;
-    private String avatarUrl;
-    private Integer likesCount;
-    private Boolean likedByCurrentUser;
-    private Boolean isEdited;
     private LocalDateTime createdAt;
-    private List<CommentDTO> replies;
-    private Integer repliesCount;
 
+    public CommentDTO(Long id, String content, String username, LocalDateTime createdAt) {
+        this.id = id;
+        this.content = content;
+        this.username = username;
+        this.createdAt = createdAt;
+    }
 }

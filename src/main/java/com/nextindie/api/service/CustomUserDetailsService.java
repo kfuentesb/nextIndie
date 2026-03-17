@@ -1,7 +1,6 @@
 package com.nextindie.api.service;
 
 
-import com.nextindie.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
