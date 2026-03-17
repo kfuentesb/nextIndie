@@ -25,5 +25,6 @@ docker exec -it nextindie_db psql -U admin -d nextindie_db
 Iniciar Angular front
 ```
 cd ../nextIndie-web
-
+ng serve --open
+- http://localhost:4200/
 ```
