@@ -74,7 +74,7 @@ npm install
 # En caso de proyecto clonado, proceder desde aquí
 npm install react-router-dom axios
 
-# Iniciar servidor de desarrollo
+# Iniciar servidor de desarrollo, dentro de frontend
 npm run dev
 ```
 
