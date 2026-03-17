@@ -1,6 +1,6 @@
 {
   "name": "next-indie-web",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -11,6 +11,7 @@
   "private": true,
   "packageManager": "npm@11.9.0",
   "dependencies": {
+    "@angular/cdk": "^21.2.2",
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
     "@angular/core": "^21.2.0",

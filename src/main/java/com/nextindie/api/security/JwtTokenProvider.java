@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -13,10 +14,10 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret:mySecretKey12345678901234567890}")
     private String jwtSecret;
 
-    @Value("${jwt.expiration}")
+    @Value("${jwt.expiration:86400000}")
     private int jwtExpirationInMs;
 
     private SecretKey getSigningKey() {
@@ -24,22 +25,11 @@ public class JwtTokenProvider {
     }
 
     public String generateToken(Authentication authentication) {
-        String username = authentication.getName();
+        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
         Date expiryDate = new Date(System.currentTimeMillis() + jwtExpirationInMs);
 
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
-                .compact();
-    }
-
-    public String generateTokenFromUsername(String username) {
-        Date expiryDate = new Date(System.currentTimeMillis() + jwtExpirationInMs);
-
-        return Jwts.builder()
-                .setSubject(username)
+                .setSubject(userPrincipal.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
@@ -62,7 +52,7 @@ public class JwtTokenProvider {
             return true;
         } catch (SecurityException | MalformedJwtException | ExpiredJwtException |
                  UnsupportedJwtException | IllegalArgumentException ex) {
-            // Log error
+            System.out.println("Invalid JWT token: " + ex.getMessage());
         }
         return false;
     }

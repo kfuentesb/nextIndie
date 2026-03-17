@@ -9,50 +9,25 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 public class GameDTO {
-
     private Long id;
     private String title;
     private String description;
-    private String shortDescription; // Versión truncada para cards
-    private String genre;
-    private Long genreId;
-    private String developer;
-    private String publisher;
-    private LocalDate releaseDate;
-    private String releaseDateFormatted; // "15 Jun 2025" o "Próximamente"
-    private String playerMode; // SINGLE_PLAYER, MULTIPLAYER, BOTH
-    private String playerModeIcon; // 🎮, 👥, 🎮👥
     private String trailerUrl;
-    private String thumbnailUrl;
-    private String coverUrl; // Imagen más grande para detalle
-    private String websiteUrl;
-    private String steamUrl;
-    private Integer likesCount;
-    private Integer savesCount;
-    private Integer commentsCount;
-    private Boolean isReleased;
-    private Integer daysUntilRelease; // Null si ya salió
+    private String imageUrl;
+    private String developer;
+    private String genre;
+    private LocalDate releaseDate;
 
-    // Estados de interacción del usuario actual (null si no está logueado)
-    private Boolean likedByCurrentUser;
-    private Boolean savedByCurrentUser;
-
-    // Para feed: si el video está muteado, pausado, etc.
-    private Boolean isMuted = true;
-    private Boolean isPlaying = false;
-
-    // Métodos de utilidad
-    public boolean isUpcoming() {
-        return isReleased != null && !isReleased;
+    public GameDTO(Long id, String title, String description, String trailerUrl, String imageUrl,
+                   String developer, String genre, LocalDate releaseDate) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.trailerUrl = trailerUrl;
+        this.imageUrl = imageUrl;
+        this.developer = developer;
+        this.genre = genre;
+        this.releaseDate = releaseDate;
     }
 
-    @Override
-    public String toString() {
-        return "GameDTO{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", genre='" + genre + '\'' +
-                ", likesCount=" + likesCount +
-                '}';
-    }
 }

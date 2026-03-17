@@ -1,9 +1,7 @@
 package com.nextindie.api.controller;
 
-import com.nextindie.model.dto.GameDTO;
-import com.nextindie.model.dto.GameDetailDTO;
-import com.nextindie.service.GameService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nextindie.api.model.dto.GameDTO;
+import com.nextindie.api.service.GameService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,41 +12,19 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 public class GameController {
 
-    @Autowired
-    private GameService gameService;
+    private final GameService gameService;
 
-    // FEED PRINCIPAL - GET /api/games/feed?page=0&size=10
-    @GetMapping("/feed")
-    public ResponseEntity<List<GameDTO>> getFeed(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(gameService.getFeedGames(page, size));
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
     }
 
-    // CALENDARIO - GET /api/games/calendar?userId=1
-    @GetMapping("/calendar")
-    public ResponseEntity<List<GameDTO>> getCalendar(@RequestParam Long userId) {
-        return ResponseEntity.ok(gameService.getCalendarGames(userId));
+    @GetMapping
+    public ResponseEntity<List<GameDTO>> getAllGames() {
+        return ResponseEntity.ok(gameService.getAllGames());
     }
 
-    // DESCUBRIMIENTO ALEATORIO - GET /api/games/random
-    @GetMapping("/random")
-    public ResponseEntity<GameDTO> getRandomGame() {
-        return ResponseEntity.ok(gameService.getRandomGame());
-    }
-
-    // DETALLE - GET /api/games/{id}?userId=1
     @GetMapping("/{id}")
-    public ResponseEntity<GameDetailDTO> getGameDetail(
-            @PathVariable Long id,
-            @RequestParam Long userId) {
-        return ResponseEntity.ok(gameService.getGameDetail(id, userId));
-    }
-
-    // LIKE - POST /api/games/{id}/like
-    @PostMapping("/{id}/like")
-    public ResponseEntity<Void> toggleLike(@PathVariable Long id, @RequestParam Long userId) {
-        gameService.toggleLike(id, userId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<GameDTO> getGameById(@PathVariable Long id) {
+        return ResponseEntity.ok(gameService.getGameById(id));
     }
 }
