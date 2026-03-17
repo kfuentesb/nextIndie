@@ -1,4 +1,4 @@
-package com.nextindie.model.dto;
+package com.nextindie.api.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

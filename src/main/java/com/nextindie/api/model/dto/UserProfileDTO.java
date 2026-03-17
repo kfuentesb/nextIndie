@@ -3,6 +3,7 @@ package com.nextindie.api.model.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.nextindie.model.dto.GameDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;

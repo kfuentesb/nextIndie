@@ -4,6 +4,7 @@ import com.nextindie.api.model.User;
 import com.nextindie.api.model.UserProfile;
 import com.nextindie.api.model.dto.JwtResponse;
 import com.nextindie.api.model.dto.LoginRequest;
+import com.nextindie.api.model.dto.SignupRequest;
 import com.nextindie.api.repository.UserProfileRepository;
 import com.nextindie.api.repository.UserRepository;
 import com.nextindie.api.security.JwtTokenProvider;
