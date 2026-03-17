@@ -1,7 +1,33 @@
-# NextIndie
+# 🎮 NextIndie
 
-Requiere Maven Docker npm Java
+> Plataforma para descubrir, comentar y guardar videojuegos  
+> _Frontend: React + Vite | Backend: Spring Boot | PostgreSQL en Docker_
+
+---
+
+## 📑 Índice
+
+- [🔧 Requisitos y Instalación](#-requisitos-y-instalación)
+- [🚀 Cómo ejecutar el proyecto](#-cómo-ejecutar-el-proyecto)
+- [⚛️ Comandos de React](#️-comandos-de-react)
+- [🧠 Descripción General](#-descripción-general)
+- [👤 Sistema de Usuarios](#-sistema-de-usuarios)
+- [🎮 Gestión de Juegos](#-gestión-de-juegos)
+- [🗃️ Modelo de Datos (ERD)](#️-modelo-de-datos-erd)
+- [🗂️ Estructura de Carpetas](#️-estructura-de-carpetas)
+- [⚙️ application.properties](#️-applicationproperties)
+- [📦 POM (Maven)](#-pom-maven)
+- [🛠️ Tecnologías](#️-tecnologías)
+- [🚢 Despliegue](#-despliegue)
+
+---
+
+## 🔧 Requisitos y Instalación
+
+> **Necesario:** Maven, Docker, npm, Java
+
 ```diff
+# Instala Java, Maven y Scoop (en Windows)
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 scoop bucket add java
@@ -11,19 +37,34 @@ mvn -v
 -(reinicia)
 ```
 
-Para probar el proyecto en local, ejecutamos el docker-compose.yml en backend e iniciamos SpringBoot
-```diff
-cd backend
--(tiene que estar up el docker)
-docker compose up -d
--(esto crea las tablas automáticamente)
-mvn spring-boot:run
--(Abre nuevocmd)
-docker exec -it nextindie_db psql -U admin -d nextindie_db
-```
+---
 
-# Comandos de REACT
-```
+## 🚀 Cómo ejecutar el proyecto
+
+1. Dirígete al backend:
+   ```diff
+   cd backend
+   ```
+2. Ejecuta Docker:
+   ```diff
+   -(tiene que estar up el docker)
+   docker compose up -d
+   ```
+   _(Esto crea las tablas automáticamente)_
+3. Inicia Spring Boot:
+   ```diff
+   mvn spring-boot:run
+   ```
+4. Abre una nueva terminal y accede a la base de datos:
+   ```diff
+   docker exec -it nextindie_db psql -U admin -d nextindie_db
+   ```
+
+---
+
+## ⚛️ Comandos de React
+
+```shell
 # Opción A: Crear React con Vite (más rápido y ligero)
 npm create vite@latest . -- --template react-ts
 
@@ -31,131 +72,69 @@ npm create vite@latest . -- --template react-ts
 npm install
 
 # En caso de proyecto clonado, proceder desde aquí
-# Instalar dependencias adicionales necesarias
 npm install react-router-dom axios
 
 # Iniciar servidor de desarrollo
 npm run dev
 ```
+
+---
+
 ## 🧠 Descripción General
 
-Este proyecto consiste en una plataforma centrada en videojuegos donde los usuarios podrán interactuar con contenido de forma dinámica. La idea principal es permitir que los usuarios registrados puedan **comentar, guardar y descubrir juegos**, priorizando aquellos que resulten más relevantes para ellos.
+Plataforma centrada en videojuegos donde usuarios podrán:
+- **Comentar, guardar y descubrir juegos**
+- Interactuar con contenido visual (trailers)
+- Priorizar juegos relevantes
 
-Uno de los enfoques clave del sistema es la organización del contenido en torno a dos vistas principales:
-
-- **VideoFeed (vista principal)** → centrada en contenido visual (trailers).
-- **Vista calendario (pendiente de implementación)** → organizada por fechas de lanzamiento.
-- **Vista ranking(monetizable)(pendiente de implementación)** → juegos mejor votados o pagados
+**Vistas principales**:
+- 📺 *VideoFeed* (centrada en trailers)
+- 📅 *Vista calendario* (_pendiente_)
+- ⭐ *Vista ranking* (_pendiente_)
 
 ---
 
 ## 👤 Sistema de Usuarios
 
-Los usuarios registrados podrán:
+- Iniciar sesión
+- Comentar juegos ilimitadamente
+- Guardar juegos en una lista personal
+- Consultar y personalizar perfil
 
-- Iniciar sesión en la plataforma.
-- Comentar juegos de forma ilimitada.
-- Guardar juegos en una lista personal.
-- Consultar información de juegos.
-- Personalizar su perfil (visible al comentar).
-- Acceder a su colección de juegos guardados.
-
-> ⚠️ Nota: Los usuarios no podrán modificar juegos, solo interactuar con ellos.
+> ⚠️ Los usuarios NO pueden modificar juegos, solo interactuar.
 
 ---
 
 ## 🎮 Gestión de Juegos
 
-Cada juego en la plataforma contará con:
-
-- 🎥 **Trailer obligatorio** (elemento clave para la vista principal).
-- 📅 **Fecha de lanzamiento (release date)** — fundamental para la futura vista calendario.
-- 📝 **Sistema de comentarios** abierto a todos los usuarios registrados.
-- ❤️ **Interacciones sociales**:
-  - Likes (pendiente de implementación).
-  - Guardados (ya contemplado).
-  - Compartir.
-
----
-
-## 🧾 Vistas del Sistema
-
-### 📺 VideoFeed (Vista Principal)
-
-- Muestra juegos a través de trailers de manera aleatoria.
-- Permite interacción rápida:
-  - Dar like (futuro).
-  - Comentar.
-  - Guardar.
-  - Compartir.
+Cada juego:
+- 🎥 **Trailer obligatorio**
+- 📅 **Fecha de lanzamiento**
+- 📝 **Comentarios**
+- ❤️ **Interacciones sociales**
+  - Likes (_pendiente_)
+  - Guardados
+  - Compartir
 
 ---
 
-### 📅 Vista Calendario (Pendiente)
+## 🗃️ Modelo de Datos (ERD)
 
-- Organizará los juegos según su **fecha de lanzamiento**.
-- Mostrará con prioridad:
-  - Juegos guardados por el usuario.
-- Sistema de calendario aún por definir.
-
----
-
-### 🔍 Vista de Detalles del Juego
-
-Cada juego tendrá una página dedicada accesible mediante:
-
-- Click directo desde el feed.
-- Búsqueda en la base de datos (pendiente de implementación).
-
-Incluye:
-
-- Información completa del juego.
-- Trailer.
-- Comentarios.
-- Interacciones del usuario.
-
----
-
-### 👤 Perfil de Usuario
-
-Cada usuario contará con un perfil donde podrá:
-
-- Personalizar su identidad visual.
-- Ver sus comentarios.
-- Consultar su lista de juegos guardados.
-
----
-
-## 🗃️ Modelo de Datos (Conceptual)
-
-Entidades principales:
+### Entidades principales
 
 - **User**
 - **Game**
 - **Comment**
 - **SavedGames**
 
-Relaciones clave:
+#### Relaciones clave
 
-- Un usuario puede:
-  - Comentar múltiples juegos.
-  - Guardar múltiples juegos.
-- Un juego puede:
-  - Tener múltiples comentarios.
-  - Ser guardado por múltiples usuarios.
+- Un usuario puede comentar y guardar múltiples juegos
+- Un juego puede tener múltiples comentarios y ser guardado por múltiples usuarios
 
 ---
 
-## 🚀 Futuras Mejoras
-
-Se prevé la incorporación de nuevas funcionalidades:
-
-- 👍 Tabla `gameLike` → para gestionar likes en juegos.
-- ❤️ Tabla `commentLike` → para likes en comentarios.
-- 🔎 Sistema de búsqueda avanzada de juegos.
-- 📅 Implementación completa del sistema de calendario.
-
-# Diagrama ER Base - NextIndie
+### 📊 Diagrama ER Base - NextIndie
 
 ```mermaid
 erDiagram
@@ -182,9 +161,298 @@ erDiagram
         STRING content
         DATETIME createdAt
     }
-
     USERS ||--o{ COMMENTS : "has"
     GAMES ||--o{ COMMENTS : "has"
     COMMENTS }o--|| USERS : "belongs to"
     COMMENTS }o--|| GAMES : "refers to"
 ```
+
+---
+
+## 🛠️ Futuras Mejoras
+
+- 👍 **Tabla `gameLike`**: likes en juegos
+- ❤️ **Tabla `commentLike`**: likes en comentarios
+- 🔎 Búsqueda avanzada
+- 📅 Calendario completo
+
+---
+
+## 🗂️ Estructura de Carpetas
+
+```shell
+nextindie/
+├── backend/            # Spring Boot
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   └── com/nextindie.api/
+│   │   │   │       ├── NextindieApplication.java
+│   │   │   │       ├── config/
+│   │   │   │       ├── controller/
+│   │   │   │       ├── service/
+│   │   │   │       ├── repository/
+│   │   │   │       ├── model/
+│   │   │   │       ├── security/
+│   │   │   │       └── exception/
+│   │   │   └── resources/
+│   │   └── test/
+│   ├── target/
+│   ├── .mvn/
+│   ├── mvnw
+│   ├── pom.xml
+│   └── Dockerfile
+│
+├── frontend/           # React + Vite + TS
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── hooks/
+│   │   ├── context/
+│   │   ├── types/
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── public/
+│   ├── dist/
+│   ├── node_modules/
+│   ├── index.html
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── vite.config.ts
+│   ├── nginx.conf
+│   └── Dockerfile
+│
+├── docker-compose.yml
+└── deploy.sh           # Script opcional
+```
+
+---
+
+## ⚙️ application.properties
+
+```properties
+spring.application.name=NextIndie
+# PostgreSQL Configuration (Docker)
+spring.datasource.url=jdbc:postgresql://localhost:5432/nextindie_db
+spring.datasource.username=admin
+spring.datasource.password=pass123
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA/Hibernate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+# JWT
+jwt.secret=Kv6tQBl8c4gnu04ng4lmpQpn9vEroCL4eTzT5J3udXYp6vZjJwM17E+QaXoFsZT98Untrxyc8C8pbFh7hMOwRg==
+jwt.expiration=86400000
+
+# Server
+server.port=8080
+```
+
+---
+
+## 📦 POM (Maven)
+
+### Dependencias
+
+<details>
+<summary><b>Mostrar dependencias</b></summary>
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-webmvc</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-devtools</artifactId>
+        <scope>runtime</scope>
+        <optional>true</optional>
+    </dependency>
+    <dependency>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <optional>true</optional>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-webmvc-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <!-- JWT -->
+    <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-api</artifactId>
+        <version>0.12.6</version>
+    </dependency>
+    <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-impl</artifactId>
+        <version>0.12.6</version>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId>
+        <version>0.12.6</version>
+        <scope>runtime</scope>
+    </dependency>
+    <!-- Test -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <!-- PostgreSQL -->
+    <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <!-- Validación -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+    <!-- Seguridad -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+</dependencies>
+```
+</details>
+
+---
+
+### Plugins
+
+<details>
+<summary><b>Mostrar plugins</b></summary>
+
+```xml
+<build>
+    <plugins>
+        <!-- Compilador -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <annotationProcessorPaths>
+                    <path>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </path>
+                </annotationProcessorPaths>
+            </configuration>
+        </plugin>
+
+        <!-- Angular build -->
+        <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>1.15.0</version>
+            <configuration>
+                <workingDirectory>nextIndie-web</workingDirectory>
+            </configuration>
+            <executions>
+                <execution>
+                    <id>install-node-and-npm</id>
+                    <goals>
+                        <goal>install-node-and-npm</goal>
+                    </goals>
+                    <configuration>
+                        <nodeVersion>v20.11.1</nodeVersion>
+                        <npmVersion>10.2.4</npmVersion>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>npm-install</id>
+                    <goals>
+                        <goal>npm</goal>
+                    </goals>
+                    <configuration>
+                        <arguments>install</arguments>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>npm-build</id>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>npm</goal>
+                    </goals>
+                    <configuration>
+                        <arguments>run build</arguments>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- Spring Boot -->
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+                <excludes>
+                    <exclude>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclude>
+                </excludes>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+</details>
+
+---
+
+## 🛠️ Tecnologías
+
+- **Frontend:**  
+  - React + Vite (2026)
+  - TypeScript
+  - Principales librerías:
+    - `"axios": "^1.13.6"`
+    - `"react": "^19.2.4"`
+    - `"react-dom": "^19.2.4"`
+    - `"react-router-dom": "^7.13.1"`
+
+- **Backend:**  
+  - Spring Boot Java 4.0.1
+
+- **Base de datos:**  
+  - PostgreSQL (en Docker)
+
+---
+
+## 🚢 Despliegue
+
+> Detalles para despliegue pendiente de añadir...
+
+---
