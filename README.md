@@ -24,17 +24,10 @@ docker exec -it nextindie_db psql -U admin -d nextindie_db
 
 | Archivo                   | Descripción                                       |
 | ------------------------- | ------------------------------------------------- |
-| `Genre.java`              | Entidad para géneros de juegos                    |
-| `GameLike.java`           | Entidad para likes de usuarios a juegos           |
-| `GameSave.java`           | Entidad para juegos guardados por usuarios        |
+| `Game.java`               | Entidad para juegos                               |
 | `User.java`               | Entidad de usuario (requerida por las relaciones) |
-| `Game.java`               | Entidad Game actualizada con relaciones           |
-| `GenreRepository.java`    | Repositorio para géneros                          |
-| `GameLikeRepository.java` | Repositorio para likes con queries útiles         |
-| `GameSaveRepository.java` | Repositorio para guardados con notificaciones     |
-| `GameCalendarDTO.java`    | DTO para vista de calendario                      |
-| `GameDTO.java`            | DTO para listados de juegos                       |
-| `GameDetailDTO.java`      | DTO para detalle de juego                         |
+| `Comment.java`            | Entidad comentario actualizada                    |
+| `Genre.java`              | Entidad para los géneros de los videojuegos       |
 
 # Comandos para crear los archivos de REACT
 ```
