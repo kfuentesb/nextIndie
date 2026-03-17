@@ -1,5 +1,5 @@
 package com.nextindie.api.config;
-import com.nextindie.security.JwtAuthenticationFilter;
+import com.nextindie.api.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
