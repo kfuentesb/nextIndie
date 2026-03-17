@@ -22,14 +22,7 @@ mvn spring-boot:run
 docker exec -it nextindie_db psql -U admin -d nextindie_db
 ```
 
-| Archivo                   | Descripción                                       |
-| ------------------------- | ------------------------------------------------- |
-| `Game.java`               | Entidad para juegos                               |
-| `User.java`               | Entidad de usuario (requerida por las relaciones) |
-| `Comment.java`            | Entidad comentario actualizada                    |
-| `Genre.java`              | Entidad para los géneros de los videojuegos       |
-
-# Comandos para crear los archivos de REACT
+# Comandos de REACT
 ```
 # Opción A: Crear React con Vite (más rápido y ligero)
 npm create vite@latest . -- --template react-ts
