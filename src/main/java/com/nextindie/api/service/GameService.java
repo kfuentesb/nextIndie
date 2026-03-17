@@ -1,13 +1,17 @@
 package com.nextindie.api.service;
 
 import com.nextindie.api.model.Game;
+import com.nextindie.api.model.dto.GameCalendarDTO;
 import com.nextindie.api.model.dto.GameDTO;
 import com.nextindie.api.model.dto.GameDetailDTO;
 import com.nextindie.api.repository.CommentRepository;
 import com.nextindie.api.repository.GameRepository;
+import com.nextindie.api.repository.GenreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import com.nextindie.api.repository.GameLikeRepository;
+import com.nextindie.api.repository.GameSaveRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
