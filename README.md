@@ -29,11 +29,18 @@ ng serve --open
 - http://localhost:4200/
 ```
 
-| DTO                   | Uso Principal                    | Características                                   |
-| --------------------- | -------------------------------- | ------------------------------------------------- |
-| **GameDTO**           | Feed, listados, cards            | Datos esenciales + estados de usuario             |
-| **GameDetailDTO**     | Página de detalle del juego      | Info completa + juegos relacionados + comentarios |
-| **GameFeedDTO**       | Feed vertical TikTok-style       | Ultra-ligero + estados de UI                      |
-| **GameCalendarDTO**   | Vista calendario                 | Formato de fecha especial + prioridades           |
-| **CreateGameRequest** | Formulario de registro de juegos | Validaciones + todos los campos editables         |
+| Archivo                   | Descripción                                       |
+| ------------------------- | ------------------------------------------------- |
+| `Genre.java`              | Entidad para géneros de juegos                    |
+| `GameLike.java`           | Entidad para likes de usuarios a juegos           |
+| `GameSave.java`           | Entidad para juegos guardados por usuarios        |
+| `User.java`               | Entidad de usuario (requerida por las relaciones) |
+| `Game.java`               | Entidad Game actualizada con relaciones           |
+| `GenreRepository.java`    | Repositorio para géneros                          |
+| `GameLikeRepository.java` | Repositorio para likes con queries útiles         |
+| `GameSaveRepository.java` | Repositorio para guardados con notificaciones     |
+| `GameCalendarDTO.java`    | DTO para vista de calendario                      |
+| `GameDTO.java`            | DTO para listados de juegos                       |
+| `GameDetailDTO.java`      | DTO para detalle de juego                         |
+
 
