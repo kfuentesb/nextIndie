@@ -37,4 +37,36 @@ npm install react-router-dom axios
 # Iniciar servidor de desarrollo
 npm run dev
 ```
+# Diagrama ER Base - NextIndie
 
+```mermaid
+erDiagram
+    USERS {
+        LONG id
+        STRING username
+        STRING email
+        STRING password
+        DATETIME createdAt
+    }
+    GAMES {
+        LONG id
+        STRING title
+        STRING description
+        STRING trailerUrl
+        STRING imageUrl
+        STRING developer
+        STRING genre
+        DATE releaseDate
+        DATETIME createdAt
+    }
+    COMMENTS {
+        LONG id
+        STRING content
+        DATETIME createdAt
+    }
+
+    USERS ||--o{ COMMENTS : "has"
+    GAMES ||--o{ COMMENTS : "has"
+    COMMENTS }o--|| USERS : "belongs to"
+    COMMENTS }o--|| GAMES : "refers to"
+```
