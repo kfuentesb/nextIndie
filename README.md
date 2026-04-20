@@ -43,7 +43,7 @@ mvn -v
 
 1. Dirígete al backend:
    ```diff
-   cd backend
+   cd nextIndie
    ```
 2. Ejecuta Docker:
    ```diff
