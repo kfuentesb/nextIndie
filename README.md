@@ -41,21 +41,17 @@ mvn -v
 
 ## 🚀 Cómo ejecutar el proyecto
 
-1. Dirígete al backend:
-   ```diff
-   cd nextIndie
-   ```
-2. Ejecuta Docker:
+1. Ejecuta Docker:
    ```diff
    -(tiene que estar up el docker)
    docker compose up -d
    ```
    _(Esto crea las tablas automáticamente)_
-3. Inicia Spring Boot:
+2. Inicia Spring Boot:
    ```diff
    mvn spring-boot:run
    ```
-4. Abre una nueva terminal y accede a la base de datos:
+3. Abre una nueva terminal y accede a la base de datos:
    ```diff
    docker exec -it nextindie_db psql -U admin -d nextindie_db
    ```
