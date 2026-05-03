@@ -1,8 +1,8 @@
 package com.nextindie.api.controller;
 
-import com.nextindie.api.model.dto.AuthResponse;
-import com.nextindie.api.model.dto.LoginRequest;
-import com.nextindie.api.model.dto.RegisterRequest;
+import com.nextindie.api.dto.AuthResponse;
+import com.nextindie.api.dto.LoginRequest;
+import com.nextindie.api.dto.RegisterRequest;
 import com.nextindie.api.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

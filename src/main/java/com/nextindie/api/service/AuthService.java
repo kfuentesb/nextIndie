@@ -1,8 +1,8 @@
 package com.nextindie.api.service;
 
-import com.nextindie.api.model.dto.AuthResponse;
-import com.nextindie.api.model.dto.LoginRequest;
-import com.nextindie.api.model.dto.RegisterRequest;
+import com.nextindie.api.dto.AuthResponse;
+import com.nextindie.api.dto.LoginRequest;
+import com.nextindie.api.dto.RegisterRequest;
 import com.nextindie.api.model.User;
 import com.nextindie.api.repository.UserRepository;
 import com.nextindie.api.security.JwtTokenProvider;

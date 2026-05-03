@@ -1,7 +1,7 @@
 // service/CommentService.java
 package com.nextindie.api.service;
 
-import com.nextindie.api.model.dto.CommentDTO;
+import com.nextindie.api.dto.CommentDTO;
 import com.nextindie.api.model.Comment;
 import com.nextindie.api.model.Game;
 import com.nextindie.api.model.User;

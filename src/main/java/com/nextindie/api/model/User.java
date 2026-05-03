@@ -24,7 +24,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt; // Fecha de registro
 
     @PrePersist
     protected void onCreate() {

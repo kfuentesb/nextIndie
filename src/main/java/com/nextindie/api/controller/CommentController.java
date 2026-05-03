@@ -1,6 +1,6 @@
 package com.nextindie.api.controller;
 
-import com.nextindie.api.model.dto.CommentDTO;
+import com.nextindie.api.dto.CommentDTO;
 import com.nextindie.api.service.CommentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

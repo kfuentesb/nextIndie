@@ -1,6 +1,6 @@
 package com.nextindie.api.service;
 
-import com.nextindie.api.model.dto.GameDTO;
+import com.nextindie.api.dto.GameDTO;
 import com.nextindie.api.model.Game;
 import com.nextindie.api.repository.GameRepository;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,8 @@ public class GameService {
                 game.getTrailerUrl(),
                 game.getImageUrl(),
                 game.getDeveloper(),
-                game.getGenre(),
+                game.getGenres().stream().map(genre -> genre.getName()).collect(Collectors.toList()),
+                game.getPlatforms().stream().map(platform -> platform.getName()).collect(Collectors.toList()),
                 game.getReleaseDate()
         );
     }

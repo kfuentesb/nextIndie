@@ -1,6 +1,6 @@
 package com.nextindie.api.controller;
 
-import com.nextindie.api.model.dto.GameDTO;
+import com.nextindie.api.dto.GameDTO;
 import com.nextindie.api.service.GameService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
