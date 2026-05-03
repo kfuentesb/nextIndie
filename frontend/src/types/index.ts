@@ -28,7 +28,8 @@ export interface Game {
     trailerUrl: string;
     imageUrl: string;
     developer: string;
-    genre: string;
+    genres: string[];
+    platforms: string[];
     releaseDate: string;
 }
 

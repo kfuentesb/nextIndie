@@ -36,6 +36,7 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
     };
 
     const videoId = extractVideoId(game.trailerUrl);
+    const genreText = game.genres?.join(", ") || "Sin género";
 
     // Cambiar URL cuando cambia el estado de mute/active
     const [embedUrl, setEmbedUrl] = useState(() =>
@@ -86,7 +87,7 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                 <div className="game-details">
                     <h2 className="game-title">{game.title}</h2>
                     <p className="game-meta">
-                        {game.developer} • {game.genre}
+                        {game.developer} • {genreText}
                     </p>
                     <p className="game-description">{game.description}</p>
                 </div>

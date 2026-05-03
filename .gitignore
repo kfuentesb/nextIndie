@@ -35,3 +35,6 @@ build/
 !.mvn/wrapper/maven-wrapper.jar
 *.log
 application-prod.properties
+
+# Enviroment variables
+.env
