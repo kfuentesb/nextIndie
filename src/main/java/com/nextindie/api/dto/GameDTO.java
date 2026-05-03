@@ -18,10 +18,11 @@ public class GameDTO {
     private String developer;
     private List<String> genres;
     private List<String> platforms;
+    private long totalLikes;
     private LocalDate releaseDate;
 
     public GameDTO(Long id, String title, String description, String trailerUrl, String imageUrl,
-                   String developer, List<String> genres, List<String> platforms, LocalDate releaseDate) {
+                   String developer, List<String> genres, List<String> platforms, long totalLikes, LocalDate releaseDate) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -30,6 +31,7 @@ public class GameDTO {
         this.developer = developer;
         this.genres = genres;
         this.platforms = platforms;
+        this.totalLikes = totalLikes;
         this.releaseDate = releaseDate;
     }
 

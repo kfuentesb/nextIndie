@@ -45,6 +45,12 @@ public class Game {
     )
     private Set<Platform> platforms = new LinkedHashSet<>();
 
+    @ManyToMany(mappedBy = "likedGames")
+    private Set<User> likedByUsers = new LinkedHashSet<>();
+
+    @ManyToMany(mappedBy = "savedGames")
+    private Set<User> savedByUsers = new LinkedHashSet<>();
+
     @NotNull
     @Column(nullable = false)
     private LocalDate releaseDate; // Por la idea principal de la WEB será obligatorio de momento
