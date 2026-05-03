@@ -30,6 +30,7 @@ export interface Game {
     developer: string;
     genres: string[];
     platforms: string[];
+    totalLikes: number;
     releaseDate: string;
 }
 

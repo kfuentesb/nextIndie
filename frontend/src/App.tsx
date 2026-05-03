@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { FeedPage } from './pages/FeedPage';
 import { LoginPage } from './pages/LoginPage';
+import { SavedGamesPage } from './pages/SavedGamesPage';
 
 function AppContent() {
   return (
@@ -12,6 +13,7 @@ function AppContent() {
           <Routes>
             <Route path="/" element={<FeedPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/saved" element={<SavedGamesPage />} />
           </Routes>
         </main>
       </>

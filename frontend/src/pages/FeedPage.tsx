@@ -93,7 +93,7 @@ export function FeedPage() {
                         key={game.id}
                         className={`video-slide ${index === currentIndex ? 'active' : ''}`}
                     >
-                        <VideoFeed game={game} />
+                        <VideoFeed game={game} isActive={index === currentIndex} />
                     </div>
                 ))}
             </div>

@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { CommentsSection} from "./CommentSection.tsx";
 import type { Game } from '../types';
+import { gameService } from '../services/gameService';
+import { useAuth } from '../context/AuthContext';
 
 interface VideoFeedProps {
     game: Game;
@@ -8,9 +10,13 @@ interface VideoFeedProps {
 }
 
 export function VideoFeed({ game, isActive }: VideoFeedProps) {
+    const { isAuthenticated } = useAuth();
     const [showComments, setShowComments] = useState(false);
     const [isMuted, setIsMuted] = useState(true);  // Empezar muteado
     const [hasInteracted, setHasInteracted] = useState(false);
+    const [isLiked, setIsLiked] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
+    const [likesCount, setLikesCount] = useState(game.totalLikes ?? 0);
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
     const getEmbedUrl = (videoId: string, muted: boolean): string => {
@@ -50,6 +56,30 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
     const toggleMute = () => {
         setHasInteracted(true);
         setIsMuted(!isMuted);
+    };
+
+    const toggleLike = async () => {
+        if (!isAuthenticated) return;
+        if (isLiked) {
+            await gameService.unlikeGame(game.id);
+            setIsLiked(false);
+            setLikesCount((current) => Math.max(0, current - 1));
+            return;
+        }
+        await gameService.likeGame(game.id);
+        setIsLiked(true);
+        setLikesCount((current) => current + 1);
+    };
+
+    const toggleSave = async () => {
+        if (!isAuthenticated) return;
+        if (isSaved) {
+            await gameService.unsaveGame(game.id);
+            setIsSaved(false);
+            return;
+        }
+        await gameService.saveGame(game.id);
+        setIsSaved(true);
     };
 
     const handleVideoClick = () => {
@@ -103,9 +133,14 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                         <span className="label">Comentarios</span>
                     </button>
 
-                    <button className="action-btn">
-                        <span className="icon">❤️</span>
-                        <span className="label">Me gusta</span>
+                    <button className="action-btn" onClick={toggleLike}>
+                        <span className="icon">{isLiked ? "❤️" : "🤍"}</span>
+                        <span className="label">{likesCount}</span>
+                    </button>
+
+                    <button className="action-btn" onClick={toggleSave}>
+                        <span className="icon">{isSaved ? "🔖" : "📑"}</span>
+                        <span className="label">{isSaved ? "Guardado" : "Guardar"}</span>
                     </button>
                 </div>
             </div>
