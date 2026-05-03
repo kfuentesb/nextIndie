@@ -79,9 +79,10 @@ npm run dev
 ## 🧠 Descripción General
 
 Plataforma centrada en videojuegos donde usuarios podrán:
-- **Comentar, guardar y descubrir juegos**
-- Interactuar con contenido visual (trailers)
-- Priorizar juegos relevantes
+- **Descubrir nuevos juegos indies**
+- Ver un feed vertical de trailers de juegos
+- Consultar mediante un calendario nuevos lanzamientos
+- Ver los juegos más queridos por la comunidad
 
 **Vistas principales**:
 - 📺 *VideoFeed* (centrada en trailers)
@@ -108,7 +109,7 @@ Cada juego:
 - 📅 **Fecha de lanzamiento**
 - 📝 **Comentarios**
 - ❤️ **Interacciones sociales**
-  - Likes (_pendiente_)
+  - Likes
   - Guardados
   - Compartir
 
@@ -121,47 +122,19 @@ Cada juego:
 - **User**
 - **Game**
 - **Comment**
-- **SavedGames**
+- **Genre**
+- **Platform**
 
 #### Relaciones clave
 
-- Un usuario puede comentar y guardar múltiples juegos
+- Un usuario auténticado puede comentar y guardar múltiples juegos
 - Un juego puede tener múltiples comentarios y ser guardado por múltiples usuarios
 
 ---
 
 ### 📊 Diagrama ER Base - NextIndie
 
-```mermaid
-erDiagram
-    USERS {
-        LONG id
-        STRING username
-        STRING email
-        STRING password
-        DATETIME createdAt
-    }
-    GAMES {
-        LONG id
-        STRING title
-        STRING description
-        STRING trailerUrl
-        STRING imageUrl
-        STRING developer
-        STRING genre
-        DATE releaseDate
-        DATETIME createdAt
-    }
-    COMMENTS {
-        LONG id
-        STRING content
-        DATETIME createdAt
-    }
-    USERS ||--o{ COMMENTS : "has"
-    GAMES ||--o{ COMMENTS : "has"
-    COMMENTS }o--|| USERS : "belongs to"
-    COMMENTS }o--|| GAMES : "refers to"
-```
+<img width="409" height="998" alt="next_indie_db_entrega3" src="https://github.com/user-attachments/assets/4da99f9b-223b-407e-a81b-a0a02480a83a" />
 
 ---
 
