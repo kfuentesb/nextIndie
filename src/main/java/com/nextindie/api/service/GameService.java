@@ -21,12 +21,12 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
-    private final RawgSyncService rawgSyncService;
+    private final IgdbSyncService igdbSyncService;
 
-    public GameService(GameRepository gameRepository, UserRepository userRepository, RawgSyncService rawgSyncService) {
+    public GameService(GameRepository gameRepository, UserRepository userRepository, IgdbSyncService igdbSyncService) {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
-        this.rawgSyncService = rawgSyncService;
+        this.igdbSyncService = igdbSyncService;
     }
 
     public List<GameDTO> getAllGames() {
@@ -89,21 +89,17 @@ public class GameService {
         int safePage = Math.max(1, page);
         int safeSize = Math.max(1, Math.min(size, 20));
 
-        List<Game> syncedGames = rawgSyncService.syncFeedPage(safePage, safeSize);
+        List<Game> syncedGames = igdbSyncService.syncFeedPage(safePage, safeSize);
         if (!syncedGames.isEmpty()) {
             List<GameDTO> games = syncedGames.stream()
-                    .filter(game -> game.getTrailerUrl() != null && !game.getTrailerUrl().isBlank())
                     .map(this::convertToDTO)
                     .collect(Collectors.toList());
-            if (!games.isEmpty()) {
-                return new GameFeedResponseDTO(games, safePage, games.size() == safeSize);
-            }
+            return new GameFeedResponseDTO(games, safePage, games.size() == safeSize);
         }
 
         List<GameDTO> fallbackGames = gameRepository.findAll(
                         PageRequest.of(safePage - 1, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"))
                 ).stream()
-                .filter(game -> game.getTrailerUrl() != null && !game.getTrailerUrl().isBlank())
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
 
@@ -111,7 +107,7 @@ public class GameService {
     }
 
     public List<GameDTO> getReleasesByMonth(int year, int month) {
-        rawgSyncService.syncReleasesForMonth(year, month);
+        igdbSyncService.syncReleasesForMonth(year, month);
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
@@ -122,16 +118,21 @@ public class GameService {
 
     private GameDTO convertToDTO(Game game) {
         return new GameDTO(
-                game.getId(),
-                game.getTitle(),
-                game.getDescription(),
-                game.getTrailerUrl(),
-                game.getImageUrl(),
-                game.getDeveloper(),
-                game.getGenres().stream().map(genre -> genre.getName()).collect(Collectors.toList()),
-                game.getPlatforms().stream().map(platform -> platform.getName()).collect(Collectors.toList()),
-                userRepository.countLikesByGameId(game.getId()),
-                game.getReleaseDate()
+            game.getId(),
+            game.getTitle(),
+            game.getDescription(),
+            game.getTrailerUrl(),
+            game.getImageUrl(),
+            game.getDeveloper(),
+            game.getGameStatus(),
+            game.getWebsiteUrl(),
+            game.getMainFranchise(),
+            game.getGenres().stream().map(genre -> genre.getName()).collect(Collectors.toList()),
+            game.getPlatforms().stream().map(platform -> platform.getName()).collect(Collectors.toList()),
+            game.getSimilarGames().stream().collect(Collectors.toList()),
+            game.getDlcs().stream().collect(Collectors.toList()),
+            userRepository.countLikesByGameId(game.getId()),
+            game.getReleaseDate()
         );
     }
 

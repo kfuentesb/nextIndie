@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface GameRepository extends JpaRepository<Game, Long> {
-    Optional<Game> findByRawgId(Long rawgId);
+    Optional<Game> findByIgdbId(Long igdbId);
     Optional<Game> findByTitleAndReleaseDate(String title, LocalDate releaseDate);
     List<Game> findByReleaseDateBetweenOrderByReleaseDateAsc(LocalDate startDate, LocalDate endDate);
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
 
@@ -54,6 +55,10 @@ export function SavedGamesPage() {
                             <p className="game-description">{game.description}</p>
                         </div>
                         <div className="game-actions">
+                            <Link className="action-btn" to={`/games/${game.id}`}>
+                                <span className="icon">ℹ️</span>
+                                <span className="label">Detalle</span>
+                            </Link>
                             <button className="action-btn" onClick={() => removeFromSaved(game.id)}>
                                 <span className="icon">🗑️</span>
                                 <span className="label">Quitar</span>

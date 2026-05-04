@@ -8,7 +8,7 @@ import com.nextindie.api.repository.GenreRepository;
 import com.nextindie.api.repository.GameRepository;
 import com.nextindie.api.repository.PlatformRepository;
 import com.nextindie.api.repository.UserRepository;
-import com.nextindie.api.service.RawgSyncService;
+import com.nextindie.api.service.IgdbSyncService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -27,17 +27,17 @@ public class DataInitializer implements CommandLineRunner {
     private final GenreRepository genreRepository;
     private final PlatformRepository platformRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RawgSyncService rawgSyncService;
+    private final IgdbSyncService igdbSyncService;
 
     public DataInitializer(UserRepository userRepository, GameRepository gameRepository,
                            GenreRepository genreRepository, PlatformRepository platformRepository,
-                           PasswordEncoder passwordEncoder, RawgSyncService rawgSyncService) {
+                           PasswordEncoder passwordEncoder, IgdbSyncService igdbSyncService) {
         this.userRepository = userRepository;
         this.gameRepository = gameRepository;
         this.genreRepository = genreRepository;
         this.platformRepository = platformRepository;
         this.passwordEncoder = passwordEncoder;
-        this.rawgSyncService = rawgSyncService;
+        this.igdbSyncService = igdbSyncService;
     }
 
     @Override
@@ -90,9 +90,9 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         try {
-            rawgSyncService.syncCatalogAndCurrentMonthReleases();
+            igdbSyncService.syncCatalogAndCurrentMonthReleases();
         } catch (Exception ignored) {
-            // Si RAWG falla, la app sigue operativa con catálogo local.
+            // Si IGDB falla, la app sigue operativa con catálogo local.
         }
     }
 

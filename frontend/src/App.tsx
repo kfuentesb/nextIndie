@@ -5,6 +5,7 @@ import { FeedPage } from './pages/FeedPage';
 import { LoginPage } from './pages/LoginPage';
 import { SavedGamesPage } from './pages/SavedGamesPage';
 import { ReleasesPage } from './pages/ReleasesPage';
+import { GameDetailPage } from './pages/GameDetailPage';
 
 function AppContent() {
   return (
@@ -13,6 +14,7 @@ function AppContent() {
         <main className="main-content">
           <Routes>
             <Route path="/" element={<FeedPage />} />
+            <Route path="/games/:id" element={<GameDetailPage />} />
             <Route path="/releases" element={<ReleasesPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/saved" element={<SavedGamesPage />} />

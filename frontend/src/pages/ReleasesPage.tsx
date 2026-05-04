@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
 
@@ -98,14 +99,14 @@ export function ReleasesPage() {
                 {selectedDayGames.length > 0 && (
                     <div className="release-games-grid">
                         {selectedDayGames.map((game) => (
-                            <article key={game.id} className="release-card">
+                            <Link key={game.id} to={`/games/${game.id}`} className="release-card">
                                 <img src={game.imageUrl} alt={game.title} />
                                 <div>
                                     <h3>{game.title}</h3>
                                     <p>{game.developer}</p>
                                     <p>{new Date(game.releaseDate).toLocaleDateString('es-ES')}</p>
                                 </div>
-                            </article>
+                            </Link>
                         ))}
                     </div>
                 )}
