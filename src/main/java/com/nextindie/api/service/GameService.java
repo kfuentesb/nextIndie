@@ -6,6 +6,8 @@ import com.nextindie.api.model.Game;
 import com.nextindie.api.model.User;
 import com.nextindie.api.repository.GameRepository;
 import com.nextindie.api.repository.UserRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,11 +86,28 @@ public class GameService {
     }
 
     public GameFeedResponseDTO getFeedPage(int page, int size) {
-        List<GameDTO> games = rawgSyncService.syncFeedPage(page, size).stream()
+        int safePage = Math.max(1, page);
+        int safeSize = Math.max(1, Math.min(size, 20));
+
+        List<Game> syncedGames = rawgSyncService.syncFeedPage(safePage, safeSize);
+        if (!syncedGames.isEmpty()) {
+            List<GameDTO> games = syncedGames.stream()
+                    .filter(game -> game.getTrailerUrl() != null && !game.getTrailerUrl().isBlank())
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
+            if (!games.isEmpty()) {
+                return new GameFeedResponseDTO(games, safePage, games.size() == safeSize);
+            }
+        }
+
+        List<GameDTO> fallbackGames = gameRepository.findAll(
+                        PageRequest.of(safePage - 1, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"))
+                ).stream()
+                .filter(game -> game.getTrailerUrl() != null && !game.getTrailerUrl().isBlank())
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
-        boolean hasMore = games.size() == size;
-        return new GameFeedResponseDTO(games, page, hasMore);
+
+        return new GameFeedResponseDTO(fallbackGames, safePage, fallbackGames.size() == safeSize);
     }
 
     public List<GameDTO> getReleasesByMonth(int year, int month) {

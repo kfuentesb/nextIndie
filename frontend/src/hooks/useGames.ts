@@ -9,6 +9,7 @@ export function useGames() {
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const MAX_BUFFER = 40;
 
     const fetchGames = useCallback(async () => {
         try {
@@ -31,7 +32,13 @@ export function useGames() {
         try {
             setIsLoadingMore(true);
             const data = await gameService.getFeedPage(page, 10);
-            setGames((current) => [...current, ...data.games]);
+            setGames((current) => {
+                const merged = [...current, ...data.games];
+                if (merged.length <= MAX_BUFFER) {
+                    return merged;
+                }
+                return merged.slice(merged.length - MAX_BUFFER);
+            });
             setPage((current) => current + 1);
             setHasMore(data.hasMore);
         } catch (err) {
@@ -42,9 +49,14 @@ export function useGames() {
         }
     }, [hasMore, isLoadingMore, page]);
 
+    const dropHead = useCallback((count: number) => {
+        if (count <= 0) return;
+        setGames((current) => current.slice(Math.min(count, current.length)));
+    }, []);
+
     useEffect(() => {
         fetchGames();
     }, [fetchGames]);
 
-    return { games, isLoading, isLoadingMore, hasMore, error, refetch: fetchGames, loadMore };
+    return { games, isLoading, isLoadingMore, hasMore, error, refetch: fetchGames, loadMore, dropHead };
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.time.YearMonth;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -93,9 +94,18 @@ public class RawgSyncService {
 
     @Transactional
     public List<Game> syncFeedPage(int page, int pageSize) {
-        syncGenres();
-        syncPlatforms();
-        JsonNode response = rawgApiService.fetchGamesPage(page, pageSize);
+        try {
+            syncGenres();
+            syncPlatforms();
+        } catch (RuntimeException ex) {
+            return List.of();
+        }
+        JsonNode response;
+        try {
+            response = rawgApiService.fetchGamesPage(page, pageSize);
+        } catch (RuntimeException ex) {
+            return List.of();
+        }
         List<Game> games = new ArrayList<>();
         for (JsonNode gameNode : response.path("results")) {
             Game game = upsertGame(gameNode);
@@ -110,12 +120,17 @@ public class RawgSyncService {
         Long rawgId = gameNode.path("id").asLong();
         String title = gameNode.path("name").asText(null);
         String releasedValue = gameNode.path("released").asText(null);
-        if (rawgId == null || title == null || title.isBlank() || releasedValue == null || releasedValue.isBlank()) {
+        if (rawgId == null || title == null || title.isBlank()) {
             return null;
         }
 
-        LocalDate releaseDate = LocalDate.parse(releasedValue);
-        JsonNode detailsNode = rawgApiService.fetchGameDetails(rawgId);
+        LocalDate releaseDate = parseReleaseDateOrNow(releasedValue);
+        JsonNode detailsNode;
+        try {
+            detailsNode = rawgApiService.fetchGameDetails(rawgId);
+        } catch (RuntimeException ex) {
+            detailsNode = gameNode;
+        }
 
         Optional<Game> existing = gameRepository.findByRawgId(rawgId);
         if (existing.isEmpty()) {
@@ -128,14 +143,26 @@ public class RawgSyncService {
         game.setDescription(resolveDescription(detailsNode));
         game.setReleaseDate(releaseDate);
         game.setImageUrl(gameNode.path("background_image").asText(null));
-        game.setTrailerUrl(resolveTrailerUrl(detailsNode, gameNode));
+        game.setTrailerUrl(resolveTrailerUrl(rawgId, detailsNode, gameNode));
         game.setDeveloper(resolveDeveloper(detailsNode));
         game.setGenres(resolveGenres(gameNode.path("genres")));
         game.setPlatforms(resolvePlatforms(gameNode.path("platforms")));
         return gameRepository.save(game);
     }
 
-    private String resolveTrailerUrl(JsonNode detailsNode, JsonNode gameNode) {
+    private String resolveTrailerUrl(Long rawgId, JsonNode detailsNode, JsonNode gameNode) {
+        try {
+            JsonNode movies = rawgApiService.fetchGameMovies(rawgId);
+            if (movies.path("results").isArray() && !movies.path("results").isEmpty()) {
+                String movieUrl = movies.path("results").get(0).path("data").path("max").asText(null);
+                if (movieUrl != null && !movieUrl.isBlank()) {
+                    return movieUrl;
+                }
+            }
+        } catch (RuntimeException ignored) {
+            // fallback below
+        }
+
         String trailer = detailsNode.path("clip").path("clip").asText(null);
         if (trailer == null || trailer.isBlank()) {
             trailer = gameNode.path("clip").path("clip").asText(null);
@@ -157,6 +184,17 @@ public class RawgSyncService {
             return "Sin sinopsis disponible";
         }
         return description;
+    }
+
+    private LocalDate parseReleaseDateOrNow(String releasedValue) {
+        if (releasedValue == null || releasedValue.isBlank()) {
+            return LocalDate.now();
+        }
+        try {
+            return LocalDate.parse(releasedValue);
+        } catch (DateTimeParseException ex) {
+            return LocalDate.now();
+        }
     }
 
     private Set<Genre> resolveGenres(JsonNode genresNode) {

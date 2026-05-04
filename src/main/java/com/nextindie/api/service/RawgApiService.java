@@ -51,6 +51,10 @@ public class RawgApiService {
         return get("/games?ordering=-added&page=" + page + "&page_size=" + pageSize);
     }
 
+    public JsonNode fetchGameMovies(Long rawgGameId) {
+        return get("/games/" + rawgGameId + "/movies");
+    }
+
     private JsonNode get(String pathAndQuery) {
         String separator = pathAndQuery.contains("?") ? "&" : "?";
         String url = baseUrl + pathAndQuery + separator + "key=" + encode(apiKey);
