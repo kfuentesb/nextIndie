@@ -31,5 +31,12 @@ export const gameService = {
     getSavedGames: async (): Promise<Game[]> => {
         const response = await api.get<Game[]>('/games/me/saved');
         return response.data;
+    },
+
+    getReleasesByMonth: async (year: number, month: number): Promise<Game[]> => {
+        const response = await api.get<Game[]>('/games/releases', {
+            params: { year, month }
+        });
+        return response.data;
     }
 };

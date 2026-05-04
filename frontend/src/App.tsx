@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar';
 import { FeedPage } from './pages/FeedPage';
 import { LoginPage } from './pages/LoginPage';
 import { SavedGamesPage } from './pages/SavedGamesPage';
+import { ReleasesPage } from './pages/ReleasesPage';
 
 function AppContent() {
   return (
@@ -12,6 +13,7 @@ function AppContent() {
         <main className="main-content">
           <Routes>
             <Route path="/" element={<FeedPage />} />
+            <Route path="/releases" element={<ReleasesPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/saved" element={<SavedGamesPage />} />
           </Routes>

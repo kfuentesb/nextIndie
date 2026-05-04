@@ -1,5 +1,5 @@
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 export function Navbar() {
     const { user, isAuthenticated, logout } = useAuth();
@@ -7,13 +7,21 @@ export function Navbar() {
     return (
         <nav className="navbar">
             <div className="navbar-brand">
-                <a href="/" className="logo">
+                <Link to="/" className="logo">
                     <span className="logo-icon">🎮</span>
                     <span className="logo-text">NextIndie</span>
-                </a>
+                </Link>
             </div>
 
             <div className="navbar-menu">
+                <div className="navbar-tabs">
+                    <NavLink to="/" end className={({ isActive }) => `nav-tab ${isActive ? 'nav-tab-active' : ''}`}>
+                        Feed
+                    </NavLink>
+                    <NavLink to="/releases" className={({ isActive }) => `nav-tab ${isActive ? 'nav-tab-active' : ''}`}>
+                        Lanzamientos
+                    </NavLink>
+                </div>
                 {isAuthenticated ? (
                     <div className="user-section">
                         <Link to="/saved" className="btn btn-secondary">

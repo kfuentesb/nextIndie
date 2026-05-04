@@ -1,0 +1,114 @@
+import { useEffect, useMemo, useState } from 'react';
+import type { Game } from '../types';
+import { gameService } from '../services/gameService';
+
+function buildCalendarDays(year: number, month: number): Date[] {
+    const firstDay = new Date(year, month - 1, 1);
+    const startOffset = (firstDay.getDay() + 6) % 7;
+    const startDate = new Date(year, month - 1, 1 - startOffset);
+    return Array.from({ length: 42 }, (_, i) => new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + i));
+}
+
+export function ReleasesPage() {
+    const now = new Date();
+    const [year, setYear] = useState(now.getFullYear());
+    const [month, setMonth] = useState(now.getMonth() + 1);
+    const [games, setGames] = useState<Game[]>([]);
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const loadReleases = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const data = await gameService.getReleasesByMonth(year, month);
+                setGames(data);
+            } catch {
+                setError('No se pudieron cargar los lanzamientos');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadReleases();
+    }, [year, month]);
+
+    const releasesByDay = useMemo(() => {
+        return games.reduce<Record<string, Game[]>>((acc, game) => {
+            const day = game.releaseDate;
+            if (!acc[day]) {
+                acc[day] = [];
+            }
+            acc[day].push(game);
+            return acc;
+        }, {});
+    }, [games]);
+
+    const calendarDays = useMemo(() => buildCalendarDays(year, month), [year, month]);
+    const selectedDayGames = selectedDate ? (releasesByDay[selectedDate] || []) : [];
+
+    const monthLabel = new Date(year, month - 1, 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+
+    const moveMonth = (step: number) => {
+        const next = new Date(year, month - 1 + step, 1);
+        setYear(next.getFullYear());
+        setMonth(next.getMonth() + 1);
+        setSelectedDate(null);
+    };
+
+    return (
+        <div className="releases-page">
+            <section className="calendar-panel">
+                <header className="calendar-header">
+                    <button className="month-nav-btn" onClick={() => moveMonth(-1)}>◀</button>
+                    <h1>{monthLabel}</h1>
+                    <button className="month-nav-btn" onClick={() => moveMonth(1)}>▶</button>
+                </header>
+
+                <div className="calendar-weekdays">
+                    {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day) => <span key={day}>{day}</span>)}
+                </div>
+
+                <div className="calendar-grid">
+                    {calendarDays.map((date) => {
+                        const iso = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                        const inCurrentMonth = date.getMonth() + 1 === month;
+                        const dayReleases = releasesByDay[iso] || [];
+                        const isSelected = selectedDate === iso;
+                        return (
+                            <button
+                                key={iso}
+                                className={`calendar-day ${inCurrentMonth ? '' : 'calendar-day-out'} ${isSelected ? 'calendar-day-selected' : ''}`}
+                                onClick={() => setSelectedDate(iso)}
+                            >
+                                <span>{date.getDate()}</span>
+                                {dayReleases.length > 0 && <small>{dayReleases.length} juegos</small>}
+                            </button>
+                        );
+                    })}
+                </div>
+                {isLoading && <p className="calendar-feedback">Cargando lanzamientos...</p>}
+                {error && <p className="calendar-feedback">{error}</p>}
+            </section>
+
+            <section className="releases-day-panel">
+                <h2>{selectedDate ? `Lanzamientos del ${selectedDate}` : 'Selecciona un día'}</h2>
+                {selectedDate && selectedDayGames.length === 0 && <p className="calendar-feedback">No hay juegos ese día.</p>}
+                {selectedDayGames.length > 0 && (
+                    <div className="release-games-grid">
+                        {selectedDayGames.map((game) => (
+                            <article key={game.id} className="release-card">
+                                <img src={game.imageUrl} alt={game.title} />
+                                <div>
+                                    <h3>{game.title}</h3>
+                                    <p>{game.developer}</p>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                )}
+            </section>
+        </div>
+    );
+}
