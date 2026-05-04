@@ -23,6 +23,9 @@ public class Game {
     @Column(nullable = false)
     private String title;
 
+    @Column(unique = true)
+    private Long rawgId;
+
     @Column(length = 2000)
     private String description;
     private String trailerUrl;
