@@ -25,35 +25,40 @@ public class GameController {
         return ResponseEntity.ok(gameService.getAllGames());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<GameDTO> getGameById(@PathVariable Long id) {
         return ResponseEntity.ok(gameService.getGameById(id));
     }
 
-    @PostMapping("/{id}/likes")
+    @GetMapping("/releases")
+    public ResponseEntity<List<GameDTO>> getReleasesByMonth(@RequestParam int year, @RequestParam int month) {
+        return ResponseEntity.ok(gameService.getReleasesByMonth(year, month));
+    }
+
+    @PostMapping("/{id:\\d+}/likes")
     public ResponseEntity<Void> likeGame(@PathVariable Long id, Authentication authentication) {
         gameService.likeGame(id, authentication.getName());
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}/likes")
+    @DeleteMapping("/{id:\\d+}/likes")
     public ResponseEntity<Void> unlikeGame(@PathVariable Long id, Authentication authentication) {
         gameService.unlikeGame(id, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}/likes/count")
+    @GetMapping("/{id:\\d+}/likes/count")
     public ResponseEntity<Map<String, Long>> getLikesCount(@PathVariable Long id) {
         return ResponseEntity.ok(Map.of("count", gameService.getLikesCount(id)));
     }
 
-    @PostMapping("/{id}/saved")
+    @PostMapping("/{id:\\d+}/saved")
     public ResponseEntity<Void> saveGame(@PathVariable Long id, Authentication authentication) {
         gameService.saveGame(id, authentication.getName());
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}/saved")
+    @DeleteMapping("/{id:\\d+}/saved")
     public ResponseEntity<Void> unsaveGame(@PathVariable Long id, Authentication authentication) {
         gameService.unsaveGame(id, authentication.getName());
         return ResponseEntity.noContent().build();

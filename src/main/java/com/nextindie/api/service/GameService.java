@@ -8,6 +8,8 @@ import com.nextindie.api.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,6 +76,15 @@ public class GameService {
     public List<GameDTO> getSavedGames(String username) {
         getUserByUsername(username);
         return userRepository.findSavedGamesByUsername(username).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<GameDTO> getReleasesByMonth(int year, int month) {
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDate startDate = yearMonth.atDay(1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
+        return gameRepository.findByReleaseDateBetweenOrderByReleaseDateAsc(startDate, endDate).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

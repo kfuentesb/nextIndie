@@ -43,6 +43,10 @@ public class RawgApiService {
         return get("/games?ordering=released&page_size=" + pageSize + "&dates=" + encode(dates));
     }
 
+    public JsonNode fetchGameDetails(Long rawgGameId) {
+        return get("/games/" + rawgGameId);
+    }
+
     private JsonNode get(String pathAndQuery) {
         String separator = pathAndQuery.contains("?") ? "&" : "?";
         String url = baseUrl + pathAndQuery + separator + "key=" + encode(apiKey);
@@ -58,8 +62,10 @@ public class RawgApiService {
                 throw new RuntimeException("Error RAWG " + response.statusCode() + ": " + response.body());
             }
             return objectMapper.readTree(response.body());
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            throw new RuntimeException("Consulta RAWG interrumpida", e);
+        } catch (IOException e) {
             throw new RuntimeException("No se pudo consultar RAWG", e);
         }
     }
