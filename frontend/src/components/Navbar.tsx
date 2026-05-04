@@ -13,15 +13,16 @@ export function Navbar() {
                 </Link>
             </div>
 
-            <div className="navbar-menu">
-                <div className="navbar-tabs">
-                    <NavLink to="/" end className={({ isActive }) => `nav-tab ${isActive ? 'nav-tab-active' : ''}`}>
-                        Feed
-                    </NavLink>
-                    <NavLink to="/releases" className={({ isActive }) => `nav-tab ${isActive ? 'nav-tab-active' : ''}`}>
-                        Lanzamientos
-                    </NavLink>
-                </div>
+            <div className="navbar-tabs">
+                <NavLink to="/" end className={({ isActive }) => `nav-tab ${isActive ? 'nav-tab-active' : ''}`}>
+                    Feed
+                </NavLink>
+                <NavLink to="/releases" className={({ isActive }) => `nav-tab ${isActive ? 'nav-tab-active' : ''}`}>
+                    Lanzamientos
+                </NavLink>
+            </div>
+
+            <div className="navbar-menu navbar-menu-right">
                 {isAuthenticated ? (
                     <div className="user-section">
                         <Link to="/saved" className="btn btn-secondary">

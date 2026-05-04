@@ -1,6 +1,7 @@
 package com.nextindie.api.controller;
 
 import com.nextindie.api.dto.GameDTO;
+import com.nextindie.api.dto.GameFeedResponseDTO;
 import com.nextindie.api.service.GameService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,12 @@ public class GameController {
     @GetMapping
     public ResponseEntity<List<GameDTO>> getAllGames() {
         return ResponseEntity.ok(gameService.getAllGames());
+    }
+
+    @GetMapping("/feed")
+    public ResponseEntity<GameFeedResponseDTO> getFeedPage(@RequestParam(defaultValue = "1") int page,
+                                                           @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(gameService.getFeedPage(page, size));
     }
 
     @GetMapping("/{id:\\d+}")

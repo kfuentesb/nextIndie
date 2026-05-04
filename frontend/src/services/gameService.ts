@@ -1,9 +1,16 @@
 import api from './api';
-import type { Game } from '../types';
+import type { Game, GameFeedResponse } from '../types';
 
 export const gameService = {
     getAllGames: async (): Promise<Game[]> => {
         const response = await api.get<Game[]>('/games');
+        return response.data;
+    },
+
+    getFeedPage: async (page: number, size = 10): Promise<GameFeedResponse> => {
+        const response = await api.get<GameFeedResponse>('/games/feed', {
+            params: { page, size }
+        });
         return response.data;
     },
 

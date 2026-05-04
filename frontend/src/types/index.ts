@@ -34,6 +34,12 @@ export interface Game {
     releaseDate: string;
 }
 
+export interface GameFeedResponse {
+    games: Game[];
+    page: number;
+    hasMore: boolean;
+}
+
 export interface Comment {
     id: number;
     content: string;

@@ -13,8 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.ArrayList;
 
 @Service
 public class RawgSyncService {
@@ -73,21 +75,43 @@ public class RawgSyncService {
 
     private void syncCurrentMonthGames() {
         YearMonth currentMonth = YearMonth.now();
-        LocalDate startDate = currentMonth.atDay(1);
-        LocalDate endDate = currentMonth.atEndOfMonth();
+        syncReleasesForMonth(currentMonth.getYear(), currentMonth.getMonthValue());
+    }
 
+    @Transactional
+    public void syncReleasesForMonth(int year, int month) {
+        syncGenres();
+        syncPlatforms();
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDate startDate = yearMonth.atDay(1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
         JsonNode response = rawgApiService.fetchReleases(startDate, endDate, 40);
         for (JsonNode gameNode : response.path("results")) {
             upsertGame(gameNode);
         }
     }
 
-    private void upsertGame(JsonNode gameNode) {
+    @Transactional
+    public List<Game> syncFeedPage(int page, int pageSize) {
+        syncGenres();
+        syncPlatforms();
+        JsonNode response = rawgApiService.fetchGamesPage(page, pageSize);
+        List<Game> games = new ArrayList<>();
+        for (JsonNode gameNode : response.path("results")) {
+            Game game = upsertGame(gameNode);
+            if (game != null) {
+                games.add(game);
+            }
+        }
+        return games;
+    }
+
+    private Game upsertGame(JsonNode gameNode) {
         Long rawgId = gameNode.path("id").asLong();
         String title = gameNode.path("name").asText(null);
         String releasedValue = gameNode.path("released").asText(null);
         if (rawgId == null || title == null || title.isBlank() || releasedValue == null || releasedValue.isBlank()) {
-            return;
+            return null;
         }
 
         LocalDate releaseDate = LocalDate.parse(releasedValue);
@@ -108,7 +132,7 @@ public class RawgSyncService {
         game.setDeveloper(resolveDeveloper(detailsNode));
         game.setGenres(resolveGenres(gameNode.path("genres")));
         game.setPlatforms(resolvePlatforms(gameNode.path("platforms")));
-        gameRepository.save(game);
+        return gameRepository.save(game);
     }
 
     private String resolveTrailerUrl(JsonNode detailsNode, JsonNode gameNode) {

@@ -1,6 +1,7 @@
 package com.nextindie.api.service;
 
 import com.nextindie.api.dto.GameDTO;
+import com.nextindie.api.dto.GameFeedResponseDTO;
 import com.nextindie.api.model.Game;
 import com.nextindie.api.model.User;
 import com.nextindie.api.repository.GameRepository;
@@ -18,10 +19,12 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
+    private final RawgSyncService rawgSyncService;
 
-    public GameService(GameRepository gameRepository, UserRepository userRepository) {
+    public GameService(GameRepository gameRepository, UserRepository userRepository, RawgSyncService rawgSyncService) {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
+        this.rawgSyncService = rawgSyncService;
     }
 
     public List<GameDTO> getAllGames() {
@@ -80,7 +83,16 @@ public class GameService {
                 .collect(Collectors.toList());
     }
 
+    public GameFeedResponseDTO getFeedPage(int page, int size) {
+        List<GameDTO> games = rawgSyncService.syncFeedPage(page, size).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        boolean hasMore = games.size() == size;
+        return new GameFeedResponseDTO(games, page, hasMore);
+    }
+
     public List<GameDTO> getReleasesByMonth(int year, int month) {
+        rawgSyncService.syncReleasesForMonth(year, month);
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();

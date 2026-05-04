@@ -3,7 +3,7 @@ import { VideoFeed } from '../components/VideoFeed';
 import { useGames } from '../hooks/useGames';
 
 export function FeedPage() {
-    const { games, isLoading, error } = useGames();
+    const { games, isLoading, isLoadingMore, hasMore, error, loadMore } = useGames();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isScrolling, setIsScrolling] = useState(false);
 
@@ -14,6 +14,13 @@ export function FeedPage() {
         setCurrentIndex(index);
         setTimeout(() => setIsScrolling(false), 800);
     }, [games.length, isScrolling]);
+
+    useEffect(() => {
+        const threshold = 3;
+        if (hasMore && currentIndex >= games.length - threshold) {
+            void loadMore();
+        }
+    }, [currentIndex, games.length, hasMore, loadMore]);
 
     useEffect(() => {
         const handleWheel = (e: WheelEvent) => {
@@ -110,6 +117,7 @@ export function FeedPage() {
 
             <div className="slide-counter">
                 {currentIndex + 1} / {games.length}
+                {isLoadingMore && <span> · Cargando más...</span>}
             </div>
         </div>
     );

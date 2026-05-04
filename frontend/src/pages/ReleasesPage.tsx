@@ -103,6 +103,7 @@ export function ReleasesPage() {
                                 <div>
                                     <h3>{game.title}</h3>
                                     <p>{game.developer}</p>
+                                    <p>{new Date(game.releaseDate).toLocaleDateString('es-ES')}</p>
                                 </div>
                             </article>
                         ))}
