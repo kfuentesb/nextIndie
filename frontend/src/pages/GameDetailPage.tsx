@@ -5,11 +5,11 @@ import { gameService } from '../services/gameService';
 import { useAuth } from '../context/AuthContext';
 import { CommentsSection } from '../components/CommentSection';
 
-const getEmbedUrl = (videoId: string, muted: boolean): string => {
+const getEmbedUrl = (videoId: string): string => {
     const baseUrl = `https://www.youtube.com/embed/${videoId}`;
     const params = new URLSearchParams({
         autoplay: '0',
-        mute: muted ? '1' : '0',
+        mute: '0',
         controls: '1',
         rel: '0',
         modestbranding: '1',
@@ -36,7 +36,6 @@ export function GameDetailPage() {
     const [isLiked, setIsLiked] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
-    const [isMuted, setIsMuted] = useState(true);
 
     useEffect(() => {
         if (!id) return;
@@ -59,7 +58,7 @@ export function GameDetailPage() {
     const trailerUrl = game?.trailerUrl || '';
     const isYoutubeTrailer = trailerUrl.includes('youtube.com') || trailerUrl.includes('youtu.be') || trailerUrl.includes('/embed/');
     const videoId = useMemo(() => (isYoutubeTrailer ? extractVideoId(trailerUrl) : ''), [isYoutubeTrailer, trailerUrl]);
-    const embedUrl = useMemo(() => (isYoutubeTrailer ? getEmbedUrl(videoId, isMuted) : ''), [isYoutubeTrailer, videoId, isMuted]);
+    const embedUrl = useMemo(() => (isYoutubeTrailer ? getEmbedUrl(videoId) : ''), [isYoutubeTrailer, videoId]);
 
     const toggleLike = async () => {
         if (!game || !isAuthenticated) return;
@@ -119,7 +118,6 @@ export function GameDetailPage() {
                             <video
                                 src={trailerUrl}
                                 autoPlay={false}
-                                muted={isMuted}
                                 controls
                                 playsInline
                             />
@@ -138,9 +136,6 @@ export function GameDetailPage() {
                     <p className="detail-description">{game.description}</p>
 
                     <div className="detail-actions">
-                        <button className="btn btn-secondary" onClick={() => setIsMuted((current) => !current)}>
-                            {isMuted ? 'Activar sonido' : 'Silenciar'}
-                        </button>
                         <button className="btn btn-secondary" onClick={toggleLike}>
                             {isLiked ? '❤️' : '🤍'} {likesCount}
                         </button>

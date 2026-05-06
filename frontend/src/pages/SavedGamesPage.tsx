@@ -20,7 +20,7 @@ export function SavedGamesPage() {
             }
         };
 
-        fetchSavedGames();
+        void fetchSavedGames();
     }, []);
 
     const removeFromSaved = async (gameId: number) => {
@@ -41,29 +41,28 @@ export function SavedGamesPage() {
     }
 
     if (games.length === 0) {
-        return <div className="loading-state"><p>No tienes juegos guardados todavía.</p></div>;
+        return <div className="loading-state"><p>No tienes juegos guardados todavia.</p></div>;
     }
 
     return (
-        <div className="feed-container">
-            <div className="saved-games-list">
+        <div className="saved-page">
+            <div className="saved-games-grid">
                 {games.map((game) => (
-                    <article key={game.id} className="video-info">
-                        <div className="game-details">
-                            <h2 className="game-title">{game.title}</h2>
-                            <p className="game-meta">{game.developer} • {game.genres.join(', ')}</p>
-                            <p className="game-description">{game.description}</p>
-                        </div>
-                        <div className="game-actions">
-                            <Link className="action-btn" to={`/games/${game.id}`}>
-                                <span className="icon">ℹ️</span>
-                                <span className="label">Detalle</span>
-                            </Link>
-                            <button className="action-btn" onClick={() => removeFromSaved(game.id)}>
-                                <span className="icon">🗑️</span>
-                                <span className="label">Quitar</span>
-                            </button>
-                        </div>
+                    <article key={game.id} className="saved-game-card">
+                        <Link
+                            className="saved-game-link"
+                            to={`/games/${game.id}`}
+                            aria-label={`Ver detalle de ${game.title}`}
+                        >
+                            <img className="saved-game-cover" src={game.imageUrl} alt={game.title} loading="lazy" />
+                            <div className="saved-game-info">
+                                <h2>{game.title}</h2>
+                                <p>{game.developer}</p>
+                            </div>
+                        </Link>
+                        <button className="saved-remove-btn" onClick={() => removeFromSaved(game.id)}>
+                            Quitar
+                        </button>
                     </article>
                 ))}
             </div>
