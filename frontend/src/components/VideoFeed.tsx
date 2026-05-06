@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { CommentsSection} from "./CommentSection.tsx";
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
@@ -18,6 +19,7 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
     const [isSaved, setIsSaved] = useState(false);
     const [likesCount, setLikesCount] = useState(game.totalLikes ?? 0);
     const iframeRef = useRef<HTMLIFrameElement>(null);
+    const videoRef = useRef<HTMLVideoElement>(null);
 
     const getEmbedUrl = (videoId: string, muted: boolean): string => {
         const baseUrl = `https://www.youtube.com/embed/${videoId}`;
@@ -41,17 +43,29 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
         return match ? match[1] : url;
     };
 
-    const videoId = extractVideoId(game.trailerUrl);
+    const trailerUrl = game.trailerUrl || '';
+    const hasTrailer = Boolean(trailerUrl);
+    const isYoutubeTrailer = trailerUrl.includes('youtube.com') || trailerUrl.includes('youtu.be') || trailerUrl.includes('/embed/');
+    const videoId = isYoutubeTrailer ? extractVideoId(trailerUrl) : '';
     const genreText = game.genres?.join(", ") || "Sin género";
 
     // Cambiar URL cuando cambia el estado de mute/active
-    const [embedUrl, setEmbedUrl] = useState(() =>
-        getEmbedUrl(videoId, true)
-    );
+    const [embedUrl, setEmbedUrl] = useState(() => (isYoutubeTrailer ? getEmbedUrl(videoId, true) : ''));
 
     useEffect(() => {
-        setEmbedUrl(getEmbedUrl(videoId, isMuted));
-    }, [isActive, isMuted, videoId]);
+        if (isYoutubeTrailer) {
+            setEmbedUrl(getEmbedUrl(videoId, isMuted));
+            return;
+        }
+        if (videoRef.current) {
+            videoRef.current.muted = isMuted;
+            if (isActive) {
+                void videoRef.current.play();
+            } else {
+                videoRef.current.pause();
+            }
+        }
+    }, [isActive, isMuted, videoId, isYoutubeTrailer]);
 
     const toggleMute = () => {
         setHasInteracted(true);
@@ -92,25 +106,42 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
     return (
         <div className="video-container" onClick={handleVideoClick}>
             <div className="video-wrapper">
-                <iframe
-                    ref={iframeRef}
-                    src={embedUrl}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                    allowFullScreen
-                    title={game.title}
-                />
+                {hasTrailer ? (
+                    isYoutubeTrailer ? (
+                        <iframe
+                            ref={iframeRef}
+                            src={embedUrl}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                            allowFullScreen
+                            title={game.title}
+                        />
+                    ) : (
+                        <video
+                            ref={videoRef}
+                            src={trailerUrl}
+                            autoPlay={isActive}
+                            muted={isMuted}
+                            controls
+                            loop
+                            playsInline
+                        />
+                    )
+                ) : (
+                    <img src={game.imageUrl} alt={game.title} className="video-fallback" />
+                )}
 
-                {/* Overlay para capturar clicks y mostrar estado de audio */}
-                <div className="audio-overlay" onClick={(e) => {
-                    e.stopPropagation();
-                    toggleMute();
-                }}>
-                    <div className={`audio-indicator ${isMuted ? 'muted' : ''}`}>
-                        {isMuted ? '🔇' : '🔊'}
-                        <span>{isMuted ? 'Click para activar sonido' : 'Sonido activado'}</span>
+                {hasTrailer && (
+                    <div className="audio-overlay" onClick={(e) => {
+                        e.stopPropagation();
+                        toggleMute();
+                    }}>
+                        <div className={`audio-indicator ${isMuted ? 'muted' : ''}`}>
+                            {isMuted ? '🔇' : '🔊'}
+                            <span>{isMuted ? 'Click para activar sonido' : 'Sonido activado'}</span>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
 
             <div className="video-info">
@@ -123,10 +154,17 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                 </div>
 
                 <div className="game-actions">
-                    <button className="action-btn audio-btn" onClick={toggleMute}>
-                        <span className="icon">{isMuted ? '🔇' : '🔊'}</span>
-                        <span className="label">{isMuted ? 'Activar' : 'Silenciar'}</span>
-                    </button>
+                    {hasTrailer && (
+                        <button className="action-btn audio-btn" onClick={toggleMute}>
+                            <span className="icon">{isMuted ? '🔇' : '🔊'}</span>
+                            <span className="label">{isMuted ? 'Activar' : 'Silenciar'}</span>
+                        </button>
+                    )}
+
+                    <Link className="action-btn" to={`/games/${game.id}`}>
+                        <span className="icon">ℹ️</span>
+                        <span className="label">Detalle</span>
+                    </Link>
 
                     <button className="action-btn" onClick={() => setShowComments(!showComments)}>
                         <span className="icon">💬</span>

@@ -3,9 +3,10 @@ import { VideoFeed } from '../components/VideoFeed';
 import { useGames } from '../hooks/useGames';
 
 export function FeedPage() {
-    const { games, isLoading, error } = useGames();
+    const { games, isLoading, isLoadingMore, hasMore, error, loadMore, dropHead } = useGames();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isScrolling, setIsScrolling] = useState(false);
+    const RENDER_RADIUS = 2;
 
     const navigateTo = useCallback((index: number) => {
         if (isScrolling || index < 0 || index >= games.length) return;
@@ -14,6 +15,21 @@ export function FeedPage() {
         setCurrentIndex(index);
         setTimeout(() => setIsScrolling(false), 800);
     }, [games.length, isScrolling]);
+
+    useEffect(() => {
+        const threshold = 3;
+        if (hasMore && currentIndex >= games.length - threshold) {
+            void loadMore();
+        }
+    }, [currentIndex, games.length, hasMore, loadMore]);
+
+    useEffect(() => {
+        if (currentIndex > 20 && games.length > 30) {
+            const toDrop = 10;
+            dropHead(toDrop);
+            setCurrentIndex((prev) => Math.max(0, prev - toDrop));
+        }
+    }, [currentIndex, games.length, dropHead]);
 
     useEffect(() => {
         const handleWheel = (e: WheelEvent) => {
@@ -93,7 +109,11 @@ export function FeedPage() {
                         key={game.id}
                         className={`video-slide ${index === currentIndex ? 'active' : ''}`}
                     >
-                        <VideoFeed game={game} isActive={index === currentIndex} />
+                        {Math.abs(index - currentIndex) <= RENDER_RADIUS ? (
+                            <VideoFeed game={game} isActive={index === currentIndex} />
+                        ) : (
+                            <div className="video-placeholder" />
+                        )}
                     </div>
                 ))}
             </div>
@@ -110,6 +130,7 @@ export function FeedPage() {
 
             <div className="slide-counter">
                 {currentIndex + 1} / {games.length}
+                {isLoadingMore && <span> · Cargando más...</span>}
             </div>
         </div>
     );

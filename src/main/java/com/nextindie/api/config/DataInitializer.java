@@ -8,6 +8,7 @@ import com.nextindie.api.repository.GenreRepository;
 import com.nextindie.api.repository.GameRepository;
 import com.nextindie.api.repository.PlatformRepository;
 import com.nextindie.api.repository.UserRepository;
+import com.nextindie.api.service.IgdbSyncService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -26,15 +27,17 @@ public class DataInitializer implements CommandLineRunner {
     private final GenreRepository genreRepository;
     private final PlatformRepository platformRepository;
     private final PasswordEncoder passwordEncoder;
+    private final IgdbSyncService igdbSyncService;
 
     public DataInitializer(UserRepository userRepository, GameRepository gameRepository,
                            GenreRepository genreRepository, PlatformRepository platformRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, IgdbSyncService igdbSyncService) {
         this.userRepository = userRepository;
         this.gameRepository = gameRepository;
         this.genreRepository = genreRepository;
         this.platformRepository = platformRepository;
         this.passwordEncoder = passwordEncoder;
+        this.igdbSyncService = igdbSyncService;
     }
 
     @Override
@@ -84,6 +87,12 @@ public class DataInitializer implements CommandLineRunner {
             };
 
             gameRepository.saveAll(Arrays.asList(games));
+        }
+
+        try {
+            igdbSyncService.syncCatalogAndCurrentMonthReleases();
+        } catch (Exception ignored) {
+            // Si IGDB falla, la app sigue operativa con catálogo local.
         }
     }
 

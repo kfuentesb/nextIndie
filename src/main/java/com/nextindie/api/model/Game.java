@@ -23,11 +23,17 @@ public class Game {
     @Column(nullable = false)
     private String title;
 
+    @Column(unique = true)
+    private Long igdbId;
+
     @Column(length = 2000)
     private String description;
     private String trailerUrl;
     private String imageUrl;
     private String developer;
+    private String gameStatus;
+    private String websiteUrl;
+    private String mainFranchise;
 
     @ManyToMany
     @JoinTable(
@@ -50,6 +56,16 @@ public class Game {
 
     @ManyToMany(mappedBy = "savedGames")
     private Set<User> savedByUsers = new LinkedHashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "game_similar_games", joinColumns = @JoinColumn(name = "game_id"))
+    @Column(name = "title")
+    private Set<String> similarGames = new LinkedHashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "game_dlcs", joinColumns = @JoinColumn(name = "game_id"))
+    @Column(name = "title")
+    private Set<String> dlcs = new LinkedHashSet<>();
 
     @NotNull
     @Column(nullable = false)

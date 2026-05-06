@@ -1,6 +1,7 @@
 package com.nextindie.api.controller;
 
 import com.nextindie.api.dto.GameDTO;
+import com.nextindie.api.dto.GameFeedResponseDTO;
 import com.nextindie.api.service.GameService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -11,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/games")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5174")
 public class GameController {
 
     private final GameService gameService;
@@ -25,35 +26,46 @@ public class GameController {
         return ResponseEntity.ok(gameService.getAllGames());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/feed")
+    public ResponseEntity<GameFeedResponseDTO> getFeedPage(@RequestParam(defaultValue = "1") int page,
+                                                           @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(gameService.getFeedPage(page, size));
+    }
+
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<GameDTO> getGameById(@PathVariable Long id) {
         return ResponseEntity.ok(gameService.getGameById(id));
     }
 
-    @PostMapping("/{id}/likes")
+    @GetMapping("/releases")
+    public ResponseEntity<List<GameDTO>> getReleasesByMonth(@RequestParam int year, @RequestParam int month) {
+        return ResponseEntity.ok(gameService.getReleasesByMonth(year, month));
+    }
+
+    @PostMapping("/{id:\\d+}/likes")
     public ResponseEntity<Void> likeGame(@PathVariable Long id, Authentication authentication) {
         gameService.likeGame(id, authentication.getName());
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}/likes")
+    @DeleteMapping("/{id:\\d+}/likes")
     public ResponseEntity<Void> unlikeGame(@PathVariable Long id, Authentication authentication) {
         gameService.unlikeGame(id, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}/likes/count")
+    @GetMapping("/{id:\\d+}/likes/count")
     public ResponseEntity<Map<String, Long>> getLikesCount(@PathVariable Long id) {
         return ResponseEntity.ok(Map.of("count", gameService.getLikesCount(id)));
     }
 
-    @PostMapping("/{id}/saved")
+    @PostMapping("/{id:\\d+}/saved")
     public ResponseEntity<Void> saveGame(@PathVariable Long id, Authentication authentication) {
         gameService.saveGame(id, authentication.getName());
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}/saved")
+    @DeleteMapping("/{id:\\d+}/saved")
     public ResponseEntity<Void> unsaveGame(@PathVariable Long id, Authentication authentication) {
         gameService.unsaveGame(id, authentication.getName());
         return ResponseEntity.noContent().build();
