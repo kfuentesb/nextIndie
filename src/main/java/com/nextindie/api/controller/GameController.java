@@ -42,6 +42,11 @@ public class GameController {
         return ResponseEntity.ok(gameService.getReleasesByMonth(year, month));
     }
 
+    @GetMapping("/ranking/current-month")
+    public ResponseEntity<List<GameDTO>> getCurrentMonthRanking() {
+        return ResponseEntity.ok(gameService.getCurrentMonthRanking());
+    }
+
     @PostMapping("/{id:\\d+}/likes")
     public ResponseEntity<Void> likeGame(@PathVariable Long id, Authentication authentication) {
         gameService.likeGame(id, authentication.getName());

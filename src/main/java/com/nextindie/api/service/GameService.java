@@ -4,6 +4,7 @@ import com.nextindie.api.dto.GameDTO;
 import com.nextindie.api.dto.GameFeedResponseDTO;
 import com.nextindie.api.model.Game;
 import com.nextindie.api.model.User;
+import com.nextindie.api.repository.CommentRepository;
 import com.nextindie.api.repository.GameRepository;
 import com.nextindie.api.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
@@ -19,13 +20,23 @@ import java.util.stream.Collectors;
 @Service
 public class GameService {
 
+    private static final int LIKE_WEIGHT = 1;
+    private static final int SAVE_WEIGHT = 2;
+    private static final int COMMENT_UNIQUE_USER_WEIGHT = 1;
+    private static final int RANKING_LIMIT = 10;
+
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
     private final IgdbSyncService igdbSyncService;
 
-    public GameService(GameRepository gameRepository, UserRepository userRepository, IgdbSyncService igdbSyncService) {
+    public GameService(GameRepository gameRepository,
+                       UserRepository userRepository,
+                       CommentRepository commentRepository,
+                       IgdbSyncService igdbSyncService) {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
         this.igdbSyncService = igdbSyncService;
     }
 
@@ -116,7 +127,43 @@ public class GameService {
                 .collect(Collectors.toList());
     }
 
+    public List<GameDTO> getCurrentMonthRanking() {
+        YearMonth currentMonth = YearMonth.from(LocalDate.now());
+        igdbSyncService.syncReleasesForMonth(currentMonth.getYear(), currentMonth.getMonthValue());
+
+        LocalDate startDate = currentMonth.atDay(1);
+        LocalDate endDate = currentMonth.atEndOfMonth();
+
+        return gameRepository.findByReleaseDateBetweenOrderByReleaseDateAsc(startDate, endDate).stream()
+                .map(this::buildRankedGame)
+                .sorted((left, right) -> {
+                    int scoreCompare = Long.compare(right.score(), left.score());
+                    if (scoreCompare != 0) return scoreCompare;
+
+                    int savesCompare = Long.compare(right.saves(), left.saves());
+                    if (savesCompare != 0) return savesCompare;
+
+                    int likesCompare = Long.compare(right.likes(), left.likes());
+                    if (likesCompare != 0) return likesCompare;
+
+                    int commentersCompare = Long.compare(right.commenters(), left.commenters());
+                    if (commentersCompare != 0) return commentersCompare;
+
+                    int releaseDateCompare = left.game().getReleaseDate().compareTo(right.game().getReleaseDate());
+                    if (releaseDateCompare != 0) return releaseDateCompare;
+
+                    return left.game().getTitle().compareToIgnoreCase(right.game().getTitle());
+                })
+                .limit(RANKING_LIMIT)
+                .map(ranked -> convertToDTO(ranked.game(), ranked.likes()))
+                .collect(Collectors.toList());
+    }
+
     private GameDTO convertToDTO(Game game) {
+        return convertToDTO(game, userRepository.countLikesByGameId(game.getId()));
+    }
+
+    private GameDTO convertToDTO(Game game, long totalLikes) {
         return new GameDTO(
             game.getId(),
             game.getTitle(),
@@ -131,9 +178,17 @@ public class GameService {
             game.getPlatforms().stream().map(platform -> platform.getName()).collect(Collectors.toList()),
             game.getSimilarGames().stream().collect(Collectors.toList()),
             game.getDlcs().stream().collect(Collectors.toList()),
-            userRepository.countLikesByGameId(game.getId()),
+            totalLikes,
             game.getReleaseDate()
         );
+    }
+
+    private RankedGame buildRankedGame(Game game) {
+        long likes = userRepository.countLikesByGameId(game.getId());
+        long saves = userRepository.countSavesByGameId(game.getId());
+        long uniqueCommenters = commentRepository.countDistinctUserIdByGameId(game.getId());
+        long score = (likes * LIKE_WEIGHT) + (saves * SAVE_WEIGHT) + (uniqueCommenters * COMMENT_UNIQUE_USER_WEIGHT);
+        return new RankedGame(game, likes, saves, uniqueCommenters, score);
     }
 
     private User getUserByUsername(String username) {
@@ -145,4 +200,6 @@ public class GameService {
         return gameRepository.findById(gameId)
                 .orElseThrow(() -> new RuntimeException("Juego no encontrado"));
     }
+
+    private record RankedGame(Game game, long likes, long saves, long commenters, long score) {}
 }
