@@ -26,7 +26,6 @@ public class Game {
     @Column(unique = true)
     private Long igdbId;
 
-    @Column(length = 2000)
     private String description;
     private String trailerUrl;
     private String imageUrl;
