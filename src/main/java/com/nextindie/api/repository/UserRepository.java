@@ -21,6 +21,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select count(u) from User u join u.likedGames g where g.id = :gameId")
     long countLikesByGameId(Long gameId);
 
+    @Query("select count(u) from User u join u.savedGames g where g.id = :gameId")
+    long countSavesByGameId(Long gameId);
+
     @Query("select g from User u join u.savedGames g where u.username = :username")
     List<com.nextindie.api.model.Game> findSavedGamesByUsername(String username);
 }
