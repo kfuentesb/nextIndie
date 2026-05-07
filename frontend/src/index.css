@@ -1126,6 +1126,126 @@ html, body, #root {
   color: #ef4444;
 }
 
+.ranking-page {
+  min-height: calc(100vh - 60px);
+  padding: 24px;
+  display: grid;
+  gap: 20px;
+}
+
+.ranking-header h1 {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.ranking-header p {
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+.ranking-podium {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 0.8fr;
+  gap: 14px;
+  align-items: end;
+}
+
+.podium-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface-dark);
+}
+
+.podium-cover {
+  width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.podium-rank-1 .podium-cover {
+  aspect-ratio: 3 / 4;
+}
+
+.podium-rank-2 .podium-cover {
+  aspect-ratio: 4 / 5;
+}
+
+.podium-rank-3 .podium-cover {
+  aspect-ratio: 1 / 1;
+}
+
+.podium-meta {
+  padding: 10px 12px 12px;
+}
+
+.podium-position {
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.podium-meta h2 {
+  font-size: 16px;
+  margin: 4px 0;
+}
+
+.podium-meta small {
+  color: var(--text-secondary);
+}
+
+.ranking-list {
+  display: grid;
+  gap: 8px;
+}
+
+.ranking-row {
+  display: grid;
+  grid-template-columns: 56px 56px 1fr;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px;
+  text-decoration: none;
+  color: inherit;
+  background: var(--surface-dark);
+}
+
+.ranking-row-position {
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+}
+
+.ranking-row-cover {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.ranking-row-meta h3 {
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.ranking-row-meta p {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.podium-card:hover,
+.ranking-row:hover {
+  border-color: var(--primary-color);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .releases-page {
@@ -1146,6 +1266,15 @@ html, body, #root {
 
   .saved-page {
     padding: 16px;
+  }
+
+  .ranking-page {
+    padding: 16px;
+  }
+
+  .ranking-podium {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .saved-games-grid {
