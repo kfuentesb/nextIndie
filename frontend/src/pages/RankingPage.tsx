@@ -30,6 +30,7 @@ export function RankingPage() {
 
     const topThree = games.slice(0, 3);
     const rest = games.slice(3, 10);
+    const formatReleaseDate = (value: string) => new Date(value).toLocaleDateString('es-ES');
 
     if (isLoading) {
         return (
@@ -64,22 +65,22 @@ export function RankingPage() {
                     >
                         <img src={game.imageUrl} alt={game.title} className="podium-cover" />
                         <div className="podium-meta">
-                            <span className="podium-position">#{index + 1}</span>
                             <h2>{game.title}</h2>
-                            <small>{game.developer}</small>
+                            <p>{game.developer}</p>
+                            <small>{formatReleaseDate(game.releaseDate)}</small>
                         </div>
                     </Link>
                 ))}
             </section>
 
             <section className="ranking-list">
-                {rest.map((game, index) => (
+                {rest.map((game) => (
                     <Link key={game.id} to={`/games/${game.id}`} className="ranking-row">
-                        <span className="ranking-row-position">#{index + 4}</span>
                         <img src={game.imageUrl} alt={game.title} className="ranking-row-cover" />
                         <div className="ranking-row-meta">
                             <h3>{game.title}</h3>
                             <p>{game.developer}</p>
+                            <small>{formatReleaseDate(game.releaseDate)}</small>
                         </div>
                     </Link>
                 ))}
