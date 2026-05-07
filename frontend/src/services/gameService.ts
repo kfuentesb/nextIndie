@@ -45,5 +45,10 @@ export const gameService = {
             params: { year, month }
         });
         return response.data;
+    },
+
+    getCurrentMonthRanking: async (): Promise<Game[]> => {
+        const response = await api.get<Game[]>('/games/ranking/current-month');
+        return response.data;
     }
 };
