@@ -59,6 +59,11 @@ export function RankingPage() {
     const topThree = games.slice(0, 3);
     const rest = games.slice(3, 10);
     const formatReleaseDate = (value: string) => new Date(value).toLocaleDateString('es-ES');
+    const podiumSlots = [
+        topThree[1] ? { game: topThree[1], position: 2 } : null,
+        topThree[0] ? { game: topThree[0], position: 1 } : null,
+        topThree[2] ? { game: topThree[2], position: 3 } : null
+    ].filter((slot): slot is { game: Game; position: 1 | 2 | 3 } => slot !== null);
 
     if (isLoading) {
         return (
@@ -85,14 +90,15 @@ export function RankingPage() {
             </header>
 
             <section className="ranking-podium">
-                {topThree.map((game, index) => (
+                {podiumSlots.map(({ game, position }) => (
                     <Link
                         key={game.id}
                         to={`/games/${game.id}`}
-                        className={`podium-card podium-rank-${index + 1}`}
+                        className={`podium-card podium-rank-${position}`}
                     >
                         <img src={game.imageUrl} alt={game.title} className="podium-cover" />
                         <div className="podium-meta">
+                            <span className="podium-position">#{position}</span>
                             <h2>{game.title}</h2>
                             <p>{game.developer}</p>
                             <small>{formatReleaseDate(game.releaseDate)}</small>
@@ -102,8 +108,9 @@ export function RankingPage() {
             </section>
 
             <section className="ranking-list">
-                {rest.map((game) => (
+                {rest.map((game, index) => (
                     <Link key={game.id} to={`/games/${game.id}`} className="ranking-row">
+                        <span className="ranking-row-position">#{index + 4}</span>
                         <img src={game.imageUrl} alt={game.title} className="ranking-row-cover" />
                         <div className="ranking-row-meta">
                             <h3>{game.title}</h3>

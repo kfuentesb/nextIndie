@@ -1145,8 +1145,8 @@ html, body, #root {
 
 .ranking-podium {
   display: grid;
-  grid-template-columns: 1.3fr 1fr 0.8fr;
-  gap: 14px;
+  grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.15fr) minmax(180px, 1fr);
+  gap: 12px;
   align-items: end;
 }
 
@@ -1169,19 +1169,30 @@ html, body, #root {
 }
 
 .podium-rank-1 .podium-cover {
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 5;
+  max-height: 320px;
 }
 
 .podium-rank-2 .podium-cover {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 5 / 7;
+  max-height: 280px;
 }
 
 .podium-rank-3 .podium-cover {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 3 / 4;
+  max-height: 250px;
 }
 
 .podium-meta {
   padding: 10px 12px 12px;
+}
+
+.podium-position {
+  display: inline-block;
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
 }
 
 .podium-meta h2 {
@@ -1207,7 +1218,7 @@ html, body, #root {
 
 .ranking-row {
   display: grid;
-  grid-template-columns: 56px 1fr;
+  grid-template-columns: 52px 56px 1fr;
   align-items: center;
   gap: 10px;
   border: 1px solid var(--border-color);
@@ -1216,6 +1227,13 @@ html, body, #root {
   text-decoration: none;
   color: inherit;
   background: var(--surface-dark);
+}
+
+.ranking-row-position {
+  color: var(--primary-color);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
 }
 
 .ranking-row-cover {
