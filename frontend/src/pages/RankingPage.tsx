@@ -3,6 +3,19 @@ import { Link } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
 
+type RankingMonthCache = {
+    monthKey: string;
+    games: Game[];
+};
+
+let rankingMonthCache: RankingMonthCache | null = null;
+let rankingMonthInFlight: Promise<Game[]> | null = null;
+
+function currentMonthKey(): string {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+}
+
 export function RankingPage() {
     const [games, setGames] = useState<Game[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -10,14 +23,29 @@ export function RankingPage() {
 
     useEffect(() => {
         const loadRanking = async () => {
+            const monthKey = currentMonthKey();
+            if (rankingMonthCache?.monthKey === monthKey) {
+                setGames(rankingMonthCache.games);
+                setIsLoading(false);
+                return;
+            }
+
             setIsLoading(true);
             setError(null);
             try {
-                const ranking = await gameService.getCurrentMonthRanking();
-                setGames(ranking.slice(0, 10));
+                const request = rankingMonthInFlight ?? gameService.getCurrentMonthRanking();
+                if (!rankingMonthInFlight) {
+                    rankingMonthInFlight = request;
+                }
+
+                const ranking = await request;
+                const topTen = ranking.slice(0, 10);
+                rankingMonthCache = { monthKey, games: topTen };
+                setGames(topTen);
             } catch {
                 setError('No se pudo cargar el ranking del mes');
             } finally {
+                rankingMonthInFlight = null;
                 setIsLoading(false);
             }
         };

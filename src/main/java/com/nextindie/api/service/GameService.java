@@ -118,7 +118,11 @@ public class GameService {
     }
 
     public List<GameDTO> getReleasesByMonth(int year, int month) {
-        igdbSyncService.syncReleasesForMonth(year, month);
+        try {
+            igdbSyncService.syncReleasesForMonth(year, month);
+        } catch (RuntimeException ex) {
+            // Fallback a datos locales si IGDB falla.
+        }
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
@@ -129,7 +133,11 @@ public class GameService {
 
     public List<GameDTO> getCurrentMonthRanking() {
         YearMonth currentMonth = YearMonth.from(LocalDate.now());
-        igdbSyncService.syncReleasesForMonth(currentMonth.getYear(), currentMonth.getMonthValue());
+        try {
+            igdbSyncService.syncReleasesForMonth(currentMonth.getYear(), currentMonth.getMonthValue());
+        } catch (RuntimeException ex) {
+            // Fallback a datos locales si IGDB falla.
+        }
 
         LocalDate startDate = currentMonth.atDay(1);
         LocalDate endDate = currentMonth.atEndOfMonth();
