@@ -11,7 +11,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
 

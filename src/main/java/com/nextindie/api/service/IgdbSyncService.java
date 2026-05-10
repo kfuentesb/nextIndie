@@ -173,11 +173,20 @@ public class IgdbSyncService {
         game.setGameStatus(resolveStatus(gameNode.path("status")));
         game.setWebsiteUrl(resolveWebsite(gameNode.path("websites")));
         game.setMainFranchise(resolveFranchise(gameNode));
-        game.setGenres(resolveGenres(gameNode.path("genres")));
-        game.setPlatforms(resolvePlatforms(gameNode.path("platforms")));
+        syncSet(game.getGenres(), resolveGenres(gameNode.path("genres")));
+        syncSet(game.getPlatforms(), resolvePlatforms(gameNode.path("platforms")));
         game.setSimilarGames(resolveNameList(gameNode.path("similar_games"), 8));
 
         return gameRepository.save(game);
+    }
+
+    private <T> void syncSet(Set<T> current, Set<T> next) {
+        current.removeIf(item -> !next.contains(item));
+        for (T item : next) {
+            if (!current.contains(item)) {
+                current.add(item);
+            }
+        }
     }
 
     private String resolveTrailerUrl(JsonNode videosNode) {
