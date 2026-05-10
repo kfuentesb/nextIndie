@@ -1,7 +1,9 @@
 package com.nextindie.api.model;
 
+import com.nextindie.api.model.enums.UserType;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -9,7 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Getter @Setter
+@Getter @Setter @NoArgsConstructor
 @Table(name = "users")
 public class User {
 
@@ -45,6 +47,13 @@ public class User {
     private Set<Game> savedGames = new LinkedHashSet<>();
 
     private LocalDateTime createdAt; // Fecha de registro
+
+    // ROLES.
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 50)
+    private Set<UserType> roles = new LinkedHashSet<>();
 
     @PrePersist
     protected void onCreate() {

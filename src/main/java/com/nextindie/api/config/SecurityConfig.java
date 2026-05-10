@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/games").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/games/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/comments/game/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/comments/game/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
