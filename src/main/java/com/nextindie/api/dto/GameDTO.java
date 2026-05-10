@@ -22,13 +22,12 @@ public class GameDTO {
     private List<String> genres;
     private List<String> platforms;
     private List<String> similarGames;
-    private List<String> dlcs;
     private long totalLikes;
     private LocalDate releaseDate;
 
     public GameDTO(Long id, String title, String description, String trailerUrl, String imageUrl,
                    String developer, String gameStatus, String websiteUrl, String mainFranchise,
-                   List<String> genres, List<String> platforms, List<String> similarGames, List<String> dlcs,
+                   List<String> genres, List<String> platforms, List<String> similarGames,
                    long totalLikes, LocalDate releaseDate) {
         this.id = id;
         this.title = title;
@@ -42,7 +41,6 @@ public class GameDTO {
         this.genres = genres;
         this.platforms = platforms;
         this.similarGames = similarGames;
-        this.dlcs = dlcs;
         this.totalLikes = totalLikes;
         this.releaseDate = releaseDate;
     }

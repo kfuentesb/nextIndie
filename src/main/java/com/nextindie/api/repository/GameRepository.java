@@ -1,6 +1,8 @@
 package com.nextindie.api.repository;
 
 import com.nextindie.api.model.Game;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,5 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     Optional<Game> findByIgdbId(Long igdbId);
     Optional<Game> findByTitleAndReleaseDate(String title, LocalDate releaseDate);
     List<Game> findByReleaseDateBetweenOrderByReleaseDateAsc(LocalDate startDate, LocalDate endDate);
+    Page<Game> findByTrailerUrlIsNotNullAndTrailerUrlNot(String trailerUrl, Pageable pageable);
 }

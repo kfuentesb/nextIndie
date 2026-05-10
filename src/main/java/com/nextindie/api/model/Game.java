@@ -61,11 +61,6 @@ public class Game {
     @Column(name = "title")
     private Set<String> similarGames = new LinkedHashSet<>();
 
-    @ElementCollection
-    @CollectionTable(name = "game_dlcs", joinColumns = @JoinColumn(name = "game_id"))
-    @Column(name = "title")
-    private Set<String> dlcs = new LinkedHashSet<>();
-
     @NotNull
     @Column(nullable = false)
     private LocalDate releaseDate; // Por la idea principal de la WEB será obligatorio de momento

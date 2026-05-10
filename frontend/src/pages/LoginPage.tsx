@@ -29,7 +29,14 @@ export function LoginPage() {
             }
             navigate('/');
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Error en la autenticación');
+            const backendMessage = String(err?.response?.data?.message ?? '').toLowerCase();
+            if (backendMessage.includes('nombre de usuario ya existe')) {
+                setError('Ese nombre de usuario ya existe. Usa otro para registrarte.');
+            } else if (backendMessage.includes('email ya está registrado') || backendMessage.includes('email ya esta registrado')) {
+                setError('Ese correo ya está registrado. Usa otro correo para registrarte.');
+            } else {
+                setError(err?.response?.data?.message || 'Error en la autenticación');
+            }
         } finally {
             setIsLoading(false);
         }

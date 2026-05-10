@@ -108,7 +108,8 @@ public class GameService {
             return new GameFeedResponseDTO(games, safePage, games.size() == safeSize);
         }
 
-        List<GameDTO> fallbackGames = gameRepository.findAll(
+        List<GameDTO> fallbackGames = gameRepository.findByTrailerUrlIsNotNullAndTrailerUrlNot(
+                        "",
                         PageRequest.of(safePage - 1, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"))
                 ).stream()
                 .map(this::convertToDTO)
@@ -185,7 +186,6 @@ public class GameService {
             game.getGenres().stream().map(genre -> genre.getName()).collect(Collectors.toList()),
             game.getPlatforms().stream().map(platform -> platform.getName()).collect(Collectors.toList()),
             game.getSimilarGames().stream().collect(Collectors.toList()),
-            game.getDlcs().stream().collect(Collectors.toList()),
             totalLikes,
             game.getReleaseDate()
         );

@@ -4,6 +4,7 @@ import com.nextindie.api.dto.AuthResponse;
 import com.nextindie.api.dto.LoginRequest;
 import com.nextindie.api.dto.RegisterRequest;
 import com.nextindie.api.model.User;
+import com.nextindie.api.model.enums.UserType;
 import com.nextindie.api.repository.UserRepository;
 import com.nextindie.api.security.JwtTokenProvider;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -51,12 +52,14 @@ public class AuthService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(UserType.NORMAL);
 
         userRepository.save(user);
 
-        String token = jwtTokenProvider.generateToken(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
+        String token = jwtTokenProvider.generateToken(authentication);
 
         return new AuthResponse(token, user.getUsername(), user.getEmail());
     }

@@ -120,7 +120,7 @@ public class IgdbSyncService {
         int offset = (safePage - 1) * safeSize;
 
         String query = buildGameFields()
-                + " where first_release_date != null & name != null;"
+                + " where first_release_date != null & name != null & videos != null;"
                 + " sort first_release_date desc;"
                 + " limit " + safeSize + ";"
                 + " offset " + offset + ";";
@@ -135,7 +135,7 @@ public class IgdbSyncService {
         List<Game> games = new ArrayList<>();
         for (JsonNode gameNode : response) {
             Game game = upsertGame(gameNode);
-            if (game != null) {
+            if (game != null && game.getTrailerUrl() != null && !game.getTrailerUrl().isBlank()) {
                 games.add(game);
             }
         }
@@ -146,7 +146,7 @@ public class IgdbSyncService {
         return "fields id,name,summary,cover.url,videos.video_id,"
                 + "involved_companies.company.name,involved_companies.developer,"
                 + "genres.name,platforms.name,status,websites.url,similar_games.name,"
-                + "franchise.name,franchises.name,dlcs.name,first_release_date;";
+                + "franchise.name,franchises.name,first_release_date;";
     }
 
     private Game upsertGame(JsonNode gameNode) {
@@ -176,7 +176,6 @@ public class IgdbSyncService {
         game.setGenres(resolveGenres(gameNode.path("genres")));
         game.setPlatforms(resolvePlatforms(gameNode.path("platforms")));
         game.setSimilarGames(resolveNameList(gameNode.path("similar_games"), 8));
-        game.setDlcs(resolveNameList(gameNode.path("dlcs"), 8));
 
         return gameRepository.save(game);
     }

@@ -49,11 +49,10 @@ public class User {
     private LocalDateTime createdAt; // Fecha de registro
 
     // ROLES.
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 50)
-    private Set<UserType> roles = new LinkedHashSet<>();
+    private UserType role;
+
 
     @PrePersist
     protected void onCreate() {
