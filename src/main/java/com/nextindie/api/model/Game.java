@@ -20,17 +20,23 @@ public class Game {
     private Long id;
 
     @NotNull
-    @Column(nullable = false)
     private String title;
 
     @Column(unique = true)
     private Long igdbId;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(columnDefinition = "TEXT")
     private String trailerUrl;
+
+    @Column(columnDefinition = "TEXT")
     private String imageUrl;
     private String developer;
     private String gameStatus;
+
+    @Column(columnDefinition = "TEXT")
     private String websiteUrl;
     private String mainFranchise;
 
