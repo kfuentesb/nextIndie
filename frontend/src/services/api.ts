@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+const viteApiBaseUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
+const legacyApiUrl = import.meta.env.VITE_APP_API_URL as string | undefined;
+
+const baseURL = viteApiBaseUrl
+    ?? (legacyApiUrl ? `${legacyApiUrl.replace(/\/+$/, '')}/api` : '/api');
+
 const api = axios.create({
-    baseURL: 'http://localhost:8080/api',
+    baseURL,
     headers: {
         'Content-Type': 'application/json'
     }

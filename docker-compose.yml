@@ -2,14 +2,43 @@ services:
   postgres:
     image: postgres:16
     container_name: nextindie_db
-    environment:
-      POSTGRES_DB: nextindie_db
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: pass123
-    command: postgres -c listen_addresses='*'
+    env_file:
+      - .env.local
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nextindie_backend
+    env_file:
+      - .env.local
+    environment:
+      PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api}
+    container_name: nextindie_frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
 volumes:
   postgres_data:

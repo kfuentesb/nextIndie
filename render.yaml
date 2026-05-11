@@ -1,0 +1,84 @@
+# Render Blueprint para desplegar NextIndie.
+# Antes de usarlo:
+# 1. Sube este repo a GitHub/GitLab y crea un Blueprint en Render apuntando a este archivo.
+# 2. Cambia los nombres si ya existen servicios con estos nombres en tu cuenta.
+# 3. En las variables con "sync: false", Render te pedira el valor en el dashboard.
+# 4. Cuando el backend tenga URL real, pon esa URL en VITE_API_BASE_URL del frontend:
+#    https://TU_BACKEND.onrender.com/api
+# 5. En APP_CORS_ALLOWED_ORIGINS pon la URL real del frontend:
+#    https://TU_FRONTEND.onrender.com
+
+services:
+  # Backend Spring Boot. Usa el Dockerfile de la raiz del proyecto.
+  - type: web
+    runtime: docker
+    name: nextindie-backend
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/games
+    envVars:
+      # Render expone el puerto por la variable PORT. Spring la lee en application.properties.
+      - key: PORT
+        value: 10000
+
+      # Datos de la base de datos gestionada de Render.
+      # DB_URL no se usa aqui para evitar el formato postgresql:// de Render;
+      # application.properties construye el JDBC URL con DB_HOST, DB_PORT y DB_NAME.
+      - key: DB_HOST
+        fromDatabase:
+          name: nextindie-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: nextindie-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: nextindie-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: nextindie-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: nextindie-db
+          property: password
+
+      # Secretos: rellena estos valores en Render, no los dejes en el repo.
+      - key: JWT_SECRET
+        sync: false
+      - key: IGDB_CLIENT_ID
+        sync: false
+      - key: IGDB_CLIENT_SECRET
+        sync: false
+
+      # Pon aqui la URL publica del frontend desplegado en Render.
+      - key: APP_CORS_ALLOWED_ORIGINS
+        value: https://TU_FRONTEND.onrender.com
+
+  # Frontend Vite como sitio estatico.
+  - type: web
+    runtime: static
+    name: nextindie-frontend
+    plan: free
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      # Pon aqui la URL publica del backend desplegado en Render, terminando en /api.
+      - key: VITE_API_BASE_URL
+        value: https://TU_BACKEND.onrender.com/api
+    routes:
+      # Necesario para React Router: cualquier ruta del frontend sirve index.html.
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  # Base de datos PostgreSQL gestionada por Render.
+  - name: nextindie-db
+    plan: free
+    databaseName: nextindie_db
+    user: nextindie_user
