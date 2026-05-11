@@ -9,7 +9,7 @@
 #    https://TU_FRONTEND.onrender.com
 
 services:
-  # Backend Spring Boot. Usa el Dockerfile de la raiz del proyecto.
+  # Backend Spring Boot ./Dockerfile
   - type: web
     runtime: docker
     name: nextindie-backend
@@ -56,7 +56,7 @@ services:
 
       # Pon aqui la URL publica del frontend desplegado en Render.
       - key: APP_CORS_ALLOWED_ORIGINS
-        value: https://TU_FRONTEND.onrender.com
+        value: https://nextindie.onrender.com
 
   # Frontend Vite como sitio estatico.
   - type: web
@@ -69,7 +69,7 @@ services:
     envVars:
       # Pon aqui la URL publica del backend desplegado en Render, terminando en /api.
       - key: VITE_API_BASE_URL
-        value: https://TU_BACKEND.onrender.com/api
+        value: https://nextindie.onrender.com/api
     routes:
       # Necesario para React Router: cualquier ruta del frontend sirve index.html.
       - type: rewrite
@@ -77,7 +77,7 @@ services:
         destination: /index.html
 
 databases:
-  # Base de datos PostgreSQL gestionada por Render.
+  # Base de datos PostgreSQL
   - name: nextindie-db
     plan: free
     databaseName: nextindie_db
