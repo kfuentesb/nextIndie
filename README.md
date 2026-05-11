@@ -391,6 +391,6 @@ igdb.api.client-secret=${IGDB_CLIENT_SECRET}
 ## 🚢 Despliegue
 
 Configurar variables de entorno para el host actual
-URL: https://nextindie-frontend.onrender.com/
+- URL: https://nextindie-frontend.onrender.com/
 
 ---
