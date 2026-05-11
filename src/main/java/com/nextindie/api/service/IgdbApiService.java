@@ -2,7 +2,7 @@ package com.nextindie.api.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
+import com.nextindie.api.config.properties.IgdbApiProperties;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -28,15 +28,12 @@ public class IgdbApiService {
     private volatile Instant tokenExpiresAt;
 
     public IgdbApiService(ObjectMapper objectMapper,
-                          @Value("${igdb.api.base-url}") String baseUrl,
-                          @Value("${igdb.api.token-url}") String tokenUrl,
-                          @Value("${igdb.api.client-id}") String clientId,
-                          @Value("${igdb.api.client-secret}") String clientSecret) {
+                          IgdbApiProperties igdbApiProperties) {
         this.objectMapper = objectMapper;
-        this.baseUrl = baseUrl;
-        this.tokenUrl = tokenUrl;
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
+        this.baseUrl = igdbApiProperties.baseUrl();
+        this.tokenUrl = igdbApiProperties.tokenUrl();
+        this.clientId = igdbApiProperties.clientId();
+        this.clientSecret = igdbApiProperties.clientSecret();
     }
 
     public JsonNode postQuery(String endpoint, String body) {
