@@ -15,7 +15,7 @@ export function Navbar() {
 
             <div className="navbar-tabs">
                 <NavLink to="/" end className={({ isActive }) => `nav-tab ${isActive ? 'nav-tab-active' : ''}`}>
-                    Feed
+                    Descubre
                 </NavLink>
                 <NavLink to="/releases" className={({ isActive }) => `nav-tab ${isActive ? 'nav-tab-active' : ''}`}>
                     Lanzamientos
