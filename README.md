@@ -202,24 +202,33 @@ nextindie/
 
 ```properties
 spring.application.name=NextIndie
-# PostgreSQL Configuration (Docker)
-spring.datasource.url=jdbc:postgresql://localhost:5432/nextindie_db
-spring.datasource.username=admin
-spring.datasource.password=pass123
+
+# Render PostgreSQL.
+spring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+spring.datasource.username=${DB_USER}
+spring.datasource.password=${DB_PASSWORD}
 spring.datasource.driver-class-name=org.postgresql.Driver
 
 # JPA/Hibernate
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=false
 
 # JWT
-jwt.secret=Kv6tQBl8c4gnu04ng4lmpQpn9vEroCL4eTzT5J3udXYp6vZjJwM17E+QaXoFsZT98Untrxyc8C8pbFh7hMOwRg==
-jwt.expiration=86400000
+jwt.secret=${JWT_SECRET}
+jwt.expiration=${JWT_EXPIRATION_MS:86400000}
 
 # Server
-server.port=8080
+server.port=${PORT:8080}
+
+# CORS
+app.cors.allowed-origins=${APP_CORS_ALLOWED_ORIGINS}
+
+# IGDB
+igdb.api.base-url=https://api.igdb.com/v4
+igdb.api.token-url=https://id.twitch.tv/oauth2/token
+igdb.api.client-id=${IGDB_CLIENT_ID}
+igdb.api.client-secret=${IGDB_CLIENT_SECRET}
 ```
 
 ---
