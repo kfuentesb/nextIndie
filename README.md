@@ -43,8 +43,8 @@ mvn -v
 
 1. Ejecuta Docker:
    ```diff
-   -(tiene que estar up el docker)
-   docker compose up -d
+   - En raiz:
+   docker compose up --build -d
    ```
    _(Esto crea las tablas automáticamente)_
 2. Inicia Spring Boot:
