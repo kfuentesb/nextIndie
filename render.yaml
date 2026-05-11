@@ -13,7 +13,6 @@ services:
   - type: web
     runtime: docker
     name: nextindie-backend
-    plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /api/games
@@ -46,7 +45,7 @@ services:
           name: nextindie-db
           property: password
 
-      # Secretos: rellena estos valores en Render, no los dejes en el repo.
+      # Secretos:
       - key: JWT_SECRET
         sync: false
       - key: IGDB_CLIENT_ID
@@ -54,7 +53,7 @@ services:
       - key: IGDB_CLIENT_SECRET
         sync: false
 
-      # Pon aqui la URL publica del frontend desplegado en Render.
+      # URL pública
       - key: APP_CORS_ALLOWED_ORIGINS
         value: https://nextindie.onrender.com
 
@@ -62,7 +61,6 @@ services:
   - type: web
     runtime: static
     name: nextindie-frontend
-    plan: free
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
@@ -79,6 +77,5 @@ services:
 databases:
   # Base de datos PostgreSQL
   - name: nextindie-db
-    plan: free
     databaseName: nextindie_db
     user: nextindie_user
