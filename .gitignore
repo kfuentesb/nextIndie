@@ -38,3 +38,6 @@ application-prod.properties
 
 # Enviroment variables
 .env
+.env.*
+**/.env
+**/.env.*
