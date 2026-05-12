@@ -133,18 +133,7 @@ Cada juego:
 ---
 
 ### 📊 Diagrama ER Base - NextIndie
-
-<img width="409" height="998" alt="next_indie_db_entrega3" src="https://github.com/user-attachments/assets/4da99f9b-223b-407e-a81b-a0a02480a83a" />
-
----
-
-## 🛠️ Futuras Mejoras
-
-- 👍 **Tabla `gameLike`**: likes en juegos
-- ❤️ **Tabla `commentLike`**: likes en comentarios
-- 🔎 Búsqueda avanzada
-- 📅 Calendario completo
-
+<img width="890" height="738" alt="nextindie_db_diagram" src="https://github.com/user-attachments/assets/e2c43131-e1cc-4975-afca-dffb459c15a0" /
 ---
 
 ## 🗂️ Estructura de Carpetas
