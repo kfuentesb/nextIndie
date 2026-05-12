@@ -133,7 +133,8 @@ Cada juego:
 ---
 
 ### 📊 Diagrama ER Base - NextIndie
-<img width="890" height="738" alt="nextindie_db_diagram" src="https://github.com/user-attachments/assets/e2c43131-e1cc-4975-afca-dffb459c15a0" /
+<img width="890" height="738" alt="nextindie_db_diagram" src="https://github.com/user-attachments/assets/880d3ae5-be8a-4c74-a4a1-d937acd8261d" />
+
 ---
 
 ## 🗂️ Estructura de Carpetas
