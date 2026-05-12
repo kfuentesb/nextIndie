@@ -1264,6 +1264,151 @@ html, body, #root {
   border-color: var(--primary-color);
 }
 
+.admin-page {
+  min-height: calc(100vh - 60px);
+  padding: 24px;
+  display: grid;
+  gap: 20px;
+}
+
+.admin-state {
+  align-content: center;
+  justify-items: center;
+  color: var(--text-secondary);
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.admin-header h1 {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.admin-header p {
+  color: var(--text-secondary);
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 20px;
+  align-items: start;
+}
+
+.admin-table-panel,
+.admin-form-panel {
+  background: var(--surface-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+  font-size: 14px;
+}
+
+.admin-table th {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.admin-table td {
+  color: var(--text-secondary);
+}
+
+.role-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 10px;
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  border-radius: 999px;
+  color: var(--primary-color);
+  background: rgba(102, 126, 234, 0.12);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-row-actions,
+.admin-form-actions,
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.table-action {
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-primary);
+  border-radius: 6px;
+  min-height: 34px;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.table-action:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.table-action.danger:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.pagination-bar {
+  justify-content: space-between;
+  margin-top: 16px;
+  color: var(--text-secondary);
+}
+
+.pagination-bar .btn {
+  min-width: 112px;
+}
+
+.admin-form-panel {
+  position: sticky;
+  top: 84px;
+}
+
+.admin-form-panel h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.admin-form-actions {
+  margin-top: 8px;
+}
+
+.admin-table-feedback,
+.empty-table {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 32px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .releases-page {
@@ -1293,6 +1438,23 @@ html, body, #root {
   .ranking-podium {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .admin-page {
+    padding: 16px;
+  }
+
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-form-panel {
+    position: static;
   }
 
   .saved-games-grid {

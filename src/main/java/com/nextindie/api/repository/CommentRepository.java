@@ -11,4 +11,5 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByGameIdOrderByCreatedAtDesc(Long gameId);
     long countDistinctUserIdByGameId(Long gameId);
+    void deleteByUserId(Long userId);
 }

@@ -7,6 +7,7 @@ import { SavedGamesPage } from './pages/SavedGamesPage';
 import { ReleasesPage } from './pages/ReleasesPage';
 import { GameDetailPage } from './pages/GameDetailPage';
 import { RankingPage } from './pages/RankingPage';
+import { AdminUsersPage } from './pages/AdminUsersPage';
 
 function AppContent() {
   return (
@@ -20,6 +21,7 @@ function AppContent() {
             <Route path="/ranking" element={<RankingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/saved" element={<SavedGamesPage />} />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
           </Routes>
         </main>
       </>

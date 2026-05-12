@@ -31,6 +31,11 @@ export function Navbar() {
                         <Link to="/saved" className="btn btn-secondary">
                             Guardados
                         </Link>
+                        {user?.role === 'ADMIN' && (
+                            <Link to="/admin/users" className="btn btn-secondary">
+                                Admin
+                            </Link>
+                        )}
                         <span className="welcome-text">Hola, {user?.username}</span>
                         <button className="btn btn-secondary" onClick={logout}>
                             Cerrar Sesión

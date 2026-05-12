@@ -7,9 +7,9 @@ const TOKEN_KEY = 'token';
 export const authService = {
     login: async (data: LoginRequest): Promise<AuthResponse> => {
         const response = await api.post<AuthResponse>('/auth/login', data);
-        const { token, username, email } = response.data;
+        const { token, username, email, role } = response.data;
 
-        const user: User = { username, email, token };
+        const user: User = { username, email, role, token };
         localStorage.setItem(TOKEN_KEY, token);
         localStorage.setItem(AUTH_KEY, JSON.stringify(user));
 
@@ -18,9 +18,9 @@ export const authService = {
 
     register: async (data: RegisterRequest): Promise<AuthResponse> => {
         const response = await api.post<AuthResponse>('/auth/register', data);
-        const { token, username, email } = response.data;
+        const { token, username, email, role } = response.data;
 
-        const user: User = { username, email, token };
+        const user: User = { username, email, role, token };
         localStorage.setItem(TOKEN_KEY, token);
         localStorage.setItem(AUTH_KEY, JSON.stringify(user));
 

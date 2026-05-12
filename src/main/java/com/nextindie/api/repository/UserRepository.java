@@ -14,6 +14,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
+    boolean existsByUsernameAndIdNot(String username, Long id);
+    boolean existsByEmailAndIdNot(String email, Long id);
 
     @Query("select count(u) > 0 from User u join u.likedGames g where u.username = :username and g.id = :gameId")
     boolean hasLikedGame(String username, Long gameId);

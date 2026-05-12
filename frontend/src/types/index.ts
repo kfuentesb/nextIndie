@@ -1,6 +1,10 @@
+export type UserRole = 'ADMIN' | 'MODERADOR' | 'EMPRESA' | 'NORMAL';
+
 export interface User {
+    id?: number;
     username: string;
     email: string;
+    role?: UserRole;
     token?: string;
 }
 
@@ -19,6 +23,31 @@ export interface AuthResponse {
     token: string;
     username: string;
     email: string;
+    role: UserRole;
+}
+
+export interface AdminUser {
+    id: number;
+    username: string;
+    email: string;
+    role: UserRole;
+}
+
+export interface AdminUserRequest {
+    username: string;
+    email: string;
+    password?: string;
+    role: UserRole;
+}
+
+export interface PageResponse<T> {
+    content: T[];
+    number: number;
+    size: number;
+    totalElements: number;
+    totalPages: number;
+    first: boolean;
+    last: boolean;
 }
 
 export interface Game {
