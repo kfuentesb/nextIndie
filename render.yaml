@@ -55,7 +55,7 @@ services:
 
       # URL pública
       - key: APP_CORS_ALLOWED_ORIGINS
-        value: https://nextindie.onrender.com
+        value: https://nextindie-frontend.onrender.com
 
   # Frontend Vite como sitio estatico.
   - type: web
