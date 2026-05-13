@@ -9,14 +9,24 @@ export function useGames() {
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const PAGE_SIZE = 8;
     const MAX_BUFFER = 40;
+
+    const shuffleGames = (items: Game[]) => {
+        const copy = [...items];
+        for (let i = copy.length - 1; i > 0; i -= 1) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    };
 
     const fetchGames = useCallback(async () => {
         try {
             setIsLoading(true);
             setError(null);
-            const data = await gameService.getFeedPage(1, 10);
-            setGames(data.games);
+            const data = await gameService.getFeedPage(1, PAGE_SIZE);
+            setGames(shuffleGames(data.games));
             setPage(2);
             setHasMore(data.hasMore);
         } catch (err) {
@@ -31,9 +41,12 @@ export function useGames() {
         if (!hasMore || isLoadingMore) return;
         try {
             setIsLoadingMore(true);
-            const data = await gameService.getFeedPage(page, 10);
+            const data = await gameService.getFeedPage(page, PAGE_SIZE);
+            const randomized = shuffleGames(data.games);
             setGames((current) => {
-                const merged = [...current, ...data.games];
+                const existingIds = new Set(current.map((game) => game.id));
+                const unique = randomized.filter((game) => !existingIds.has(game.id));
+                const merged = [...current, ...unique];
                 if (merged.length <= MAX_BUFFER) {
                     return merged;
                 }
