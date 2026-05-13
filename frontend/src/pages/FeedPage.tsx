@@ -128,10 +128,13 @@ export function FeedPage() {
                 </div>
             </div>
 
-            <div className="slide-counter">
+            {/** USADO para ver si cargan bien los videos adicionales en feedPage
+             * <div className="slide-counter">
                 {currentIndex + 1} / {games.length}
                 {isLoadingMore && <span> · Cargando más...</span>}
-            </div>
+                </div>
+            */}
+            
         </div>
     );
 }
