@@ -118,7 +118,7 @@ export function FeedPage() {
                 ))}
             </div>
 
-            {/** USADO para ver si cargan bien los videos adicionales en feedPage
+            {/** USADO en local para ver si funciona el añadido de videos
              * <div className="slide-counter">
                 {currentIndex + 1} / {games.length}
                 {isLoadingMore && <span> · Cargando más...</span>}

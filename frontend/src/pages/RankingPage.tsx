@@ -85,10 +85,11 @@ export function RankingPage() {
     return (
         <div className="ranking-page">
             <header className="ranking-header">
-                <h1>Top 10 más esperados</h1>
+                <h1>Top 50 más esperados</h1>
                 <p>{monthLabel}</p>
             </header>
-
+        {/* TOP 3 Podium */}
+        {/* 
             <section className="ranking-podium">
                 {podiumSlots.map(({ game, position }) => (
                     <Link
@@ -106,11 +107,12 @@ export function RankingPage() {
                     </Link>
                 ))}
             </section>
-
+        */}
+            {/* Vista lista ranking */}
             <section className="ranking-list">
                 {rest.map((game, index) => (
                     <Link key={game.id} to={`/games/${game.id}`} className="ranking-row">
-                        <span className="ranking-row-position">#{index + 4}</span>
+                        <span className="ranking-row-position">#{index}</span>
                         <img src={game.imageUrl} alt={game.title} className="ranking-row-cover" />
                         <div className="ranking-row-meta">
                             <h3>{game.title}</h3>
