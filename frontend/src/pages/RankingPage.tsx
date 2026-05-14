@@ -63,14 +63,15 @@ export function RankingPage() {
         return new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
     }, []);
 
-    const topThree = games.slice(0, 3);
-    const rest = games.slice(3, 10);
     const formatReleaseDate = (value: string) => new Date(value).toLocaleDateString('es-ES');
-    const podiumSlots = [
-        topThree[1] ? { game: topThree[1], position: 2 } : null,
-        topThree[0] ? { game: topThree[0], position: 1 } : null,
-        topThree[2] ? { game: topThree[2], position: 3 } : null
-    ].filter((slot): slot is { game: Game; position: 1 | 2 | 3 } => slot !== null);
+    //const topThree = games.slice(0, 3);
+    //const rest = games.slice(3, 10);
+    
+    // const podiumSlots = [
+    //     topThree[1] ? { game: topThree[1], position: 2 } : null,
+    //     topThree[0] ? { game: topThree[0], position: 1 } : null,
+    //     topThree[2] ? { game: topThree[2], position: 3 } : null
+    // ].filter((slot): slot is { game: Game; position: 1 | 2 | 3 } => slot !== null);
 
     if (isLoading) {
         return (
