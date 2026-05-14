@@ -16,6 +16,13 @@ function currentMonthKey(): string {
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
 
+function getRankClass(index: number): string {
+    if (index === 0) return 'gold';
+    if (index === 1) return 'silver';
+    if (index === 2) return 'bronze';
+    return '';
+}
+
 export function RankingPage() {
     const [games, setGames] = useState<Game[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -39,9 +46,9 @@ export function RankingPage() {
                 }
 
                 const ranking = await request;
-                const topTen = ranking.slice(0, 10);
-                rankingMonthCache = { monthKey, games: topTen };
-                setGames(topTen);
+                const topFifty = ranking.slice(0, 50);
+                rankingMonthCache = { monthKey, games: topFifty };
+                setGames(topFifty);
             } catch {
                 setError('No se pudo cargar el ranking del mes');
             } finally {
@@ -56,14 +63,15 @@ export function RankingPage() {
         return new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
     }, []);
 
-    const topThree = games.slice(0, 3);
-    const rest = games.slice(3, 10);
     const formatReleaseDate = (value: string) => new Date(value).toLocaleDateString('es-ES');
-    const podiumSlots = [
-        topThree[1] ? { game: topThree[1], position: 2 } : null,
-        topThree[0] ? { game: topThree[0], position: 1 } : null,
-        topThree[2] ? { game: topThree[2], position: 3 } : null
-    ].filter((slot): slot is { game: Game; position: 1 | 2 | 3 } => slot !== null);
+    //const topThree = games.slice(0, 3);
+    //const rest = games.slice(3, 10);
+    
+    // const podiumSlots = [
+    //     topThree[1] ? { game: topThree[1], position: 2 } : null,
+    //     topThree[0] ? { game: topThree[0], position: 1 } : null,
+    //     topThree[2] ? { game: topThree[2], position: 3 } : null
+    // ].filter((slot): slot is { game: Game; position: 1 | 2 | 3 } => slot !== null);
 
     if (isLoading) {
         return (
@@ -85,10 +93,11 @@ export function RankingPage() {
     return (
         <div className="ranking-page">
             <header className="ranking-header">
-                <h1>Top 10 más esperados</h1>
+                <h1>Top 50 más esperados</h1>
                 <p>{monthLabel}</p>
             </header>
-
+        {/* TOP 3 Podium */}
+        {/* 
             <section className="ranking-podium">
                 {podiumSlots.map(({ game, position }) => (
                     <Link
@@ -106,19 +115,35 @@ export function RankingPage() {
                     </Link>
                 ))}
             </section>
-
+        */}
+            {/* Vista lista ranking */}
             <section className="ranking-list">
-                {rest.map((game, index) => (
-                    <Link key={game.id} to={`/games/${game.id}`} className="ranking-row">
-                        <span className="ranking-row-position">#{index + 4}</span>
-                        <img src={game.imageUrl} alt={game.title} className="ranking-row-cover" />
-                        <div className="ranking-row-meta">
-                            <h3>{game.title}</h3>
-                            <p>{game.developer}</p>
-                            <small>{formatReleaseDate(game.releaseDate)}</small>
-                        </div>
-                    </Link>
-                ))}
+                {games.map((game, index) => {
+                    const rankClass = getRankClass(index);
+                    return (
+                        <Link
+                            key={game.id}
+                            to={`/games/${game.id}`}
+                            className={`ranking-row ${rankClass ? `ranking-row--${rankClass}` : ''}`}
+                        >
+                            <span
+                                className={`ranking-row-position ${rankClass ? `ranking-row-position--${rankClass}` : ''}`}
+                            >
+                                #{index + 1}
+                            </span>
+                            <img
+                                src={game.imageUrl}
+                                alt={game.title}
+                                className="ranking-row-cover"
+                            />
+                            <div className="ranking-row-meta">
+                                <h3>{game.title}</h3>
+                                <p>{game.developer}</p>
+                                <small>{formatReleaseDate(game.releaseDate)}</small>
+                            </div>
+                        </Link>
+                    );
+                })}
             </section>
         </div>
     );

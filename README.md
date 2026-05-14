@@ -86,8 +86,8 @@ Plataforma centrada en videojuegos donde usuarios podrán:
 
 **Vistas principales**:
 - 📺 *VideoFeed* (centrada en trailers)
-- 📅 *Vista calendario* (_pendiente_)
-- ⭐ *Vista ranking* (_pendiente_)
+- 📅 *Vista calendario* (lanzamientos de videojuegos)
+- ⭐ *Vista ranking* (Top juegos)
 
 ---
 

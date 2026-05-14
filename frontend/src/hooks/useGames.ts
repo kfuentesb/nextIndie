@@ -9,11 +9,14 @@ export function useGames() {
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
-    const PAGE_SIZE = 8;
-    const MAX_BUFFER = 40;
+    const INITIAL_SIZE = 60;
+    const PAGE_SIZE = 10;
+    const MAX_BUFFER = 150;
 
-    const shuffleGames = (items: Game[]) => {
-        const copy = [...items];
+    const shuffleGames = (items: Game[], size?: number) => {
+        const limit = typeof size === 'number' ? Math.min(size, items.length) : items.length;
+        console.log("Cantidad de juegos recibidos:", items.length);
+        const copy = [...items.slice(0, limit)];
         for (let i = copy.length - 1; i > 0; i -= 1) {
             const j = Math.floor(Math.random() * (i + 1));
             [copy[i], copy[j]] = [copy[j], copy[i]];
@@ -25,9 +28,9 @@ export function useGames() {
         try {
             setIsLoading(true);
             setError(null);
-            const data = await gameService.getFeedPage(1, PAGE_SIZE);
-            setGames(shuffleGames(data.games));
-            setPage(2);
+            const data = await gameService.getFeedPage(1, INITIAL_SIZE);
+            setGames(shuffleGames(data.games, INITIAL_SIZE));
+            setPage(Math.floor(INITIAL_SIZE / PAGE_SIZE) + 1);
             setHasMore(data.hasMore);
         } catch (err) {
             setError('Error al cargar los juegos');
@@ -42,7 +45,7 @@ export function useGames() {
         try {
             setIsLoadingMore(true);
             const data = await gameService.getFeedPage(page, PAGE_SIZE);
-            const randomized = shuffleGames(data.games);
+            const randomized = shuffleGames(data.games, PAGE_SIZE);
             setGames((current) => {
                 const existingIds = new Set(current.map((game) => game.id));
                 const unique = randomized.filter((game) => !existingIds.has(game.id));

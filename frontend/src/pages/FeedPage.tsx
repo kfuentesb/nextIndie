@@ -117,19 +117,8 @@ export function FeedPage() {
                     </div>
                 ))}
             </div>
-            
-            {/* 
-            <div className="navigation-hint">
-                <div className="scroll-indicator">
-                    <span>Desplaza para navegar</span>
-                    <div className="arrows">
-                        <span>↑</span>
-                        <span>↓</span>
-                    </div>
-                </div>
-            </div>
-            */}
-            {/** USADO para ver si cargan bien los videos adicionales en feedPage
+
+            {/** USADO en local para ver si funciona el añadido de videos
              * <div className="slide-counter">
                 {currentIndex + 1} / {games.length}
                 {isLoadingMore && <span> · Cargando más...</span>}

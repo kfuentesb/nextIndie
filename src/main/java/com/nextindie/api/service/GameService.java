@@ -98,7 +98,7 @@ public class GameService {
 
     public GameFeedResponseDTO getFeedPage(int page, int size) {
         int safePage = Math.max(1, page);
-        int safeSize = Math.max(1, Math.min(size, 20));
+        int safeSize = Math.max(1, Math.min(size, 60));
 
         List<Game> syncedGames = igdbSyncService.syncFeedPage(safePage, safeSize);
         if (!syncedGames.isEmpty()) {
