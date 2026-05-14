@@ -3,7 +3,7 @@ import { VideoFeed } from '../components/VideoFeed';
 import { useGames } from '../hooks/useGames';
 
 export function FeedPage() {
-    const { games, isLoading, isLoadingMore, hasMore, error, loadMore, dropHead } = useGames();
+    const { games, isLoading, hasMore, error, loadMore, dropHead } = useGames();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isScrolling, setIsScrolling] = useState(false);
     const RENDER_RADIUS = 2;
@@ -117,7 +117,8 @@ export function FeedPage() {
                     </div>
                 ))}
             </div>
-
+            
+            {/* 
             <div className="navigation-hint">
                 <div className="scroll-indicator">
                     <span>Desplaza para navegar</span>
@@ -127,7 +128,7 @@ export function FeedPage() {
                     </div>
                 </div>
             </div>
-
+            */}
             {/** USADO para ver si cargan bien los videos adicionales en feedPage
              * <div className="slide-counter">
                 {currentIndex + 1} / {games.length}
