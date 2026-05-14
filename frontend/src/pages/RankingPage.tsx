@@ -112,7 +112,7 @@ export function RankingPage() {
             <section className="ranking-list">
                 {rest.map((game, index) => (
                     <Link key={game.id} to={`/games/${game.id}`} className="ranking-row">
-                        <span className="ranking-row-position">#{index}</span>
+                        <span className="ranking-row-position">#{index + 1}</span>
                         <img src={game.imageUrl} alt={game.title} className="ranking-row-cover" />
                         <div className="ranking-row-meta">
                             <h3>{game.title}</h3>
