@@ -16,6 +16,13 @@ function currentMonthKey(): string {
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
 
+function getRankClass(index: number): string {
+    if (index === 0) return 'gold';
+    if (index === 1) return 'silver';
+    if (index === 2) return 'bronze';
+    return '';
+}
+
 export function RankingPage() {
     const [games, setGames] = useState<Game[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -39,9 +46,9 @@ export function RankingPage() {
                 }
 
                 const ranking = await request;
-                const topTen = ranking.slice(0, 10);
-                rankingMonthCache = { monthKey, games: topTen };
-                setGames(topTen);
+                const topFifty = ranking.slice(0, 50);
+                rankingMonthCache = { monthKey, games: topFifty };
+                setGames(topFifty);
             } catch {
                 setError('No se pudo cargar el ranking del mes');
             } finally {
@@ -110,17 +117,32 @@ export function RankingPage() {
         */}
             {/* Vista lista ranking */}
             <section className="ranking-list">
-                {rest.map((game, index) => (
-                    <Link key={game.id} to={`/games/${game.id}`} className="ranking-row">
-                        <span className="ranking-row-position">#{index + 1}</span>
-                        <img src={game.imageUrl} alt={game.title} className="ranking-row-cover" />
-                        <div className="ranking-row-meta">
-                            <h3>{game.title}</h3>
-                            <p>{game.developer}</p>
-                            <small>{formatReleaseDate(game.releaseDate)}</small>
-                        </div>
-                    </Link>
-                ))}
+                {games.map((game, index) => {
+                    const rankClass = getRankClass(index);
+                    return (
+                        <Link
+                            key={game.id}
+                            to={`/games/${game.id}`}
+                            className={`ranking-row ${rankClass ? `ranking-row--${rankClass}` : ''}`}
+                        >
+                            <span
+                                className={`ranking-row-position ${rankClass ? `ranking-row-position--${rankClass}` : ''}`}
+                            >
+                                #{index + 1}
+                            </span>
+                            <img
+                                src={game.imageUrl}
+                                alt={game.title}
+                                className="ranking-row-cover"
+                            />
+                            <div className="ranking-row-meta">
+                                <h3>{game.title}</h3>
+                                <p>{game.developer}</p>
+                                <small>{formatReleaseDate(game.releaseDate)}</small>
+                            </div>
+                        </Link>
+                    );
+                })}
             </section>
         </div>
     );

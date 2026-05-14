@@ -1259,6 +1259,53 @@ html, body, #root {
   font-size: 12px;
 }
 
+.ranking-row-gold {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 237, 74, 0.1) 100%);
+  border-color: #ffd700;
+  box-shadow: 0 0 0 1px #ffd700, 0 4px 12px rgba(255, 215, 0, 0.15);
+}
+
+.ranking-row-silver {
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.15) 0%, rgba(232, 232, 232, 0.1) 100%);
+  border-color: #c0c0c0;
+  box-shadow: 0 0 0 1px #c0c0c0, 0 4px 12px rgba(192, 192, 192, 0.15);
+}
+
+.ranking-row-bronze {
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.15) 0%, rgba(218, 165, 32, 0.1) 100%);
+  border-color: #cd7f32;
+  box-shadow: 0 0 0 1px #cd7f32, 0 4px 12px rgba(205, 127, 50, 0.15);
+}
+
+/* Número de posición con color de medalla */
+.ranking-row-position--gold {
+  color: #ffd700;
+  font-size: 16px;
+}
+
+.ranking-row-position--silver {
+  color: #c0c0c0;
+  font-size: 16px;
+}
+
+.ranking-row-position--bronze {
+  color: #cd7f32;
+  font-size: 16px;
+}
+
+/* Hover para brillo */
+.ranking-row--gold:hover {
+  box-shadow: 0 0 0 2px #ffd700, 0 6px 20px rgba(255, 215, 0, 0.25);
+}
+
+.ranking-row--silver:hover {
+  box-shadow: 0 0 0 2px #c0c0c0, 0 6px 20px rgba(192, 192, 192, 0.25);
+}
+
+.ranking-row--bronze:hover {
+  box-shadow: 0 0 0 2px #cd7f32, 0 6px 20px rgba(205, 127, 50, 0.25);
+}
+
 .podium-card:hover,
 .ranking-row:hover {
   border-color: var(--primary-color);
