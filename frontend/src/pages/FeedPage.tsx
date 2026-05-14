@@ -3,7 +3,7 @@ import { VideoFeed } from '../components/VideoFeed';
 import { useGames } from '../hooks/useGames';
 
 export function FeedPage() {
-    const { games, isLoading, isLoadingMore, hasMore, error, loadMore, dropHead } = useGames();
+    const { games, isLoading, hasMore, error, loadMore, dropHead } = useGames();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isScrolling, setIsScrolling] = useState(false);
     const RENDER_RADIUS = 2;
