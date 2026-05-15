@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, NavLink} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { CommentsSection} from "./CommentSection.tsx";
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
