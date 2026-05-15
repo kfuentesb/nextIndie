@@ -23,7 +23,7 @@ public class GameService {
     private static final int LIKE_WEIGHT = 1;
     private static final int SAVE_WEIGHT = 2;
     private static final int COMMENT_UNIQUE_USER_WEIGHT = 1;
-    private static final int RANKING_LIMIT = 10;
+    private static final int RANKING_LIMIT = 50;
 
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
