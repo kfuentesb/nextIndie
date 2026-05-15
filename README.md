@@ -164,26 +164,30 @@ nextindie/
 │
 ├── frontend/           # React + Vite + TS
 │   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── hooks/
-│   │   ├── context/
+│   │   ├── components/      # Reutilizables
+│   │   ├── pages/           # Páginas de la vista
+│   │   ├── services/        
+│   │   ├── hooks/           
+│   │   ├── context/         # AuthContext
 │   │   ├── types/
 │   │   ├── App.tsx
+│   │   ├── App.css
+│   │   ├── index.css
 │   │   └── main.tsx
 │   ├── public/
 │   ├── dist/
 │   ├── node_modules/
 │   ├── index.html
 │   ├── package.json
+│   ├── package-lock.json
 │   ├── tsconfig.json
 │   ├── vite.config.ts
 │   ├── nginx.conf
 │   └── Dockerfile
-│
+├── .env                   # Variables de Entorno
 ├── docker-compose.yml
-└── deploy.sh           # Script opcional
+├── Dockerfile
+└── pom.xml
 ```
 
 ---
