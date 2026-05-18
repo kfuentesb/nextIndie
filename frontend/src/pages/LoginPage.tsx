@@ -54,7 +54,7 @@ export function LoginPage() {
             <div className="auth-box">
                 <div className="auth-header">
                     <h1 className="logo">NextIndie</h1>
-                    <p className="subtitle">Descubre los mejores juegos indie</p>
+                    <p className="subtitle">Descubre nuevos juegos indies</p>
                 </div>
 
                 {error && (
@@ -133,14 +133,6 @@ export function LoginPage() {
                         )}
                     </button>
                 </form>
-
-                <div className="auth-footer">
-                    {isRegisterMode ? (
-                        <p>¿Ya tienes cuenta? <a onClick={() => setIsRegisterMode(false)}>Inicia sesión</a></p>
-                    ) : (
-                        <p>¿No tienes cuenta? <a onClick={() => setIsRegisterMode(true)}>Regístrate</a></p>
-                    )}
-                </div>
 
                 <div className="demo-credentials">
                     <p>Demo: admin / admin123</p>
