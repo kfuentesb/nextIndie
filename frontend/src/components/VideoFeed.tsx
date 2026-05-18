@@ -18,9 +18,11 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
     const [isLiked, setIsLiked] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [likesCount, setLikesCount] = useState(game.totalLikes ?? 0);
+    const [isLikeAnimation, setIsLikeAnimation] = useState(false);
+    const [isSaveAnimation, setIsSaveAnimation] = useState(false);
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
-    const [isLikeAnimation, setIsLikeAnimation] = useState(false);
+    
 
     const getEmbedUrl = (videoId: string, muted: boolean): string => {
         const baseUrl = `https://www.youtube.com/embed/${videoId}`;
@@ -97,6 +99,9 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
             setIsSaved(false);
             return;
         }
+        setIsSaveAnimation(true);
+        setTimeout(() => setIsSaveAnimation(false), 400);
+
         await gameService.saveGame(game.id);
         setIsSaved(true);
     };
@@ -184,8 +189,9 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                     </button>
 
                     <button className="action-btn" onClick={toggleSave}>
-                        <span className="icon">{isSaved ? "🔖" : "📑"}</span>
-                        <span className="label">{isSaved ? "Guardado" : "Guardar"}</span>
+                        <span className={`icon bookmark-wrapper ${isSaveAnimation ? 'bookmark-pop':''}`}>
+                            <i className={isSaved ? "bi bi-bookmark-fill" : "bi bi-bookmark"}></i></span>
+                        <span className="label"></span>
                     </button>
                 </div>
             </div>

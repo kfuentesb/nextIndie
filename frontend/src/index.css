@@ -386,10 +386,6 @@ html, body, #root {
   font-weight: 500;
 }
 
-.action-btn .bi-heart-fill {
-  color: #ff3040;
-}
-
 /* Corazón animation */
 .heart-wrapper {
     display: inline-flex;
@@ -410,6 +406,28 @@ html, body, #root {
 
 .heart-pop {
     animation: heart-pop-tiktok 0.4s ease-in-out;
+}
+
+/* Guardado */
+.bookmark-wrapper {
+    display: inline-flex;
+    transition: transform 0.1s ease;
+}
+
+.bookmark-wrapper .bi-bookmark-fill {
+    color: #facc15;
+}
+
+@keyframes bookmark-pop-tiktok {
+    0%   { transform: scale(1) rotate(0deg); }
+    25%  { transform: scale(1.4) rotate(-10deg); }
+    50%  { transform: scale(0.95) rotate(5deg); }
+    70%  { transform: scale(1.15) rotate(-3deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+.bookmark-pop {
+    animation: bookmark-pop-tiktok 0.4s ease-in-out;
 }
 
 /* Comments */
