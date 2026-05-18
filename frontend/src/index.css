@@ -616,6 +616,7 @@ html, body, #root {
   padding: 40px;
   border: 1px solid var(--border-color);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
 }
 
 .auth-header {
@@ -623,14 +624,21 @@ html, body, #root {
   margin-bottom: 30px;
 }
 
-.logo {
-  font-size: 32px;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
+.auth-header .logo { /* Centrar título en LoginPage */
+  margin: 0 auto;
+  text-align: center;
+  display: block;
+  width: fit-content;
 }
+
+  .logo {
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
 
 .subtitle {
   color: var(--text-muted);
