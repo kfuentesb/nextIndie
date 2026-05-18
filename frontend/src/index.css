@@ -778,6 +778,16 @@ html, body, #root {
   border: 3px solid var(--border-color);
   border-top-color: var(--primary-color);
   border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.feed-loading .spinner {
+  animation: none;
+  border-top-color: var(--border-color);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .navigation-hint {
