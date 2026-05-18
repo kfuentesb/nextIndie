@@ -694,25 +694,6 @@ html, body, #root {
   display: inline-block;
 }
 
-.auth-footer {
-  text-align: center;
-  margin-top: 25px;
-  padding-top: 25px;
-  border-top: 1px solid var(--border-color);
-  color: var(--text-muted);
-  font-size: 14px;
-}
-
-.auth-footer a {
-  color: var(--primary-color);
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.auth-footer a:hover {
-  text-decoration: underline;
-}
-
 .demo-credentials {
   text-align: center;
   margin-top: 20px;
