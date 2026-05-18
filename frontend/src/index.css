@@ -386,6 +386,32 @@ html, body, #root {
   font-weight: 500;
 }
 
+.action-btn .bi-heart-fill {
+  color: #ff3040;
+}
+
+/* Corazón animation */
+.heart-wrapper {
+    display: inline-flex;
+    transition: transform 0.1s ease;
+}
+
+.heart-wrapper .bi-heart-fill {
+    color: #ff3040;
+}
+
+@keyframes heart-pop-tiktok {
+    0%   { transform: scale(1); }
+    25%  { transform: scale(1.4); }
+    50%  { transform: scale(0.95); }
+    70%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.heart-pop {
+    animation: heart-pop-tiktok 0.4s ease-in-out;
+}
+
 /* Comments */
 .comments-overlay {
   position: absolute;

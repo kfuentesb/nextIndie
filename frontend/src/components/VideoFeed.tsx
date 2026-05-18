@@ -20,6 +20,7 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
     const [likesCount, setLikesCount] = useState(game.totalLikes ?? 0);
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const [isLikeAnimation, setIsLikeAnimation] = useState(false);
 
     const getEmbedUrl = (videoId: string, muted: boolean): string => {
         const baseUrl = `https://www.youtube.com/embed/${videoId}`;
@@ -80,6 +81,10 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
             setLikesCount((current) => Math.max(0, current - 1));
             return;
         }
+        // La activación de la animación
+        setIsLikeAnimation(true);
+        setTimeout(() => setIsLikeAnimation(false), 400); // Duración de la animación
+
         await gameService.likeGame(game.id);
         setIsLiked(true);
         setLikesCount((current) => current + 1);
@@ -102,6 +107,7 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
             setIsMuted(false);
         }
     };
+    
 
     return (
         <div className="video-container" onClick={handleVideoClick}>
@@ -165,14 +171,16 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                         </button>
                     )}
 
-                    <button className="action-btn" onClick={() => setShowComments(!showComments)}>
-                        <span className="icon">💬</span>
-                        <span className="label">Comentarios</span>
+                    <button className="action-btn" onClick={toggleLike}>
+                        <span className={`icon heart-wrapper ${isLikeAnimation ? 'heart-pop' : ''}`}>
+                            <i className={isLiked ? "bi bi-heart-fill" : "bi bi-heart"}></i>
+                        </span>
+                        <span className="label">{likesCount}</span>
                     </button>
 
-                    <button className="action-btn" onClick={toggleLike}>
-                        <span className="icon">{isLiked ? "❤️" : "🤍"}</span>
-                        <span className="label">{likesCount}</span>
+                    <button className="action-btn" onClick={() => setShowComments(!showComments)}>
+                        <span className="icon"><i className="bi bi-chat-dots-fill"></i></span>
+                        <span className="label"></span>
                     </button>
 
                     <button className="action-btn" onClick={toggleSave}>
