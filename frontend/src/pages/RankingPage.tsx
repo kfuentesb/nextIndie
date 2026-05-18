@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
-import emeraldPlaceholder from '../../dist/assets/emerald_placeholder.jpg';
+import questionPlaceholder from '../../dist/assets/question_mark.jpg';
 
 type RankingMonthCache = {
     monthKey: string;
@@ -133,7 +133,7 @@ export function RankingPage() {
                                 #{index + 1}
                             </span>
                             <img
-                                src={game.imageUrl || emeraldPlaceholder} // En caso de null, undefined de la imagen
+                                src={game.imageUrl || questionPlaceholder} // En caso de null, undefined de la imagen
                                 alt={game.title}
                                 className="ranking-row-cover"
                             />
