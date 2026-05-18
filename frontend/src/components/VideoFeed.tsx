@@ -146,10 +146,11 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
 
             <div className="video-info">
                 <div className="game-details">
-                    <Link className="game-title-link" to={`/games/${game.id}`}>
-                        <h2 className="game-title">{game.title}</h2>
-                    </Link>
-                    
+                    <h2 className="game-title">
+                        <Link className="game-title-link" to={`/games/${game.id}`}>
+                            {game.title}
+                        </Link>
+                    </h2>
                     <p className="game-meta">
                         {game.developer} • {genreText}
                     </p>

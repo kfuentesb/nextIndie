@@ -82,8 +82,8 @@ export function FeedPage() {
 
     if (isLoading) {
         return (
-            <div className="loading-state">
-                <div className="spinner"></div>
+            <div className="loading-state feed-loading">
+                <div className="spinner" aria-hidden="true"></div>
                 <p>Cargando juegos...</p>
             </div>
         );
