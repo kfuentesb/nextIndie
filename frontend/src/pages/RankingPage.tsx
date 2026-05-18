@@ -66,7 +66,7 @@ export function RankingPage() {
 
     const formatReleaseDate = (value: string) => new Date(value).toLocaleDateString('es-ES');
     //const topThree = games.slice(0, 3);
-    //const rest = games.slice(3, 10);
+    //const rest = games.slice(3, 50);
     
     // const podiumSlots = [
     //     topThree[1] ? { game: topThree[1], position: 2 } : null,
