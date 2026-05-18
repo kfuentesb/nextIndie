@@ -1529,11 +1529,11 @@ html, body, #root {
     padding: 6px 8px;
   }
 
-    .video-info {
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 30px 20px 80px;
-    }
+  .video-info {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 30px 20px 80px;
+  }
 
   .game-details {
     max-width: 100%;

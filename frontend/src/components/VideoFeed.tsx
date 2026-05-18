@@ -146,7 +146,10 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
 
             <div className="video-info">
                 <div className="game-details">
-                    <h2 className="game-title">{game.title}</h2>
+                    <Link className="game-title-link" to={`/games/${game.id}`}>
+                        <h2 className="game-title">{game.title}</h2>
+                    </Link>
+                    
                     <p className="game-meta">
                         {game.developer} • {genreText}
                     </p>
@@ -160,11 +163,6 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                             <span className="label">{isMuted ? 'Activar' : 'Silenciar'}</span>
                         </button>
                     )}
-
-                    <Link className="action-btn" to={`/games/${game.id}`}>
-                        <span className="icon">ℹ️</span>
-                        <span className="label">Detalle</span>
-                    </Link>
 
                     <button className="action-btn" onClick={() => setShowComments(!showComments)}>
                         <span className="icon">💬</span>
