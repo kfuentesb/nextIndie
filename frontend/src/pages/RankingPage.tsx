@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
-import questionPlaceholder from '../assets/question-placeholder.png';
+import questionPlaceholder from '../assets/question_mark.jpg';
 
 type RankingMonthCache = {
     monthKey: string;
