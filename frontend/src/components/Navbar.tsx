@@ -21,7 +21,7 @@ export function Navbar() {
                     Lanzamientos
                 </NavLink>
                 <NavLink to="/ranking" className={({ isActive }) => `nav-tab ${isActive ? 'nav-tab-active' : ''}`}>
-                    Top Games
+                    Top Juegos
                 </NavLink>
             </div>
 

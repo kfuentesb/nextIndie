@@ -18,8 +18,14 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
     const [isLiked, setIsLiked] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [likesCount, setLikesCount] = useState(game.totalLikes ?? 0);
+    const [savedCount, setSavedCount] = useState(game.totalSaves ?? 0);
+    const [commentsCount, setCommentsCount] = useState(game.totalComments ?? 0);
+    const [isLikeAnimation, setIsLikeAnimation] = useState(false);
+    const [isSaveAnimation, setIsSaveAnimation] = useState(false);
+    const [isMediaReady, setIsMediaReady] = useState(false);
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
+    
 
     const getEmbedUrl = (videoId: string, muted: boolean): string => {
         const baseUrl = `https://www.youtube.com/embed/${videoId}`;
@@ -67,6 +73,13 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
         }
     }, [isActive, isMuted, videoId, isYoutubeTrailer]);
 
+    useEffect(() => {
+        setLikesCount(game.totalLikes ?? 0);
+        setSavedCount(game.totalSaves ?? 0);
+        setCommentsCount(game.totalComments ?? 0);
+        setIsMediaReady(!hasTrailer);
+    }, [game.id, game.totalLikes, game.totalSaves, game.totalComments, hasTrailer]);
+
     const toggleMute = () => {
         setHasInteracted(true);
         setIsMuted(!isMuted);
@@ -80,6 +93,10 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
             setLikesCount((current) => Math.max(0, current - 1));
             return;
         }
+        // La activación de la animación
+        setIsLikeAnimation(true);
+        setTimeout(() => setIsLikeAnimation(false), 400); // Duración de la animación
+
         await gameService.likeGame(game.id);
         setIsLiked(true);
         setLikesCount((current) => current + 1);
@@ -90,10 +107,15 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
         if (isSaved) {
             await gameService.unsaveGame(game.id);
             setIsSaved(false);
+            setSavedCount((current) => Math.max(0, current - 1));
             return;
         }
+        setIsSaveAnimation(true);
+        setTimeout(() => setIsSaveAnimation(false), 400);
+
         await gameService.saveGame(game.id);
         setIsSaved(true);
+        setSavedCount((current) => current + 1);
     };
 
     const handleVideoClick = () => {
@@ -102,31 +124,41 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
             setIsMuted(false);
         }
     };
+    
 
     return (
         <div className="video-container" onClick={handleVideoClick}>
             <div className="video-wrapper">
                 {hasTrailer ? (
-                    isYoutubeTrailer ? (
-                        <iframe
-                            ref={iframeRef}
-                            src={embedUrl}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                            allowFullScreen
-                            title={game.title}
-                        />
-                    ) : (
-                        <video
-                            ref={videoRef}
-                            src={trailerUrl}
-                            autoPlay={isActive}
-                            muted={isMuted}
-                            controls
-                            loop
-                            playsInline
-                        />
-                    )
+                    <>
+                        {isYoutubeTrailer ? (
+                            <iframe
+                                ref={iframeRef}
+                                src={embedUrl}
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                                allowFullScreen
+                                title={game.title}
+                                className={`video-media ${isMediaReady ? 'is-ready' : ''}`}
+                                onLoad={() => setIsMediaReady(true)}
+                            />
+                        ) : (
+                            <video
+                                ref={videoRef}
+                                src={trailerUrl}
+                                autoPlay={isActive}
+                                muted={isMuted}
+                                controls
+                                loop
+                                playsInline
+                                className={`video-media ${isMediaReady ? 'is-ready' : ''}`}
+                                onLoadedData={() => setIsMediaReady(true)}
+                            />
+                        )}
+                        {!isMediaReady && (
+                            <img src={game.imageUrl} alt={game.title} className="video-fallback video-loading-poster" />
+                        )}
+                    </>
                 ) : (
                     <img src={game.imageUrl} alt={game.title} className="video-fallback" />
                 )}
@@ -165,26 +197,29 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                         </button>
                     )}
 
-                    <button className="action-btn" onClick={() => setShowComments(!showComments)}>
-                        <span className="icon">💬</span>
-                        <span className="label">Comentarios</span>
-                    </button>
-
                     <button className="action-btn" onClick={toggleLike}>
-                        <span className="icon">{isLiked ? "❤️" : "🤍"}</span>
+                        <span className={`icon heart-wrapper ${isLikeAnimation ? 'heart-pop' : ''}`}>
+                            <i className={isLiked ? "bi bi-heart-fill" : "bi bi-heart"}></i>
+                        </span>
                         <span className="label">{likesCount}</span>
                     </button>
 
+                    <button className="action-btn" onClick={() => setShowComments(!showComments)}>
+                        <span className="icon"><i className="bi bi-chat-dots-fill"></i></span>
+                        <span className="label">{commentsCount}</span>
+                    </button>
+
                     <button className="action-btn" onClick={toggleSave}>
-                        <span className="icon">{isSaved ? "🔖" : "📑"}</span>
-                        <span className="label">{isSaved ? "Guardado" : "Guardar"}</span>
+                        <span className={`icon bookmark-wrapper ${isSaveAnimation ? 'bookmark-pop':''}`}>
+                            <i className={isSaved ? "bi bi-bookmark-fill" : "bi bi-bookmark"}></i></span>
+                        <span className="label">{savedCount}</span>
                     </button>
                 </div>
             </div>
 
             {showComments && (
                 <div className="comments-overlay" onClick={(e) => e.stopPropagation()}>
-                    <CommentsSection gameId={game.id} />
+                    <CommentsSection gameId={game.id} onCountChange={setCommentsCount} />
                     <button className="close-comments" onClick={() => setShowComments(false)}>
                         ✕
                     </button>

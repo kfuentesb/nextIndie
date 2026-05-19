@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
-import emeraldPlaceholder from '../../dist/assets/emerald_placeholder.jpg';
+import questionPlaceholder from '../assets/question_mark.jpg';
 
 type RankingMonthCache = {
     monthKey: string;
@@ -66,7 +66,7 @@ export function RankingPage() {
 
     const formatReleaseDate = (value: string) => new Date(value).toLocaleDateString('es-ES');
     //const topThree = games.slice(0, 3);
-    //const rest = games.slice(3, 10);
+    //const rest = games.slice(3, 50);
     
     // const podiumSlots = [
     //     topThree[1] ? { game: topThree[1], position: 2 } : null,
@@ -133,7 +133,7 @@ export function RankingPage() {
                                 #{index + 1}
                             </span>
                             <img
-                                src={game.imageUrl || emeraldPlaceholder} // En caso de null, undefined de la imagen
+                                src={game.imageUrl || questionPlaceholder} // En caso de null, undefined de la imagen
                                 alt={game.title}
                                 className="ranking-row-cover"
                             />

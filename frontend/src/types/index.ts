@@ -65,6 +65,8 @@ export interface Game {
     similarGames?: string[];
     dlcs?: string[];
     totalLikes: number;
+    totalSaves?: number;
+    totalComments?: number;
     releaseDate: string;
 }
 

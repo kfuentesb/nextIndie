@@ -281,12 +281,27 @@ html, body, #root {
   object-fit: cover;
 }
 
+.video-media {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 0;
+}
+
+.video-media.is-ready {
+  opacity: 1;
+}
+
 .video-fallback {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.video-loading-poster {
+  pointer-events: none;
+  z-index: 1;
 }
 
 .video-info {
@@ -384,6 +399,50 @@ html, body, #root {
 .action-btn .label {
   font-size: 10px;
   font-weight: 500;
+}
+
+/* Corazón animation */
+.heart-wrapper {
+    display: inline-flex;
+    transition: transform 0.1s ease;
+}
+
+.heart-wrapper .bi-heart-fill {
+    color: #ff3040;
+}
+
+@keyframes heart-pop-tiktok {
+    0%   { transform: scale(1); }
+    25%  { transform: scale(1.4); }
+    50%  { transform: scale(0.95); }
+    70%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.heart-pop {
+    animation: heart-pop-tiktok 0.4s ease-in-out;
+}
+
+/* Guardado */
+.bookmark-wrapper {
+    display: inline-flex;
+    transition: transform 0.1s ease;
+}
+
+.bookmark-wrapper .bi-bookmark-fill {
+    color: #facc15;
+}
+
+@keyframes bookmark-pop-tiktok {
+    0%   { transform: scale(1) rotate(0deg); }
+    25%  { transform: scale(1.4) rotate(-10deg); }
+    50%  { transform: scale(0.95) rotate(5deg); }
+    70%  { transform: scale(1.15) rotate(-3deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+.bookmark-pop {
+    animation: bookmark-pop-tiktok 0.4s ease-in-out;
 }
 
 /* Comments */
@@ -616,11 +675,19 @@ html, body, #root {
   padding: 40px;
   border: 1px solid var(--border-color);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
 }
 
 .auth-header {
   text-align: center;
   margin-bottom: 30px;
+}
+
+.auth-header .logo { /* Centrar título en LoginPage */
+  margin: 0 auto;
+  text-align: center;
+  display: block;
+  width: fit-content;
 }
 
 .logo {
@@ -726,6 +793,16 @@ html, body, #root {
   border: 3px solid var(--border-color);
   border-top-color: var(--primary-color);
   border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.feed-loading .spinner {
+  animation: none;
+  border-top-color: var(--border-color);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .navigation-hint {
