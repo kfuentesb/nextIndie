@@ -36,6 +36,8 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
             rel: '0',
             modestbranding: '1',
             enablejsapi: '1',               // Habilitar API de YouTube
+            loop: '1',
+            playlist: videoId,                // Necesario para loop en iframes de YouTube
             origin: window.location.origin
         });
         return `${baseUrl}?${params.toString()}`;
