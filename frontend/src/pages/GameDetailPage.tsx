@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
 import { useAuth } from '../context/AuthContext';
@@ -36,6 +36,7 @@ export function GameDetailPage() {
     const [isLiked, setIsLiked] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!id) return;
@@ -128,7 +129,9 @@ export function GameDetailPage() {
                 </div>
 
                 <div className="game-detail-info">
-                    <Link to="/" className="detail-back">← Volver al feed</Link>
+                    <a onClick={() => navigate(-1)} className="detail-back" style={{ cursor: 'pointer' }}>
+                        ← Volver atrás
+                    </a>
                     <h1>{game.title}</h1>
                     <p className="detail-meta">
                         {game.developer} · {new Date(game.releaseDate).toLocaleDateString('es-ES')}
