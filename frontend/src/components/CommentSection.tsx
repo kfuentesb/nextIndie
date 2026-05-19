@@ -4,9 +4,10 @@ import { useAuth } from '../context/AuthContext';
 
 interface CommentsSectionProps {
     gameId: number;
+    onCountChange?: (count: number) => void;
 }
 
-export function CommentsSection({ gameId }: CommentsSectionProps) {
+export function CommentsSection({ gameId, onCountChange }: CommentsSectionProps) {
     const { comments, fetchComments, addComment } = useComments(gameId);
     const { isAuthenticated } = useAuth();
     const [newComment, setNewComment] = useState('');
@@ -15,6 +16,10 @@ export function CommentsSection({ gameId }: CommentsSectionProps) {
     useEffect(() => {
         fetchComments();
     }, [fetchComments]);
+
+    useEffect(() => {
+        onCountChange?.(comments.length);
+    }, [comments.length, onCountChange]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,7 +43,7 @@ export function CommentsSection({ gameId }: CommentsSectionProps) {
             <div className="comments-list">
                 {comments.length === 0 ? (
                     <div className="no-comments">
-                        <span className="icon">💬</span>
+                        <span className="icon"><i className="bi bi-chat-dots-fill"></i></span>
                         <p>No hay comentarios aún</p>
                         <span className="subtext">¡Sé el primero en comentar!</span>
                     </div>

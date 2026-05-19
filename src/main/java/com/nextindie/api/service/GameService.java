@@ -164,15 +164,18 @@ public class GameService {
                     return left.game().getTitle().compareToIgnoreCase(right.game().getTitle());
                 })
                 .limit(RANKING_LIMIT)
-                .map(ranked -> convertToDTO(ranked.game(), ranked.likes()))
+                .map(ranked -> convertToDTO(ranked.game(), ranked.likes(), ranked.saves(), ranked.totalComments()))
                 .collect(Collectors.toList());
     }
 
     private GameDTO convertToDTO(Game game) {
-        return convertToDTO(game, userRepository.countLikesByGameId(game.getId()));
+        long totalLikes = userRepository.countLikesByGameId(game.getId());
+        long totalSaves = userRepository.countSavesByGameId(game.getId());
+        long totalComments = commentRepository.countByGameId(game.getId());
+        return convertToDTO(game, totalLikes, totalSaves, totalComments);
     }
 
-    private GameDTO convertToDTO(Game game, long totalLikes) {
+    private GameDTO convertToDTO(Game game, long totalLikes, long totalSaves, long totalComments) {
         return new GameDTO(
             game.getId(),
             game.getTitle(),
@@ -187,6 +190,8 @@ public class GameService {
             game.getPlatforms().stream().map(platform -> platform.getName()).collect(Collectors.toList()),
             game.getSimilarGames().stream().collect(Collectors.toList()),
             totalLikes,
+            totalSaves,
+            totalComments,
             game.getReleaseDate()
         );
     }
@@ -195,8 +200,9 @@ public class GameService {
         long likes = userRepository.countLikesByGameId(game.getId());
         long saves = userRepository.countSavesByGameId(game.getId());
         long uniqueCommenters = commentRepository.countDistinctUserIdByGameId(game.getId());
+        long totalComments = commentRepository.countByGameId(game.getId());
         long score = (likes * LIKE_WEIGHT) + (saves * SAVE_WEIGHT) + (uniqueCommenters * COMMENT_UNIQUE_USER_WEIGHT);
-        return new RankedGame(game, likes, saves, uniqueCommenters, score);
+        return new RankedGame(game, likes, saves, uniqueCommenters, totalComments, score);
     }
 
     private User getUserByUsername(String username) {
@@ -209,5 +215,5 @@ public class GameService {
                 .orElseThrow(() -> new RuntimeException("Juego no encontrado"));
     }
 
-    private record RankedGame(Game game, long likes, long saves, long commenters, long score) {}
+    private record RankedGame(Game game, long likes, long saves, long commenters, long totalComments, long score) {}
 }

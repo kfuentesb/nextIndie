@@ -281,12 +281,27 @@ html, body, #root {
   object-fit: cover;
 }
 
+.video-media {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 0;
+}
+
+.video-media.is-ready {
+  opacity: 1;
+}
+
 .video-fallback {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.video-loading-poster {
+  pointer-events: none;
+  z-index: 1;
 }
 
 .video-info {
