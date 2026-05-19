@@ -27,11 +27,11 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     
 
-    const getEmbedUrl = (videoId: string, muted: boolean): string => {
+    const getEmbedUrl = (videoId: string): string => {
         const baseUrl = `https://www.youtube.com/embed/${videoId}`;
         const params = new URLSearchParams({
             autoplay: isActive ? '1' : '0',  // Autoplay solo si es activo
-            mute: muted ? '1' : '0',        // Mute según estado
+            mute: '1',        // Requerido para autoplay
             controls: '1',
             rel: '0',
             modestbranding: '1',
@@ -60,7 +60,7 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
 
     useEffect(() => {
         if (isYoutubeTrailer) {
-            setEmbedUrl(getEmbedUrl(videoId, isMuted));
+            setEmbedUrl(getEmbedUrl(videoId));
             return;
         }
         if (videoRef.current) {
@@ -71,7 +71,22 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                 videoRef.current.pause();
             }
         }
-    }, [isActive, isMuted, videoId, isYoutubeTrailer]);
+    }, [isActive, videoId, isYoutubeTrailer]);
+
+    useEffect(() => {
+        if (!isYoutubeTrailer || !iframeRef.current?.contentWindow) return;
+        const timer = setTimeout(() => {
+            iframeRef.current?.contentWindow?.postMessage(
+                JSON.stringify({
+                    event: 'command',
+                    func: isMuted ? 'mute' : 'unMute',
+                    args: []
+                }),
+                '*'
+            );
+        }, 150);
+        return () => clearTimeout(timer);
+    }, [isMuted, isYoutubeTrailer]);
 
     useEffect(() => {
         setLikesCount(game.totalLikes ?? 0);
