@@ -184,7 +184,7 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                         toggleMute();
                     }}>
                         <div className={`audio-indicator ${isMuted ? 'muted' : ''}`}>
-                            {isMuted ? '🔇' : '🔊'}
+                            <i className={isMuted ? "bi bi-volume-mute" : "bi bi-volume-up"}></i>
                             <span>{isMuted ? 'Click para activar sonido' : 'Sonido activado'}</span>
                         </div>
                     </div>
@@ -207,7 +207,9 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                 <div className="game-actions">
                     {hasTrailer && (
                         <button className="action-btn audio-btn" onClick={toggleMute}>
-                            <span className="icon">{isMuted ? '🔇' : '🔊'}</span>
+                            <span className="icon">
+                                <i className={isMuted ? "bi bi-volume-off-fill" : "bi bi-volume-up-fill"}></i>
+                            </span>
                             <span className="label">{isMuted ? 'Activar' : 'Silenciar'}</span>
                         </button>
                     )}
