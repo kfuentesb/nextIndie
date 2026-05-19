@@ -128,7 +128,26 @@ public class GameService {
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
         return gameRepository.findByReleaseDateBetweenOrderByReleaseDateAsc(startDate, endDate).stream()
-                .map(this::convertToDTO)
+                .map(this::buildRankedGame)
+                .sorted((left, right) -> {
+                    int dateCompare = left.game().getReleaseDate().compareTo(right.game().getReleaseDate());
+                    if (dateCompare != 0) return dateCompare;
+
+                    int scoreCompare = Long.compare(right.score(), left.score());
+                    if (scoreCompare != 0) return scoreCompare;
+
+                    int savesCompare = Long.compare(right.saves(), left.saves());
+                    if (savesCompare != 0) return savesCompare;
+
+                    int likesCompare = Long.compare(right.likes(), left.likes());
+                    if (likesCompare != 0) return likesCompare;
+
+                    int commentersCompare = Long.compare(right.commenters(), left.commenters());
+                    if (commentersCompare != 0) return commentersCompare;
+
+                    return left.game().getTitle().compareToIgnoreCase(right.game().getTitle());
+                })
+                .map(ranked -> convertToDTO(ranked.game(), ranked.likes(), ranked.saves(), ranked.totalComments()))
                 .collect(Collectors.toList());
     }
 
