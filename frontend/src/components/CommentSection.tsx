@@ -68,6 +68,12 @@ export function CommentsSection({ gameId, onCountChange }: CommentsSectionProps)
                         <textarea
                             value={newComment}
                             onChange={(e) => setNewComment(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    e.currentTarget.form?.requestSubmit();
+                                }
+                            }}
                             placeholder="Escribe un comentario..."
                             className="comment-input"
                             maxLength={500}
