@@ -65,6 +65,16 @@ export function RankingPage() {
     }, []);
 
     const formatReleaseDate = (value: string) => new Date(value).toLocaleDateString('es-ES');
+
+    const getRankingImage = (game: Game): string => {
+        return (
+            game.imageUrls?.coverSmall ||
+            game.imageUrls?.thumb ||
+            game.imageUrls?.coverBig ||
+            game.imageUrl ||
+            questionPlaceholder
+        );
+    };
     //const topThree = games.slice(0, 3);
     //const rest = games.slice(3, 50);
     
@@ -133,7 +143,7 @@ export function RankingPage() {
                                 #{index + 1}
                             </span>
                             <img
-                                src={game.imageUrl || questionPlaceholder} // En caso de null, undefined de la imagen
+                                src={getRankingImage(game)}
                                 alt={game.title}
                                 className="ranking-row-cover"
                             />

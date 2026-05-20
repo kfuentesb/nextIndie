@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
+import questionPlaceholder from '../assets/question_mark.jpg';
 
 function buildCalendarDays(year: number, month: number): Date[] {
     const firstDay = new Date(year, month - 1, 1);
@@ -58,6 +59,16 @@ export function ReleasesPage() {
         setSelectedDate(null);
     };
 
+    const getReleaseImage = (game: Game): string => {
+        return (
+            game.imageUrls?.thumb ||
+            game.imageUrls?.coverSmall ||
+            game.imageUrls?.coverBig ||
+            game.imageUrl ||
+            questionPlaceholder
+        );
+    };
+
     return (
         <div className="releases-page">
             <section className="calendar-panel">
@@ -100,7 +111,7 @@ export function ReleasesPage() {
                     <div className="release-games-grid">
                         {selectedDayGames.map((game) => (
                             <Link key={game.id} to={`/games/${game.id}`} className="release-card">
-                                <img src={game.imageUrl} alt={game.title} />
+                                <img src={getReleaseImage(game)} alt={game.title} />
                                 <div>
                                     <h3>{game.title}</h3>
                                     <p>{game.developer}</p>
