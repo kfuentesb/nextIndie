@@ -56,6 +56,25 @@ export interface Game {
     description: string;
     trailerUrl: string;
     imageUrl: string;
+    imageUrls?: {
+        micro?: string;
+        thumb?: string;
+        coverSmall?: string;
+        coverBig?: string;
+        coverSmall2x?: string;
+        coverBig2x?: string;
+        logoMed?: string;
+        screenshotMed?: string;
+        screenshotBig?: string;
+        screenshotHuge?: string;
+        screenshotMed2x?: string;
+        screenshotBig2x?: string;
+        size720p?: string;
+        size1080p?: string;
+        size720p2x?: string;
+        size1080p2x?: string;
+        original?: string;
+    };
     developer: string;
     gameStatus?: string;
     websiteUrl?: string;

@@ -22,6 +22,7 @@ import java.util.Set;
 
 @Service
 public class IgdbSyncService {
+    private static final String IGDB_IMAGE_SIZE = "t_720p";
 
     private static final int MAX_MASTER_LIMIT = 200;
 
@@ -273,7 +274,7 @@ public class IgdbSyncService {
             return null;
         }
         String normalized = url.startsWith("//") ? "https:" + url : url;
-        return normalized.replace("t_thumb", "t_cover_big");
+        return normalized.replaceAll("/t_[^/]+/", "/" + IGDB_IMAGE_SIZE + "/");
     }
 
     private String resolveStatus(JsonNode statusNode) {

@@ -15,6 +15,7 @@ public class GameDTO {
     private String description;
     private String trailerUrl;
     private String imageUrl;
+    private GameImageUrls imageUrls;
     private String developer;
     private String gameStatus;
     private String websiteUrl;

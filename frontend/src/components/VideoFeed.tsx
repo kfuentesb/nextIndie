@@ -88,6 +88,7 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
             );
         }, 150);
         return () => clearTimeout(timer);
+        
     }, [isMuted, isYoutubeTrailer]);
 
     useEffect(() => {

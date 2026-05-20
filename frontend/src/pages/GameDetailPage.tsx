@@ -200,7 +200,7 @@ export function GameDetailPage() {
                             <strong>{game.mainFranchise ?? 'Sin dato'}</strong>
                         </div>
                         <div>
-                            <span>Generos</span>
+                            <span>Géneros</span>
                             <strong>{game.genres.join(', ') || 'Sin dato'}</strong>
                         </div>
                         <div>
@@ -217,17 +217,6 @@ export function GameDetailPage() {
                             game.similarGames.map((title) => <span key={title}>{title}</span>)
                         ) : (
                             <p>Sin similares</p>
-                        )}
-                    </div>
-                </div>
-
-                <div className="detail-card">
-                    <h3>DLCs</h3>
-                    <div className="detail-tags">
-                        {game.dlcs && game.dlcs.length > 0 ? (
-                            game.dlcs.map((title) => <span key={title}>{title}</span>)
-                        ) : (
-                            <p>Sin DLCs</p>
                         )}
                     </div>
                 </div>
