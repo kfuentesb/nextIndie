@@ -37,6 +37,7 @@ export function GameDetailPage() {
     const [isSaved, setIsSaved] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
     const [savedCount, setSavedCount] = useState(0);
+    const [commentsCount, setCommentsCount] = useState(0);
     const [isLikeAnimation, setIsLikeAnimation] = useState(false);
     const [isSaveAnimation, setIsSaveAnimation] = useState(false);
     const navigate = useNavigate();
@@ -51,6 +52,9 @@ export function GameDetailPage() {
                 setGame(data);
                 setLikesCount(data.totalLikes ?? 0);
                 setSavedCount(data.totalSaves ?? 0);
+                setCommentsCount(data.totalComments ?? 0);
+                setIsLiked(Boolean(data.likedByMe));
+                setIsSaved(Boolean(data.savedByMe));
             } catch {
                 setError('No se pudo cargar el juego');
             } finally {
@@ -165,6 +169,15 @@ export function GameDetailPage() {
                                 <span>{savedCount}</span>
                             </span>
                         </button>
+                        <button
+                            className="btn btn-secondary"
+                            onClick={() => document.getElementById('game-comments')?.scrollIntoView({ behavior: 'smooth' })}
+                        >
+                            <span className="btn-icon-text">
+                                <span className="icon"><i className="bi bi-chat-dots-fill"></i></span>
+                                <span>{commentsCount}</span>
+                            </span>
+                        </button>
                         {game.websiteUrl && (
                             <a className="btn btn-primary" href={game.websiteUrl} target="_blank" rel="noreferrer">
                                 Sitio oficial
@@ -220,8 +233,8 @@ export function GameDetailPage() {
                 </div>
             </section>
 
-            <section className="game-detail-comments">
-                <CommentsSection gameId={game.id} />
+            <section id="game-comments" className="game-detail-comments">
+                <CommentsSection gameId={game.id} onCountChange={setCommentsCount} />
             </section>
         </div>
     );

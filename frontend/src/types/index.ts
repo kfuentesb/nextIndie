@@ -67,6 +67,8 @@ export interface Game {
     totalLikes: number;
     totalSaves?: number;
     totalComments?: number;
+    likedByMe?: boolean;
+    savedByMe?: boolean;
     releaseDate: string;
 }
 

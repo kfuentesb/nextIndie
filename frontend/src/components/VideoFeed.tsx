@@ -94,8 +94,10 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
         setLikesCount(game.totalLikes ?? 0);
         setSavedCount(game.totalSaves ?? 0);
         setCommentsCount(game.totalComments ?? 0);
+        setIsLiked(Boolean(game.likedByMe));
+        setIsSaved(Boolean(game.savedByMe));
         setIsMediaReady(!hasTrailer);
-    }, [game.id, game.totalLikes, game.totalSaves, game.totalComments, hasTrailer]);
+    }, [game.id, game.totalLikes, game.totalSaves, game.totalComments, game.likedByMe, game.savedByMe, hasTrailer]);
 
     const toggleMute = () => {
         setHasInteracted(true);

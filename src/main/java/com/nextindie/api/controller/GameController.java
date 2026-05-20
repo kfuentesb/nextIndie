@@ -21,29 +21,37 @@ public class GameController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GameDTO>> getAllGames() {
-        return ResponseEntity.ok(gameService.getAllGames());
+    public ResponseEntity<List<GameDTO>> getAllGames(Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : null;
+        return ResponseEntity.ok(gameService.getAllGames(username));
     }
 
     @GetMapping("/feed")
     public ResponseEntity<GameFeedResponseDTO> getFeedPage(@RequestParam(defaultValue = "1") int page,
-                                                           @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(gameService.getFeedPage(page, size));
+                                                           @RequestParam(defaultValue = "10") int size,
+                                                           Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : null;
+        return ResponseEntity.ok(gameService.getFeedPage(page, size, username));
     }
 
     @GetMapping("/{id:\\d+}")
-    public ResponseEntity<GameDTO> getGameById(@PathVariable Long id) {
-        return ResponseEntity.ok(gameService.getGameById(id));
+    public ResponseEntity<GameDTO> getGameById(@PathVariable Long id, Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : null;
+        return ResponseEntity.ok(gameService.getGameById(id, username));
     }
 
     @GetMapping("/releases")
-    public ResponseEntity<List<GameDTO>> getReleasesByMonth(@RequestParam int year, @RequestParam int month) {
-        return ResponseEntity.ok(gameService.getReleasesByMonth(year, month));
+    public ResponseEntity<List<GameDTO>> getReleasesByMonth(@RequestParam int year,
+                                                            @RequestParam int month,
+                                                            Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : null;
+        return ResponseEntity.ok(gameService.getReleasesByMonth(year, month, username));
     }
 
     @GetMapping("/ranking/current-month")
-    public ResponseEntity<List<GameDTO>> getCurrentMonthRanking() {
-        return ResponseEntity.ok(gameService.getCurrentMonthRanking());
+    public ResponseEntity<List<GameDTO>> getCurrentMonthRanking(Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : null;
+        return ResponseEntity.ok(gameService.getCurrentMonthRanking(username));
     }
 
     @PostMapping("/{id:\\d+}/likes")
