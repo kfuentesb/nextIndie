@@ -20,6 +20,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select count(u) > 0 from User u join u.likedGames g where u.username = :username and g.id = :gameId")
     boolean hasLikedGame(String username, Long gameId);
 
+    @Query("select count(u) > 0 from User u join u.savedGames g where u.username = :username and g.id = :gameId")
+    boolean hasSavedGame(String username, Long gameId);
+
     @Query("select count(u) from User u join u.likedGames g where g.id = :gameId")
     long countLikesByGameId(Long gameId);
 

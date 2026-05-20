@@ -94,6 +94,14 @@ html, body, #root {
   color: white;
 }
 
+/* Botón para GameDetailPage */
+.btn-icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  line-height: 1;
+}
+
 /* Formularios */
 .form-group {
   margin-bottom: 20px;
@@ -520,6 +528,7 @@ html, body, #root {
   overflow-y: auto;
   padding-right: 10px;
   margin-bottom: 15px;
+  max-height: 180px; 
 }
 
 .comment {
@@ -553,6 +562,8 @@ html, body, #root {
   color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.5;
+  word-break: break-word; /* Evita desbordamiento por la derecha cortando palabra */
+  overflow-wrap: break-word; /* Respaldo por si falla word-break */
 }
 
 .no-comments {
@@ -598,6 +609,14 @@ html, body, #root {
   color: var(--text-primary);
   font-size: 14px;
   transition: all 0.3s;
+  resize: none;
+  field-sizing: content;
+  min-height: 44px;
+  line-height: 1.4;
+  font-family: inherit;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .comment-input:focus {

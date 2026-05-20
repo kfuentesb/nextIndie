@@ -41,15 +41,23 @@ public class GameService {
     }
 
     public List<GameDTO> getAllGames() {
+        return getAllGames(null);
+    }
+
+    public List<GameDTO> getAllGames(String username) {
         return gameRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(game -> convertToDTO(game, username))
                 .collect(Collectors.toList());
     }
 
     public GameDTO getGameById(Long id) {
+        return getGameById(id, null);
+    }
+
+    public GameDTO getGameById(Long id, String username) {
         Game game = gameRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Juego no encontrado"));
-        return convertToDTO(game);
+        return convertToDTO(game, username);
     }
 
     @Transactional
@@ -92,18 +100,22 @@ public class GameService {
     public List<GameDTO> getSavedGames(String username) {
         getUserByUsername(username);
         return userRepository.findSavedGamesByUsername(username).stream()
-                .map(this::convertToDTO)
+                .map(game -> convertToDTO(game, username))
                 .collect(Collectors.toList());
     }
 
     public GameFeedResponseDTO getFeedPage(int page, int size) {
+        return getFeedPage(page, size, null);
+    }
+
+    public GameFeedResponseDTO getFeedPage(int page, int size, String username) {
         int safePage = Math.max(1, page);
         int safeSize = Math.max(1, Math.min(size, 60));
 
         List<Game> syncedGames = igdbSyncService.syncFeedPage(safePage, safeSize);
         if (!syncedGames.isEmpty()) {
-            List<GameDTO> games = syncedGames.stream()
-                    .map(this::convertToDTO)
+                List<GameDTO> games = syncedGames.stream()
+                    .map(game -> convertToDTO(game, username))
                     .collect(Collectors.toList());
             return new GameFeedResponseDTO(games, safePage, games.size() == safeSize);
         }
@@ -112,13 +124,17 @@ public class GameService {
                         "",
                         PageRequest.of(safePage - 1, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"))
                 ).stream()
-                .map(this::convertToDTO)
+            .map(game -> convertToDTO(game, username))
                 .collect(Collectors.toList());
 
         return new GameFeedResponseDTO(fallbackGames, safePage, fallbackGames.size() == safeSize);
     }
 
     public List<GameDTO> getReleasesByMonth(int year, int month) {
+        return getReleasesByMonth(year, month, null);
+    }
+
+    public List<GameDTO> getReleasesByMonth(int year, int month, String username) {
         try {
             igdbSyncService.syncReleasesForMonth(year, month);
         } catch (RuntimeException ex) {
@@ -147,11 +163,15 @@ public class GameService {
 
                     return left.game().getTitle().compareToIgnoreCase(right.game().getTitle());
                 })
-                .map(ranked -> convertToDTO(ranked.game(), ranked.likes(), ranked.saves(), ranked.totalComments()))
+                .map(ranked -> convertToDTO(ranked.game(), ranked.likes(), ranked.saves(), ranked.totalComments(), username))
                 .collect(Collectors.toList());
     }
 
     public List<GameDTO> getCurrentMonthRanking() {
+        return getCurrentMonthRanking(null);
+    }
+
+    public List<GameDTO> getCurrentMonthRanking(String username) {
         YearMonth currentMonth = YearMonth.from(LocalDate.now());
         try {
             igdbSyncService.syncReleasesForMonth(currentMonth.getYear(), currentMonth.getMonthValue());
@@ -183,18 +203,33 @@ public class GameService {
                     return left.game().getTitle().compareToIgnoreCase(right.game().getTitle());
                 })
                 .limit(RANKING_LIMIT)
-                .map(ranked -> convertToDTO(ranked.game(), ranked.likes(), ranked.saves(), ranked.totalComments()))
+                .map(ranked -> convertToDTO(ranked.game(), ranked.likes(), ranked.saves(), ranked.totalComments(), username))
                 .collect(Collectors.toList());
     }
 
     private GameDTO convertToDTO(Game game) {
+        return convertToDTO(game, null);
+    }
+
+    private GameDTO convertToDTO(Game game, String username) {
         long totalLikes = userRepository.countLikesByGameId(game.getId());
         long totalSaves = userRepository.countSavesByGameId(game.getId());
         long totalComments = commentRepository.countByGameId(game.getId());
-        return convertToDTO(game, totalLikes, totalSaves, totalComments);
+        return convertToDTO(game, totalLikes, totalSaves, totalComments, username);
     }
 
-    private GameDTO convertToDTO(Game game, long totalLikes, long totalSaves, long totalComments) {
+    private GameDTO convertToDTO(Game game, long totalLikes, long totalSaves, long totalComments, String username) {
+        boolean likedByMe = false;
+        boolean savedByMe = false;
+        if (username != null) {
+            likedByMe = userRepository.hasLikedGame(username, game.getId());
+            savedByMe = userRepository.hasSavedGame(username, game.getId());
+        }
+        return convertToDTO(game, totalLikes, totalSaves, totalComments, likedByMe, savedByMe);
+    }
+
+    private GameDTO convertToDTO(Game game, long totalLikes, long totalSaves, long totalComments,
+                                 boolean likedByMe, boolean savedByMe) {
         return new GameDTO(
             game.getId(),
             game.getTitle(),
@@ -211,7 +246,9 @@ public class GameService {
             totalLikes,
             totalSaves,
             totalComments,
-            game.getReleaseDate()
+            game.getReleaseDate(),
+            likedByMe,
+            savedByMe
         );
     }
 

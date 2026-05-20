@@ -27,15 +27,17 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     
 
-    const getEmbedUrl = (videoId: string, muted: boolean): string => {
+    const getEmbedUrl = (videoId: string): string => {
         const baseUrl = `https://www.youtube.com/embed/${videoId}`;
         const params = new URLSearchParams({
             autoplay: isActive ? '1' : '0',  // Autoplay solo si es activo
-            mute: muted ? '1' : '0',        // Mute según estado
+            mute: '1',        // Requerido para autoplay
             controls: '1',
             rel: '0',
             modestbranding: '1',
             enablejsapi: '1',               // Habilitar API de YouTube
+            loop: '1',
+            playlist: videoId,                // Necesario para loop en iframes de YouTube
             origin: window.location.origin
         });
         return `${baseUrl}?${params.toString()}`;
@@ -55,12 +57,12 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
     const videoId = isYoutubeTrailer ? extractVideoId(trailerUrl) : '';
     const genreText = game.genres?.join(", ") || "Sin género";
 
-    // Cambiar URL cuando cambia el estado de mute/active
-    const [embedUrl, setEmbedUrl] = useState(() => (isYoutubeTrailer ? getEmbedUrl(videoId, true) : ''));
+    // Cambiar URL de embed dinámicamente solo para trailers de YouTube
+    const [embedUrl, setEmbedUrl] = useState(() => (isYoutubeTrailer ? getEmbedUrl(videoId) : ''));
 
     useEffect(() => {
         if (isYoutubeTrailer) {
-            setEmbedUrl(getEmbedUrl(videoId, isMuted));
+            setEmbedUrl(getEmbedUrl(videoId));
             return;
         }
         if (videoRef.current) {
@@ -71,14 +73,31 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                 videoRef.current.pause();
             }
         }
-    }, [isActive, isMuted, videoId, isYoutubeTrailer]);
+    }, [isActive, videoId, isYoutubeTrailer]);
+
+    useEffect(() => {
+        if (!isYoutubeTrailer || !iframeRef.current?.contentWindow) return;
+        const timer = setTimeout(() => {
+            iframeRef.current?.contentWindow?.postMessage(
+                JSON.stringify({
+                    event: 'command',
+                    func: isMuted ? 'mute' : 'unMute',
+                    args: []
+                }),
+                '*'
+            );
+        }, 150);
+        return () => clearTimeout(timer);
+    }, [isMuted, isYoutubeTrailer]);
 
     useEffect(() => {
         setLikesCount(game.totalLikes ?? 0);
         setSavedCount(game.totalSaves ?? 0);
         setCommentsCount(game.totalComments ?? 0);
+        setIsLiked(Boolean(game.likedByMe));
+        setIsSaved(Boolean(game.savedByMe));
         setIsMediaReady(!hasTrailer);
-    }, [game.id, game.totalLikes, game.totalSaves, game.totalComments, hasTrailer]);
+    }, [game.id, game.totalLikes, game.totalSaves, game.totalComments, game.likedByMe, game.savedByMe, hasTrailer]);
 
     const toggleMute = () => {
         setHasInteracted(true);
@@ -169,7 +188,7 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                         toggleMute();
                     }}>
                         <div className={`audio-indicator ${isMuted ? 'muted' : ''}`}>
-                            {isMuted ? '🔇' : '🔊'}
+                            <i className={isMuted ? "bi bi-volume-mute" : "bi bi-volume-up"}></i>
                             <span>{isMuted ? 'Click para activar sonido' : 'Sonido activado'}</span>
                         </div>
                     </div>
@@ -192,7 +211,9 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                 <div className="game-actions">
                     {hasTrailer && (
                         <button className="action-btn audio-btn" onClick={toggleMute}>
-                            <span className="icon">{isMuted ? '🔇' : '🔊'}</span>
+                            <span className="icon">
+                                <i className={isMuted ? "bi bi-volume-off-fill" : "bi bi-volume-up-fill"}></i>
+                            </span>
                             <span className="label">{isMuted ? 'Activar' : 'Silenciar'}</span>
                         </button>
                     )}

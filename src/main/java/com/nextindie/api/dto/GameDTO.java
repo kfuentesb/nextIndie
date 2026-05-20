@@ -26,6 +26,8 @@ public class GameDTO {
     private long totalSaves;
     private long totalComments;
     private LocalDate releaseDate;
+    private boolean likedByMe;
+    private boolean savedByMe;
 
     public GameDTO(Long id, String title, String description, String trailerUrl, String imageUrl,
                    String developer, String gameStatus, String websiteUrl, String mainFranchise,
@@ -47,6 +49,33 @@ public class GameDTO {
         this.totalSaves = totalSaves;
         this.totalComments = totalComments;
         this.releaseDate = releaseDate;
+        this.likedByMe = false;
+        this.savedByMe = false;
+    }
+
+    public GameDTO(Long id, String title, String description, String trailerUrl, String imageUrl,
+                   String developer, String gameStatus, String websiteUrl, String mainFranchise,
+                   List<String> genres, List<String> platforms, List<String> similarGames,
+                   long totalLikes, long totalSaves, long totalComments, LocalDate releaseDate,
+                   boolean likedByMe, boolean savedByMe) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.trailerUrl = trailerUrl;
+        this.imageUrl = imageUrl;
+        this.developer = developer;
+        this.gameStatus = gameStatus;
+        this.websiteUrl = websiteUrl;
+        this.mainFranchise = mainFranchise;
+        this.genres = genres;
+        this.platforms = platforms;
+        this.similarGames = similarGames;
+        this.totalLikes = totalLikes;
+        this.totalSaves = totalSaves;
+        this.totalComments = totalComments;
+        this.releaseDate = releaseDate;
+        this.likedByMe = likedByMe;
+        this.savedByMe = savedByMe;
     }
 
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
 import { useAuth } from '../context/AuthContext';
@@ -36,6 +36,11 @@ export function GameDetailPage() {
     const [isLiked, setIsLiked] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
+    const [savedCount, setSavedCount] = useState(0);
+    const [commentsCount, setCommentsCount] = useState(0);
+    const [isLikeAnimation, setIsLikeAnimation] = useState(false);
+    const [isSaveAnimation, setIsSaveAnimation] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!id) return;
@@ -46,6 +51,10 @@ export function GameDetailPage() {
                 const data = await gameService.getGameById(Number(id));
                 setGame(data);
                 setLikesCount(data.totalLikes ?? 0);
+                setSavedCount(data.totalSaves ?? 0);
+                setCommentsCount(data.totalComments ?? 0);
+                setIsLiked(Boolean(data.likedByMe));
+                setIsSaved(Boolean(data.savedByMe));
             } catch {
                 setError('No se pudo cargar el juego');
             } finally {
@@ -68,6 +77,8 @@ export function GameDetailPage() {
             setLikesCount((current) => Math.max(0, current - 1));
             return;
         }
+        setIsLikeAnimation(true);
+        setTimeout(() => setIsLikeAnimation(false), 400);
         await gameService.likeGame(game.id);
         setIsLiked(true);
         setLikesCount((current) => current + 1);
@@ -78,10 +89,14 @@ export function GameDetailPage() {
         if (isSaved) {
             await gameService.unsaveGame(game.id);
             setIsSaved(false);
+            setSavedCount((current) => Math.max(0, current - 1));
             return;
         }
+        setIsSaveAnimation(true);
+        setTimeout(() => setIsSaveAnimation(false), 400);
         await gameService.saveGame(game.id);
         setIsSaved(true);
+        setSavedCount((current) => current + 1);
     };
 
     if (isLoading) {
@@ -128,7 +143,9 @@ export function GameDetailPage() {
                 </div>
 
                 <div className="game-detail-info">
-                    <Link to="/" className="detail-back">← Volver al feed</Link>
+                    <a onClick={() => navigate(-1)} className="detail-back" style={{ cursor: 'pointer' }}>
+                        ← Volver atrás
+                    </a>
                     <h1>{game.title}</h1>
                     <p className="detail-meta">
                         {game.developer} · {new Date(game.releaseDate).toLocaleDateString('es-ES')}
@@ -137,10 +154,29 @@ export function GameDetailPage() {
 
                     <div className="detail-actions">
                         <button className="btn btn-secondary" onClick={toggleLike}>
-                            {isLiked ? '❤️' : '🤍'} {likesCount}
+                            <span className="btn-icon-text">
+                                <span className={`icon heart-wrapper ${isLikeAnimation ? 'heart-pop' : ''}`}>
+                                    <i className={isLiked ? "bi bi-heart-fill" : "bi bi-heart"}></i>
+                                </span>
+                                <span>{likesCount}</span>
+                            </span>
                         </button>
                         <button className="btn btn-secondary" onClick={toggleSave}>
-                            {isSaved ? 'Guardado' : 'Guardar'}
+                            <span className="btn-icon-text">
+                                <span className={`icon bookmark-wrapper ${isSaveAnimation ? 'bookmark-pop' : ''}`}>
+                                    <i className={isSaved ? "bi bi-bookmark-fill" : "bi bi-bookmark"}></i>
+                                </span>
+                                <span>{savedCount}</span>
+                            </span>
+                        </button>
+                        <button
+                            className="btn btn-secondary"
+                            onClick={() => document.getElementById('game-comments')?.scrollIntoView({ behavior: 'smooth' })}
+                        >
+                            <span className="btn-icon-text">
+                                <span className="icon"><i className="bi bi-chat-dots-fill"></i></span>
+                                <span>{commentsCount}</span>
+                            </span>
                         </button>
                         {game.websiteUrl && (
                             <a className="btn btn-primary" href={game.websiteUrl} target="_blank" rel="noreferrer">
@@ -197,8 +233,8 @@ export function GameDetailPage() {
                 </div>
             </section>
 
-            <section className="game-detail-comments">
-                <CommentsSection gameId={game.id} />
+            <section id="game-comments" className="game-detail-comments">
+                <CommentsSection gameId={game.id} onCountChange={setCommentsCount} />
             </section>
         </div>
     );
