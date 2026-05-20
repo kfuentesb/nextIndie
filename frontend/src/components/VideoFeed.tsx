@@ -57,8 +57,8 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
     const videoId = isYoutubeTrailer ? extractVideoId(trailerUrl) : '';
     const genreText = game.genres?.join(", ") || "Sin género";
 
-    // Cambiar URL cuando cambia el estado de mute/active
-    const [embedUrl, setEmbedUrl] = useState(() => (isYoutubeTrailer ? getEmbedUrl(videoId, true) : ''));
+    // Cambiar URL de embed dinámicamente solo para trailers de YouTube
+    const [embedUrl, setEmbedUrl] = useState(() => (isYoutubeTrailer ? getEmbedUrl(videoId) : ''));
 
     useEffect(() => {
         if (isYoutubeTrailer) {

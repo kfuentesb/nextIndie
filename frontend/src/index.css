@@ -94,6 +94,14 @@ html, body, #root {
   color: white;
 }
 
+/* Botón para GameDetailPage */
+.btn-icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  line-height: 1;
+}
+
 /* Formularios */
 .form-group {
   margin-bottom: 20px;
