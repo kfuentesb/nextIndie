@@ -220,17 +220,6 @@ export function GameDetailPage() {
                         )}
                     </div>
                 </div>
-
-                <div className="detail-card">
-                    <h3>DLCs</h3>
-                    <div className="detail-tags">
-                        {game.dlcs && game.dlcs.length > 0 ? (
-                            game.dlcs.map((title) => <span key={title}>{title}</span>)
-                        ) : (
-                            <p>Sin DLCs</p>
-                        )}
-                    </div>
-                </div>
             </section>
 
             <section id="game-comments" className="game-detail-comments">
