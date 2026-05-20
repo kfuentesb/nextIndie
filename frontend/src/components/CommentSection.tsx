@@ -65,13 +65,13 @@ export function CommentsSection({ gameId, onCountChange }: CommentsSectionProps)
             <div className="comment-input-section">
                 {isAuthenticated ? (
                     <form onSubmit={handleSubmit} className="input-wrapper">
-                        <input
-                            type="text"
+                        <textarea
                             value={newComment}
                             onChange={(e) => setNewComment(e.target.value)}
                             placeholder="Escribe un comentario..."
                             className="comment-input"
                             maxLength={500}
+                            rows={1}
                         />
                         <button
                             type="submit"
