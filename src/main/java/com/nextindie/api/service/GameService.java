@@ -1,6 +1,7 @@
 package com.nextindie.api.service;
 
 import com.nextindie.api.dto.GameDTO;
+import com.nextindie.api.dto.GameImageUrls;
 import com.nextindie.api.dto.GameFeedResponseDTO;
 import com.nextindie.api.model.Game;
 import com.nextindie.api.model.User;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class GameService {
+    private static final String IGDB_IMAGE_SIZE = "t_720p";
 
     private static final int LIKE_WEIGHT = 1;
     private static final int SAVE_WEIGHT = 2;
@@ -230,12 +232,12 @@ public class GameService {
 
     private GameDTO convertToDTO(Game game, long totalLikes, long totalSaves, long totalComments,
                                  boolean likedByMe, boolean savedByMe) {
-        return new GameDTO(
+        GameDTO dto = new GameDTO(
             game.getId(),
             game.getTitle(),
             game.getDescription(),
             game.getTrailerUrl(),
-            game.getImageUrl(),
+            normalizeCoverUrl(game.getImageUrl()),
             game.getDeveloper(),
             game.getGameStatus(),
             game.getWebsiteUrl(),
@@ -250,6 +252,68 @@ public class GameService {
             likedByMe,
             savedByMe
         );
+        dto.setImageUrls(buildImageUrls(game.getImageUrl()));
+        return dto;
+    }
+
+    private String normalizeCoverUrl(String url) {
+        if (url == null || url.isBlank()) {
+            return url;
+        }
+        if (!url.contains("igdb.com/igdb/image/upload/")) {
+            return url;
+        }
+        return url.replaceAll("/t_[^/]+/", "/" + IGDB_IMAGE_SIZE + "/");
+    }
+
+    private GameImageUrls buildImageUrls(String url) {
+        if (url == null || url.isBlank()) {
+            return null;
+        }
+
+        if (!url.contains("igdb.com/igdb/image/upload/")) {
+            return new GameImageUrls(
+                url, // thumb
+                url, // coverSmall
+                url, // coverBig
+                url, // logo
+                url, // screenshotMed
+                url, // screenshotBig
+                url, // screenshotHuge
+                url, // 720p
+                url, // 1080p
+                url, // original
+                url, // coverSmall2x
+                url, // coverBig2x
+                url, // screenshotMed2x
+                url, // screenshotBig2x
+                url, // 720p2x
+                url  // 1080p2x
+            );
+        }
+
+        return new GameImageUrls(
+            replaceIgdbSize(url, "t_thumb"),
+            replaceIgdbSize(url, "t_cover_small"),
+            replaceIgdbSize(url, "t_cover_big"),
+            replaceIgdbSize(url, "t_logo_med"),
+            replaceIgdbSize(url, "t_screenshot_med"),
+            replaceIgdbSize(url, "t_screenshot_big"),
+            replaceIgdbSize(url, "t_screenshot_huge"),
+            replaceIgdbSize(url, "t_720p"),
+            replaceIgdbSize(url, "t_1080p"),
+            replaceIgdbSize(url, "t_original"),
+            replaceIgdbSize(url, "t_cover_small_2x"),
+            replaceIgdbSize(url, "t_cover_big_2x"),
+            replaceIgdbSize(url, "t_screenshot_med_2x"),
+            replaceIgdbSize(url, "t_screenshot_big_2x"),
+            replaceIgdbSize(url, "t_720p_2x"),
+            replaceIgdbSize(url, "t_1080p_2x")
+        );
+    }
+
+    private String replaceIgdbSize(String url, String size) {
+        return url.replaceAll("/t_[^/]+/", "/" + size + "/");
     }
 
     private RankedGame buildRankedGame(Game game) {

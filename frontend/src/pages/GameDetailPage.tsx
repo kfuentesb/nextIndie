@@ -200,7 +200,7 @@ export function GameDetailPage() {
                             <strong>{game.mainFranchise ?? 'Sin dato'}</strong>
                         </div>
                         <div>
-                            <span>Generos</span>
+                            <span>Géneros</span>
                             <strong>{game.genres.join(', ') || 'Sin dato'}</strong>
                         </div>
                         <div>

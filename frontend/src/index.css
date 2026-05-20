@@ -1025,6 +1025,7 @@ html, body, #root {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 20px;
+  align-items: start;
 }
 
 .game-detail-media {
@@ -1032,16 +1033,28 @@ html, body, #root {
   overflow: hidden;
   background: #0b0b0b;
   min-height: 320px;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  position: relative;
+  width: 100%;
+  align-self: start;
 }
 
 .game-detail-media iframe,
 .game-detail-media video,
 .game-detail-media img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   min-height: 320px;
   object-fit: cover;
+  object-position: center;
   display: block;
+}
+
+.game-detail-media iframe {
+  border: 0;
 }
 
 .game-detail-info h1 {
