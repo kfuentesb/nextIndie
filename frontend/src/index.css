@@ -1849,3 +1849,13 @@ html, body, #root {
     gap: 6px;
   }
 }
+
+/* OCULTAR logo y perfil en vista movil */
+@media (max-width: 768px) {
+  .navbar-brand {
+    display: none !important;
+  }
+  .profile-btn span:not(.profile-icon) {
+    display: none !important;
+  }
+}
