@@ -271,45 +271,53 @@ public class GameService {
             return null;
         }
 
+        GameImageUrls imageUrls = new GameImageUrls();
+
         if (!url.contains("igdb.com/igdb/image/upload/")) {
-            return new GameImageUrls(
-                url, // thumb
-                url, // coverSmall
-                url, // coverBig
-                url, // logo
-                url, // screenshotMed
-                url, // screenshotBig
-                url, // screenshotHuge
-                url, // 720p
-                url, // 1080p
-                url, // original
-                url, // coverSmall2x
-                url, // coverBig2x
-                url, // screenshotMed2x
-                url, // screenshotBig2x
-                url, // 720p2x
-                url  // 1080p2x
-            );
+            imageUrls.setMicro(url);
+            imageUrls.setThumb(url);
+            imageUrls.setCoverSmall(url);
+            imageUrls.setLogoMed(url);
+            imageUrls.setScreenshotMed(url);
+            imageUrls.setCoverBig(url);
+            imageUrls.setScreenshotBig(url);
+            imageUrls.setScreenshotHuge(url);
+            imageUrls.setSize720p(url);
+            imageUrls.setSize1080p(url);
+            imageUrls.setMicro2x(url);
+            imageUrls.setThumb2x(url);
+            imageUrls.setCoverSmall2x(url);
+            imageUrls.setLogoMed2x(url);
+            imageUrls.setScreenshotMed2x(url);
+            imageUrls.setCoverBig2x(url);
+            imageUrls.setScreenshotBig2x(url);
+            imageUrls.setScreenshotHuge2x(url);
+            imageUrls.setSize720p2x(url);
+            imageUrls.setSize1080p2x(url);
+            return imageUrls;
         }
 
-        return new GameImageUrls(
-            replaceIgdbSize(url, "t_thumb"),
-            replaceIgdbSize(url, "t_cover_small"),
-            replaceIgdbSize(url, "t_cover_big"),
-            replaceIgdbSize(url, "t_logo_med"),
-            replaceIgdbSize(url, "t_screenshot_med"),
-            replaceIgdbSize(url, "t_screenshot_big"),
-            replaceIgdbSize(url, "t_screenshot_huge"),
-            replaceIgdbSize(url, "t_720p"),
-            replaceIgdbSize(url, "t_1080p"),
-            replaceIgdbSize(url, "t_original"),
-            replaceIgdbSize(url, "t_cover_small_2x"),
-            replaceIgdbSize(url, "t_cover_big_2x"),
-            replaceIgdbSize(url, "t_screenshot_med_2x"),
-            replaceIgdbSize(url, "t_screenshot_big_2x"),
-            replaceIgdbSize(url, "t_720p_2x"),
-            replaceIgdbSize(url, "t_1080p_2x")
-        );
+        imageUrls.setMicro(replaceIgdbSize(url, "t_micro"));
+        imageUrls.setThumb(replaceIgdbSize(url, "t_thumb"));
+        imageUrls.setCoverSmall(replaceIgdbSize(url, "t_cover_small"));
+        imageUrls.setLogoMed(replaceIgdbSize(url, "t_logo_med"));
+        imageUrls.setScreenshotMed(replaceIgdbSize(url, "t_screenshot_med"));
+        imageUrls.setCoverBig(replaceIgdbSize(url, "t_cover_big"));
+        imageUrls.setScreenshotBig(replaceIgdbSize(url, "t_screenshot_big"));
+        imageUrls.setScreenshotHuge(replaceIgdbSize(url, "t_screenshot_huge"));
+        imageUrls.setSize720p(replaceIgdbSize(url, "t_720p"));
+        imageUrls.setSize1080p(replaceIgdbSize(url, "t_1080p"));
+        imageUrls.setMicro2x(replaceIgdbSize(url, "t_micro_2x"));
+        imageUrls.setThumb2x(replaceIgdbSize(url, "t_thumb_2x"));
+        imageUrls.setCoverSmall2x(replaceIgdbSize(url, "t_cover_small_2x"));
+        imageUrls.setLogoMed2x(replaceIgdbSize(url, "t_logo_med_2x"));
+        imageUrls.setScreenshotMed2x(replaceIgdbSize(url, "t_screenshot_med_2x"));
+        imageUrls.setCoverBig2x(replaceIgdbSize(url, "t_cover_big_2x"));
+        imageUrls.setScreenshotBig2x(replaceIgdbSize(url, "t_screenshot_big_2x"));
+        imageUrls.setScreenshotHuge2x(replaceIgdbSize(url, "t_screenshot_huge_2x"));
+        imageUrls.setSize720p2x(replaceIgdbSize(url, "t_720p_2x"));
+        imageUrls.setSize1080p2x(replaceIgdbSize(url, "t_1080p_2x"));
+        return imageUrls;
     }
 
     private String replaceIgdbSize(String url, String size) {

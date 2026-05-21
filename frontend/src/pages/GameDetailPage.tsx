@@ -4,6 +4,7 @@ import type { Game } from '../types';
 import { gameService } from '../services/gameService';
 import { useAuth } from '../context/AuthContext';
 import { CommentsSection } from '../components/CommentSection';
+import questionPlaceholder from '../assets/question_mark.jpg';
 
 const getEmbedUrl = (videoId: string): string => {
     const baseUrl = `https://www.youtube.com/embed/${videoId}`;
@@ -68,6 +69,23 @@ export function GameDetailPage() {
     const isYoutubeTrailer = trailerUrl.includes('youtube.com') || trailerUrl.includes('youtu.be') || trailerUrl.includes('/embed/');
     const videoId = useMemo(() => (isYoutubeTrailer ? extractVideoId(trailerUrl) : ''), [isYoutubeTrailer, trailerUrl]);
     const embedUrl = useMemo(() => (isYoutubeTrailer ? getEmbedUrl(videoId) : ''), [isYoutubeTrailer, videoId]);
+    const mediaImageUrl = useMemo(() => {
+        if (!game) {
+            return questionPlaceholder;
+        }
+        const imageUrls = game.imageUrls;
+        return (
+            imageUrls?.screenshotBig ||
+            imageUrls?.screenshotHuge ||
+            imageUrls?.size1080p ||
+            imageUrls?.size720p ||
+            imageUrls?.coverBig ||
+            imageUrls?.coverSmall ||
+            imageUrls?.thumb ||
+            game.imageUrl ||
+            questionPlaceholder
+        );
+    }, [game]);
 
     const toggleLike = async () => {
         if (!game || !isAuthenticated) return;
@@ -138,7 +156,7 @@ export function GameDetailPage() {
                             />
                         )
                     ) : (
-                        <img src={game.imageUrl} alt={game.title} />
+                        <img src={mediaImageUrl} alt={game.title} />
                     )}
                 </div>
 
