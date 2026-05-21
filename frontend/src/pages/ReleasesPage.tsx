@@ -105,7 +105,11 @@ export function ReleasesPage() {
             </section>
 
             <section className="releases-day-panel">
-                <h2>{selectedDate ? `Lanzamientos del ${selectedDate}` : 'Selecciona un día'}</h2>
+                <h2>
+                    {selectedDate
+                        ? `Lanzamientos del ${new Date(selectedDate).toLocaleDateString('es-ES')}`
+                        : 'Selecciona un día'}
+                </h2>
                 {selectedDate && selectedDayGames.length === 0 && <p className="calendar-feedback">No hay juegos ese día.</p>}
                 {selectedDayGames.length > 0 && (
                     <div className="release-games-grid">
