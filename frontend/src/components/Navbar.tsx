@@ -61,7 +61,7 @@ export function Navbar() {
                             aria-expanded={menuOpen}
                         >
                             <span className="profile-icon">
-                                <i className="bi bi-list"></i>
+                                <i className="bi bi-person-circle"></i>
                             </span>
                             <span>Perfil</span>
                         </button>
