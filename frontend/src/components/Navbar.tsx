@@ -27,6 +27,7 @@ export function Navbar() {
     const handleLogout = (): void => {
         setMenuOpen(false);
         logout();
+        navigate('/', { replace: true });
     };
 
     return (
