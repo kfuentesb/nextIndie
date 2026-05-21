@@ -206,7 +206,7 @@ export function VideoFeed({ game, isActive }: VideoFeedProps) {
                     <p className="game-meta">
                         {game.developer} • {genreText}
                     </p>
-                    <p className="game-description">{game.description}</p>
+                    {/* <p className="game-description">{game.description}</p> */}
                 </div>
 
                 <div className="game-actions">
