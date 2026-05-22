@@ -1877,7 +1877,6 @@ html, body, #root {
     min-height: 46px;
     height: 46px;
     overflow: visible;
-    /* Quita/NO incluyas ninguna regla tipo :has(...) o .calendar-open */
   }
   .calendar-toggle-btn {
     width: 100%;
@@ -1930,6 +1929,14 @@ html, body, #root {
   }
   .calendar-header h1 {
     font-size: 1em;
+  }
+
+  .releases-page {
+    grid-template-columns: 1fr; /* Una sola columna para que no compitan en ancho */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
   }
 
 }
