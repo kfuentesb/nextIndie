@@ -1833,7 +1833,7 @@ html, body, #root {
   margin: 4px 0;
 }
 
-/* Responsive: ajustes del dropdown en móvil */
+/* RESPONSIVE TAMAÑO 768px or less */
 @media (max-width: 768px) {
   .profile-dropdown {
     right: 0;
@@ -1868,4 +1868,68 @@ html, body, #root {
     padding-top: 40px;
     min-height: auto;
   }
+
+  /* POPOVER calendario */
+  .calendar-mobile-wrapper {
+    position: relative;
+    margin-bottom: 18px;
+    z-index: 30;
+    min-height: 46px;
+    height: 46px;
+    overflow: visible;
+    /* Quita/NO incluyas ninguna regla tipo :has(...) o .calendar-open */
+  }
+  .calendar-toggle-btn {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 10px;
+    background: var(--surface-dark);
+    color: var(--primary-color);
+    font-size: 17px;
+    border: 1px solid var(--border-color);
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 46px;
+    height: 46px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .calendar-mobile-popover {
+    position: absolute;
+    top: 48px; /* justo debajo del botón */
+    left: 0;
+    right: 0;
+    background: var(--background-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    z-index: 400;
+    min-height: 290px; /* Alto mínimo de tu calendario flotante (o el que guste) */
+    max-height: 420px;
+    padding: 12px 7px 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.28);
+    animation: fadeInCalendar 0.16s;
+    overflow-y: auto;
+  }
+  @keyframes fadeInCalendar {
+    from { opacity: 0; transform: translateY(12px);}
+    to { opacity: 1; transform: none;}
+  }
+  .calendar-grid {
+    gap: 3px;
+  }
+  .calendar-day {
+    min-height: 44px;
+    font-size: 16px;
+    border-radius: 7px;
+    padding: 2px;
+  }
+  .calendar-header h1 {
+    font-size: 1em;
+  }
+
 }
