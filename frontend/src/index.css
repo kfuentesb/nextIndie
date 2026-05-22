@@ -1848,14 +1848,24 @@ html, body, #root {
     padding: 8px 12px;
     gap: 6px;
   }
-}
-
-/* OCULTAR logo y perfil en vista movil */
-@media (max-width: 768px) {
+  .navbar-menu-right .btn { /* Achicar iniciar sesión btn */
+    padding: 6px 10px;
+    font-size: 12px;
+    min-height: 32px;
+    height: 32px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
   .navbar-brand {
-    display: none !important;
+  display: none !important;
   }
   .profile-btn span:not(.profile-icon) {
     display: none !important;
+  }
+
+  /* LOGIN page móvil */
+  .auth-container { /* Le reduzco el padding del container */
+    padding-top: 40px;
+    min-height: auto;
   }
 }
