@@ -122,7 +122,7 @@ export function ReleasesPage() {
                 ? `Calendario: ${new Date(selectedDate).toLocaleDateString("es-ES")}`
                 : "Abrir calendario"}
               <span style={{ marginLeft: 8 }} aria-hidden>
-                📅
+                <i className="bi bi-calendar-event"></i>
               </span>
             </button>
             {calendarOpen && (
