@@ -43,7 +43,7 @@ const emptyForm: RequestFormState = {
 export function ProfilePage() {
     const { user, isAuthenticated } = useAuth();
     const isCompany = user?.role === 'EMPRESA';
-    const [activeTab, setActiveTab] = useState<'request' | 'games'>('request');
+    const [activeTab, setActiveTab] = useState<'request' | 'games'>('games');
     const [formData, setFormData] = useState<RequestFormState>(emptyForm);
     const [genres, setGenres] = useState<LookupItem[]>([]);
     const [platforms, setPlatforms] = useState<LookupItem[]>([]);
@@ -253,22 +253,22 @@ export function ProfilePage() {
             <header className="profile-header">
                 <div>
                     <h1>Perfil empresa</h1>
-                    <p>Gestiona tus solicitudes y los juegos aprobados.</p>
+                    <p>Publica tus juegos en nuestra plataforma y administra tu catálogo de juegos.</p>
                 </div>
                 <div className="profile-tabs">
-                    <button
-                        type="button"
-                        className={`profile-tab ${activeTab === 'request' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('request')}
-                    >
-                        Solicitar juego
-                    </button>
                     <button
                         type="button"
                         className={`profile-tab ${activeTab === 'games' ? 'active' : ''}`}
                         onClick={() => setActiveTab('games')}
                     >
                         Mis juegos
+                    </button>
+                    <button
+                        type="button"
+                        className={`profile-tab ${activeTab === 'request' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('request')}
+                    >
+                        Solicitar juego
                     </button>
                 </div>
             </header>

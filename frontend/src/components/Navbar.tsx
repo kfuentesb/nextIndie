@@ -75,8 +75,8 @@ export function Navbar() {
                                     className="dropdown-item"
                                     onClick={(): void => goTo('/profile')}
                                 >
-                                    <i className="bi bi-person dropdown-icon"></i>
-                                    Mi perfil
+                                    <i className="bi bi-joystick"></i>
+                                    Mis juegos
                                 </button>
 
                                 <button
