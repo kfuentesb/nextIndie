@@ -146,7 +146,6 @@ export function ProfilePage() {
 
         const payload: GameRequestCreate = {
             title: formData.title.trim(),
-            igdbId: formData.igdbId ? Number(formData.igdbId) : null,
             description: formData.description.trim(),
             trailerUrl: formData.trailerUrl.trim(),
             developer: formData.developer.trim(),

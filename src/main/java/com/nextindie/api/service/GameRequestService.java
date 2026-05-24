@@ -71,7 +71,6 @@ public class GameRequestService {
 
         GameRequest gameRequest = new GameRequest();
         gameRequest.setTitle(request.getTitle().trim());
-        gameRequest.setIgdbId(request.getIgdbId());
         gameRequest.setDescription(request.getDescription().trim());
         gameRequest.setTrailerUrl(request.getTrailerUrl().trim());
         gameRequest.setDeveloper(request.getDeveloper().trim());
@@ -103,16 +102,12 @@ public class GameRequestService {
         if (request.getStatus() != GameRequestStatus.PENDING) {
             throw new RuntimeException("La solicitud ya fue procesada");
         }
-        if (request.getIgdbId() != null && gameRepository.findByIgdbId(request.getIgdbId()).isPresent()) {
-            throw new RuntimeException("Ya existe un juego con ese IGDB ID");
-        }
         if (gameRepository.findByTitleAndReleaseDate(request.getTitle(), request.getReleaseDate()).isPresent()) {
             throw new RuntimeException("Ya existe un juego con ese titulo y fecha");
         }
 
         Game game = new Game();
         game.setTitle(request.getTitle());
-        game.setIgdbId(request.getIgdbId());
         game.setDescription(request.getDescription());
         game.setTrailerUrl(request.getTrailerUrl());
         game.setDeveloper(request.getDeveloper());
@@ -202,7 +197,6 @@ public class GameRequestService {
         return new GameRequestResponse(
                 request.getId(),
                 request.getTitle(),
-                request.getIgdbId(),
                 request.getDescription(),
                 request.getTrailerUrl(),
                 request.getDeveloper(),

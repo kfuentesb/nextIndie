@@ -26,9 +26,6 @@ public class GameRequest {
     @Column(nullable = false)
     private String title;
 
-    @Column(unique = false)
-    private Long igdbId;
-
     @Column(columnDefinition = "TEXT")
     private String description;
 

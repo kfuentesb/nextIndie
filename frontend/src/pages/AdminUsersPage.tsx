@@ -116,7 +116,7 @@ export function AdminUsersPage() {
             if (editingUser?.id === selectedUser.id) {
                 resetForm();
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             setError(err?.response?.data?.message || 'No se pudo eliminar el usuario');
         }
     };

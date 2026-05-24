@@ -16,7 +16,6 @@ import java.util.List;
 public class GameRequestResponse {
     private Long id;
     private String title;
-    private Long igdbId;
     private String description;
     private String trailerUrl;
     private String developer;

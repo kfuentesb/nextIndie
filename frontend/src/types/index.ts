@@ -59,7 +59,6 @@ export type GameRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface GameRequestCreate {
     title: string;
-    igdbId?: number | null;
     description: string;
     trailerUrl: string;
     developer: string;
@@ -76,7 +75,6 @@ export interface GameRequestCreate {
 export interface GameRequestResponse {
     id: number;
     title: string;
-    igdbId?: number | null;
     description: string;
     trailerUrl: string;
     developer: string;
