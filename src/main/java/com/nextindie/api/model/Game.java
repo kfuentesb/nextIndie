@@ -67,6 +67,10 @@ public class Game {
     @Column(name = "title")
     private Set<String> similarGames = new LinkedHashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "requested_by_id")
+    private User requestedBy;
+
     @NotNull
     @Column(nullable = false)
     private LocalDate releaseDate; // Por la idea principal de la WEB será obligatorio de momento

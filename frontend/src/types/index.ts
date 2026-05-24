@@ -50,6 +50,50 @@ export interface PageResponse<T> {
     last: boolean;
 }
 
+export interface LookupItem {
+    id: number;
+    name: string;
+}
+
+export type GameRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface GameRequestCreate {
+    title: string;
+    igdbId?: number | null;
+    description: string;
+    trailerUrl: string;
+    developer: string;
+    gameStatus: string;
+    websiteUrl: string;
+    mainFranchise: string;
+    releaseDate: string;
+    imageUrl?: string;
+    genreIds: number[];
+    platformIds: number[];
+    similarGameIds?: number[];
+}
+
+export interface GameRequestResponse {
+    id: number;
+    title: string;
+    igdbId?: number | null;
+    description: string;
+    trailerUrl: string;
+    developer: string;
+    gameStatus: string;
+    websiteUrl: string;
+    mainFranchise: string;
+    releaseDate: string;
+    imageUrl?: string;
+    status: GameRequestStatus;
+    requestedBy: string;
+    createdAt: string;
+    reviewedAt?: string | null;
+    genres: string[];
+    platforms: string[];
+    similarGames: string[];
+}
+
 export interface Game {
     id: number;
     title: string;

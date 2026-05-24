@@ -106,6 +106,13 @@ public class GameService {
                 .collect(Collectors.toList());
     }
 
+    public List<GameDTO> getCompanyGames(String username) {
+        getUserByUsername(username);
+        return gameRepository.findByRequestedByUsername(username).stream()
+                .map(game -> convertToDTO(game, username))
+                .collect(Collectors.toList());
+    }
+
     public GameFeedResponseDTO getFeedPage(int page, int size) {
         return getFeedPage(page, size, null);
     }

@@ -16,4 +16,5 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     Optional<Game> findByTitleAndReleaseDate(String title, LocalDate releaseDate);
     List<Game> findByReleaseDateBetweenOrderByReleaseDateAsc(LocalDate startDate, LocalDate endDate);
     Page<Game> findByTrailerUrlIsNotNullAndTrailerUrlNot(String trailerUrl, Pageable pageable);
+    List<Game> findByRequestedByUsername(String username);
 }

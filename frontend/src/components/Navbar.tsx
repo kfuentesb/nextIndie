@@ -73,6 +73,16 @@ export function Navbar() {
                                     type="button"
                                     role="menuitem"
                                     className="dropdown-item"
+                                    onClick={(): void => goTo('/profile')}
+                                >
+                                    <i className="bi bi-person dropdown-icon"></i>
+                                    Mi perfil
+                                </button>
+
+                                <button
+                                    type="button"
+                                    role="menuitem"
+                                    className="dropdown-item"
                                     onClick={(): void => goTo('/saved')}
                                 >
                                     <i className="bi bi-bookmark-fill dropdown-icon"></i>
@@ -80,15 +90,26 @@ export function Navbar() {
                                 </button>
 
                                 {user?.role === 'ADMIN' && (
-                                    <button
-                                        type="button"
-                                        role="menuitem"
-                                        className="dropdown-item"
-                                        onClick={(): void => goTo('/admin/users')}
-                                    >
-                                        <i className="bi bi-shield-lock dropdown-icon"></i>
-                                        Administración
-                                    </button>
+                                    <>
+                                        <button
+                                            type="button"
+                                            role="menuitem"
+                                            className="dropdown-item"
+                                            onClick={(): void => goTo('/admin/users')}
+                                        >
+                                            <i className="bi bi-shield-lock dropdown-icon"></i>
+                                            Administración
+                                        </button>
+                                        <button
+                                            type="button"
+                                            role="menuitem"
+                                            className="dropdown-item"
+                                            onClick={(): void => goTo('/admin/game-requests')}
+                                        >
+                                            <i className="bi bi-inbox dropdown-icon"></i>
+                                            Solicitudes de juegos
+                                        </button>
+                                    </>
                                 )}
 
                                 <div className="dropdown-divider" />
