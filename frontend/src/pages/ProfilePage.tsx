@@ -5,6 +5,7 @@ import { gameRequestService } from '../services/gameRequestService';
 import { lookupService } from '../services/lookupService';
 import type { Game, GameRequestCreate, LookupItem } from '../types';
 import { getErrorMessage } from '../utils/error';
+import ImageUploadField from '../components/ImageUpload';
 import questionPlaceholder from '../assets/question_mark.jpg';
 
 type RequestFormState = {
@@ -51,8 +52,12 @@ export function ProfilePage() {
     const [isLoadingLookups, setIsLoadingLookups] = useState(true);
     const [isLoadingGames, setIsLoadingGames] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isImageReading, setIsImageReading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const [selectedGenreId, setSelectedGenreId] = useState('');
+    const [selectedPlatformId, setSelectedPlatformId] = useState('');
+    const [selectedSimilarId, setSelectedSimilarId] = useState('');
 
     useEffect(() => {
         if (!isCompany) {
@@ -111,14 +116,6 @@ export function ProfilePage() {
         }));
     };
 
-    const handleMultiSelect = (event: React.ChangeEvent<HTMLSelectElement>, field: keyof RequestFormState) => {
-        const values = Array.from(event.target.selectedOptions).map((option) => Number(option.value));
-        setFormData((current) => ({
-            ...current,
-            [field]: values
-        }));
-    };
-
     const validateForm = () => {
         if (!formData.title.trim()) return 'El titulo es obligatorio';
         if (!formData.description.trim()) return 'La descripcion es obligatoria';
@@ -132,6 +129,66 @@ export function ProfilePage() {
         if (formData.platformIds.length === 0) return 'Debes seleccionar al menos una plataforma';
         return null;
     };
+
+    const fileToDataUrl = (file: File): Promise<string> => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error('No se pudo leer la imagen'));
+        reader.readAsDataURL(file);
+    });
+
+    const handleImageChange = async (file: File | null) => {
+        if (!file) {
+            setFormData((current) => ({
+                ...current,
+                imageUrl: ''
+            }));
+            return;
+        }
+        setIsImageReading(true);
+        try {
+            const dataUrl = await fileToDataUrl(file);
+            setFormData((current) => ({
+                ...current,
+                imageUrl: dataUrl
+            }));
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'No se pudo leer la imagen'));
+        } finally {
+            setIsImageReading(false);
+        }
+    };
+
+    const addSelectedItem = (
+        field: 'genreIds' | 'platformIds' | 'similarGameIds',
+        value: string,
+        reset: (next: string) => void
+    ) => {
+        if (!value) return;
+        const id = Number(value);
+        if (Number.isNaN(id)) return;
+        setFormData((current) => {
+            if (current[field].includes(id)) {
+                return current;
+            }
+            return {
+                ...current,
+                [field]: [...current[field], id]
+            };
+        });
+        reset('');
+    };
+
+    const removeSelectedItem = (field: 'genreIds' | 'platformIds' | 'similarGameIds', id: number) => {
+        setFormData((current) => ({
+            ...current,
+            [field]: current[field].filter((item) => item !== id)
+        }));
+    };
+
+    const genreMap = useMemo(() => new Map(genres.map((item) => [item.id, item.name])), [genres]);
+    const platformMap = useMemo(() => new Map(platforms.map((item) => [item.id, item.name])), [platforms]);
+    const gameMap = useMemo(() => new Map(games.map((item) => [item.id, item.name])), [games]);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -240,17 +297,6 @@ export function ProfilePage() {
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="form-label">IGDB ID (opcional)</label>
-                                    <input
-                                        className="form-input"
-                                        name="igdbId"
-                                        value={formData.igdbId}
-                                        onChange={handleInputChange}
-                                        inputMode="numeric"
-                                    />
-                                </div>
-
-                                <div className="form-group">
                                     <label className="form-label">Trailer (URL)</label>
                                     <input
                                         className="form-input"
@@ -262,7 +308,7 @@ export function ProfilePage() {
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="form-label">Sitio web</label>
+                                    <label className="form-label">Sitio web (URL)</label>
                                     <input
                                         className="form-input"
                                         name="websiteUrl"
@@ -318,12 +364,13 @@ export function ProfilePage() {
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="form-label">Imagen (URL opcional)</label>
-                                    <input
-                                        className="form-input"
-                                        name="imageUrl"
-                                        value={formData.imageUrl}
-                                        onChange={handleInputChange}
+                                    <ImageUploadField
+                                        label="Imagen"
+                                        fieldName="imageUrl"
+                                        helpText="PNG o JPG, max 5MB."
+                                        maxSizeMB={5}
+                                        valueUrl={formData.imageUrl || null}
+                                        onChange={(file) => void handleImageChange(file)}
                                     />
                                 </div>
                             </div>
@@ -342,65 +389,132 @@ export function ProfilePage() {
 
                             <div className="profile-form-grid">
                                 <div className="form-group">
-                                    <label className="form-label">Generos</label>
-                                    <select
-                                        className="form-input form-select"
-                                        multiple
-                                        value={formData.genreIds.map(String)}
-                                        onChange={(event) => handleMultiSelect(event, 'genreIds')}
-                                        required
-                                    >
-                                        {genres.map((genre) => (
-                                            <option key={genre.id} value={genre.id}>
-                                                {genre.name}
-                                            </option>
+                                    <label className="form-label">Géneros</label>
+                                    <div className="multi-select-row">
+                                        <select
+                                            className="form-input form-select-single"
+                                            value={selectedGenreId}
+                                            onChange={(event) => setSelectedGenreId(event.target.value)}
+                                        >
+                                            <option value="">Selecciona un genero</option>
+                                            {genres.map((genre) => (
+                                                <option key={genre.id} value={genre.id}>
+                                                    {genre.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <button
+                                            type="button"
+                                            className="btn btn-secondary"
+                                            onClick={() => addSelectedItem('genreIds', selectedGenreId, setSelectedGenreId)}
+                                            disabled={!selectedGenreId || formData.genreIds.includes(Number(selectedGenreId))}
+                                        >
+                                            Añadir
+                                        </button>
+                                    </div>
+                                    <div className="selected-tags">
+                                        {formData.genreIds.length === 0 && (
+                                            <span className="selected-empty">Sin generos</span>
+                                        )}
+                                        {formData.genreIds.map((id) => (
+                                            <span key={id} className="selected-tag">
+                                                {genreMap.get(id) ?? `#${id}`}
+                                                <button type="button" onClick={() => removeSelectedItem('genreIds', id)}>
+                                                    ×
+                                                </button>
+                                            </span>
                                         ))}
-                                    </select>
+                                    </div>
                                 </div>
 
                                 <div className="form-group">
                                     <label className="form-label">Plataformas</label>
-                                    <select
-                                        className="form-input form-select"
-                                        multiple
-                                        value={formData.platformIds.map(String)}
-                                        onChange={(event) => handleMultiSelect(event, 'platformIds')}
-                                        required
-                                    >
-                                        {platforms.map((platform) => (
-                                            <option key={platform.id} value={platform.id}>
-                                                {platform.name}
-                                            </option>
+                                    <div className="multi-select-row">
+                                        <select
+                                            className="form-input form-select-single"
+                                            value={selectedPlatformId}
+                                            onChange={(event) => setSelectedPlatformId(event.target.value)}
+                                        >
+                                            <option value="">Selecciona una plataforma</option>
+                                            {platforms.map((platform) => (
+                                                <option key={platform.id} value={platform.id}>
+                                                    {platform.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <button
+                                            type="button"
+                                            className="btn btn-secondary"
+                                            onClick={() => addSelectedItem('platformIds', selectedPlatformId, setSelectedPlatformId)}
+                                            disabled={!selectedPlatformId || formData.platformIds.includes(Number(selectedPlatformId))}
+                                        >
+                                            Añadir
+                                        </button>
+                                    </div>
+                                    <div className="selected-tags">
+                                        {formData.platformIds.length === 0 && (
+                                            <span className="selected-empty">Sin plataformas</span>
+                                        )}
+                                        {formData.platformIds.map((id) => (
+                                            <span key={id} className="selected-tag">
+                                                {platformMap.get(id) ?? `#${id}`}
+                                                <button type="button" onClick={() => removeSelectedItem('platformIds', id)}>
+                                                    ×
+                                                </button>
+                                            </span>
                                         ))}
-                                    </select>
+                                    </div>
                                 </div>
 
                                 <div className="form-group">
                                     <label className="form-label">Juegos similares (opcional)</label>
-                                    <select
-                                        className="form-input form-select"
-                                        multiple
-                                        value={formData.similarGameIds.map(String)}
-                                        onChange={(event) => handleMultiSelect(event, 'similarGameIds')}
-                                    >
-                                        {games.map((game) => (
-                                            <option key={game.id} value={game.id}>
-                                                {game.name}
-                                            </option>
+                                    <div className="multi-select-row">
+                                        <select
+                                            className="form-input form-select-single"
+                                            value={selectedSimilarId}
+                                            onChange={(event) => setSelectedSimilarId(event.target.value)}
+                                        >
+                                            <option value="">Selecciona un juego</option>
+                                            {games.map((game) => (
+                                                <option key={game.id} value={game.id}>
+                                                    {game.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <button
+                                            type="button"
+                                            className="btn btn-secondary"
+                                            onClick={() => addSelectedItem('similarGameIds', selectedSimilarId, setSelectedSimilarId)}
+                                            disabled={!selectedSimilarId || formData.similarGameIds.includes(Number(selectedSimilarId))}
+                                        >
+                                            Añadir
+                                        </button>
+                                    </div>
+                                    <div className="selected-tags">
+                                        {formData.similarGameIds.length === 0 && (
+                                            <span className="selected-empty">Sin similares</span>
+                                        )}
+                                        {formData.similarGameIds.map((id) => (
+                                            <span key={id} className="selected-tag">
+                                                {gameMap.get(id) ?? `#${id}`}
+                                                <button type="button" onClick={() => removeSelectedItem('similarGameIds', id)}>
+                                                    ×
+                                                </button>
+                                            </span>
                                         ))}
-                                    </select>
+                                    </div>
                                 </div>
                             </div>
 
                             <div className="profile-actions">
-                                <button className="btn btn-primary" type="submit" disabled={isSubmitting}>
-                                    {isSubmitting ? 'Enviando...' : 'Enviar solicitud'}
+                                <button className="btn btn-primary" type="submit" disabled={isSubmitting || isImageReading}>
+                                    {isSubmitting || isImageReading ? 'Enviando...' : 'Enviar solicitud'}
                                 </button>
                                 <button
                                     className="btn btn-secondary"
                                     type="button"
                                     onClick={() => setFormData(emptyForm)}
-                                    disabled={isSubmitting}
+                                    disabled={isSubmitting || isImageReading}
                                 >
                                     Limpiar
                                 </button>
