@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { gameRequestService } from '../services/gameRequestService';
 import { lookupService } from '../services/lookupService';
 import type { Game, GameRequestCreate, LookupItem } from '../types';
+import { getErrorMessage } from '../utils/error';
 import questionPlaceholder from '../assets/question_mark.jpg';
 
 type RequestFormState = {
@@ -71,8 +72,8 @@ export function ProfilePage() {
                 setGenres(genreItems);
                 setPlatforms(platformItems);
                 setGames(gameItems);
-            } catch (err: any) {
-                setError(err?.response?.data?.message || 'No se pudieron cargar los datos del formulario');
+            } catch (err: unknown) {
+                setError(getErrorMessage(err, 'No se pudieron cargar los datos del formulario'));
             } finally {
                 setIsLoadingLookups(false);
             }
@@ -92,8 +93,8 @@ export function ProfilePage() {
             try {
                 const data = await gameRequestService.getMyGames();
                 setMyGames(data);
-            } catch (err: any) {
-                setError(err?.response?.data?.message || 'No se pudieron cargar tus juegos');
+            } catch (err: unknown) {
+                setError(getErrorMessage(err, 'No se pudieron cargar tus juegos'));
             } finally {
                 setIsLoadingGames(false);
             }
@@ -163,8 +164,8 @@ export function ProfilePage() {
             await gameRequestService.createRequest(payload);
             setSuccess('Solicitud enviada. Un administrador revisara tu juego.');
             setFormData(emptyForm);
-        } catch (err: any) {
-            setError(err?.response?.data?.message || 'No se pudo enviar la solicitud');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'No se pudo enviar la solicitud'));
         } finally {
             setIsSubmitting(false);
         }

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { adminUserService } from '../services/adminUserService';
 import type { AdminUser, AdminUserRequest, UserRole } from '../types';
+import { getErrorMessage } from '../utils/error';
 
 const roles: UserRole[] = ['ADMIN', 'MODERADOR', 'EMPRESA', 'NORMAL'];
 
@@ -37,8 +38,8 @@ export function AdminUsersPage() {
             setPage(response.number);
             setTotalPages(response.totalPages);
             setTotalElements(response.totalElements);
-        } catch (err: any) {
-            setError(err?.response?.data?.message || 'No se pudieron cargar los usuarios');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'No se pudieron cargar los usuarios'));
         } finally {
             setIsLoading(false);
         }
@@ -97,8 +98,8 @@ export function AdminUsersPage() {
             }
             resetForm();
             await loadUsers(editingUser ? page : 0);
-        } catch (err: any) {
-            setError(err?.response?.data?.message || 'No se pudo guardar el usuario');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'No se pudo guardar el usuario'));
         } finally {
             setIsSaving(false);
         }
@@ -117,7 +118,7 @@ export function AdminUsersPage() {
                 resetForm();
             }
         } catch (err: unknown) {
-            setError(err?.response?.data?.message || 'No se pudo eliminar el usuario');
+            setError(getErrorMessage(err, 'No se pudo eliminar el usuario'));
         }
     };
 

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { gameRequestService } from '../services/gameRequestService';
 import type { GameRequestResponse, GameRequestStatus } from '../types';
+import { getErrorMessage } from '../utils/error';
 
 const statusOptions: GameRequestStatus[] = ['PENDING', 'APPROVED', 'REJECTED'];
 
@@ -20,8 +21,8 @@ export function AdminGameRequestsPage() {
         try {
             const data = await gameRequestService.getAdminRequests(status);
             setRequests(data);
-        } catch (err: any) {
-            setError(err?.response?.data?.message || 'No se pudieron cargar las solicitudes');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'No se pudieron cargar las solicitudes'));
         } finally {
             setIsLoading(false);
         }
@@ -40,8 +41,8 @@ export function AdminGameRequestsPage() {
         try {
             await gameRequestService.approveRequest(requestId);
             await loadRequests();
-        } catch (err: any) {
-            setError(err?.response?.data?.message || 'No se pudo aprobar la solicitud');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'No se pudo aprobar la solicitud'));
         }
     };
 
@@ -52,8 +53,8 @@ export function AdminGameRequestsPage() {
         try {
             await gameRequestService.rejectRequest(requestId);
             await loadRequests();
-        } catch (err: any) {
-            setError(err?.response?.data?.message || 'No se pudo rechazar la solicitud');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'No se pudo rechazar la solicitud'));
         }
     };
 

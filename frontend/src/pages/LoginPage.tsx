@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getErrorMessage } from '../utils/error';
 
 export function LoginPage() {
     const navigate = useNavigate();
@@ -28,14 +29,14 @@ export function LoginPage() {
                 await login({ username: formData.username, password: formData.password });
             }
             navigate('/');
-        } catch (err: any) {
-            const backendMessage = String(err?.response?.data?.message ?? '').toLowerCase();
+        } catch (err: unknown) {
+            const backendMessage = getErrorMessage(err, '').toLowerCase();
             if (backendMessage.includes('nombre de usuario ya existe')) {
                 setError('Ese nombre de usuario ya existe. Usa otro para registrarte.');
             } else if (backendMessage.includes('email ya está registrado') || backendMessage.includes('email ya esta registrado')) {
                 setError('Ese correo ya está registrado. Usa otro correo para registrarte.');
             } else {
-                setError(err?.response?.data?.message || 'Error en la autenticación');
+                setError(getErrorMessage(err, 'Error en la autenticación'));
             }
         } finally {
             setIsLoading(false);
