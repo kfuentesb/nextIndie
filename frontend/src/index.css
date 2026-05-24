@@ -1809,57 +1809,6 @@ html, body, #root {
   color: var(--text-secondary);
 }
 
-/* =========================================
-   RESPONSIVE (MÓVILES Y TABLETS)
-   ========================================= */
-@media (max-width: 768px) {
-  .profile-page {
-    padding: 20px 16px;
-  }
-
-  .profile-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-
-  .profile-panel {
-    padding: 20px;
-  }
-
-  .profile-form-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .multi-select-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .multi-select-row button {
-    width: 100%;
-    min-height: 44px; /* Mejor área de toque en móviles */
-  }
-
-  .profile-actions {
-    flex-direction: column;
-  }
-  
-  .profile-actions button {
-    width: 100%;
-  }
-
-  .profile-games-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 16px;
-  }
-
-  .profile-game-cover {
-    height: 220px;
-  }
-}
-
 .admin-requests-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -1943,119 +1892,7 @@ html, body, #root {
   border-color: var(--primary-color);
   color: var(--text-primary);
   background: rgba(102, 126, 234, 0.15);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .releases-page {
-    grid-template-columns: 1fr;
-  }
-
-  .release-games-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .game-detail-hero {
-    grid-template-columns: 1fr;
-  }
-
-  .game-detail-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .saved-page {
-    padding: 16px;
-  }
-
-  .ranking-page {
-    padding: 16px;
-  }
-
-  .ranking-podium {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .admin-page {
-    padding: 16px;
-  }
-
-  .admin-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .admin-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .admin-form-panel {
-    position: static;
-  }
-
-  .saved-games-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .navbar {
-    padding: 0 12px;
-    gap: 10px;
-  }
-
-  .logo-text {
-    font-size: 18px;
-  }
-
-  .navbar-tabs {
-    position: static;
-    transform: none;
-    gap: 4px;
-  }
-
-  .nav-tab {
-    font-size: 12px;
-    padding: 6px 8px;
-  }
-
-  .video-info {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 30px 20px 80px;
-  }
-
-  .game-details {
-    max-width: 100%;
-  }
-
-  .game-title {
-    font-size: 24px;
-  }
-
-  .game-actions {
-    flex-direction: row;
-    position: absolute;
-    right: 20px;
-    bottom: 100px;
-  }
-
-  .action-btn {
-    width: 50px;
-    height: 50px;
-  }
-
-  .action-btn .label {
-    display: none;
-  }
-
-  .navigation-hint,
-  .slide-counter {
-    display: none;
-  }
-
-  .auth-box {
-    padding: 30px 20px;
-  }
+  
 }
 
 /* Perfil Dropdown (Navbar) */
@@ -2224,8 +2061,118 @@ html, body, #root {
   margin: 4px 0;
 }
 
-/* RESPONSIVE TAMAÑO 768px or less */
+/* Responsive */
 @media (max-width: 768px) {
+  .releases-page {
+    grid-template-columns: 1fr;
+  }
+
+  .release-games-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .game-detail-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .game-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .saved-page {
+    padding: 16px;
+  }
+
+  .ranking-page {
+    padding: 16px;
+  }
+
+  .ranking-podium {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .admin-page {
+    padding: 16px;
+  }
+
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-form-panel {
+    position: static;
+  }
+
+  .saved-games-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .navbar {
+    padding: 0 12px;
+    gap: 10px;
+  }
+
+  .logo-text {
+    font-size: 18px;
+  }
+
+  .navbar-tabs {
+    position: static;
+    transform: none;
+    gap: 4px;
+  }
+
+  .nav-tab {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  .video-info {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 30px 20px 80px;
+  }
+
+  .game-details {
+    max-width: 100%;
+  }
+
+  .game-title {
+    font-size: 24px;
+  }
+
+  .game-actions {
+    flex-direction: row;
+    position: absolute;
+    right: 20px;
+    bottom: 100px;
+  }
+
+  .action-btn {
+    width: 50px;
+    height: 50px;
+  }
+
+  .action-btn .label {
+    display: none;
+  }
+
+  .navigation-hint,
+  .slide-counter {
+    display: none;
+  }
+
+  .auth-box {
+    padding: 30px 20px;
+  }
+
   .profile-dropdown {
     right: 0;
     min-width: 200px;
@@ -2328,5 +2275,51 @@ html, body, #root {
     flex-direction: column;
     gap: 15px;
     padding: 15px;
+  }
+
+  .profile-page {
+    padding: 20px 16px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .profile-panel {
+    padding: 20px;
+  }
+
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .multi-select-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .multi-select-row button {
+    width: 100%;
+    min-height: 44px; /* Mejor área de toque en móviles */
+  }
+
+  .profile-actions {
+    flex-direction: column;
+  }
+  
+  .profile-actions button {
+    width: 100%;
+  }
+
+  .profile-games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+  }
+
+  .profile-game-cover {
+    height: 220px;
   }
 }
