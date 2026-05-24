@@ -1564,12 +1564,18 @@ html, body, #root {
   padding: 32px;
 }
 
+/* 
+   Página de Solicitud de juegos
+*/
 .profile-page {
   min-height: calc(100vh - 60px);
-  padding: 24px;
+  padding: 32px 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .profile-state {
@@ -1584,107 +1590,84 @@ html, body, #root {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .profile-header h1 {
-  font-size: 28px;
+  font-size: 32px;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
 }
 
+/* Tabs estilo Pill Modernos */
 .profile-tabs {
-  display: flex;
-  gap: 10px;
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px;
+  border-radius: 12px;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow-x: auto;
+  max-width: 100%;
+  scrollbar-width: none; /* Oculta scrollbar en Firefox */
+}
+.profile-tabs::-webkit-scrollbar {
+  display: none; /* Oculta scrollbar en Chrome/Safari */
 }
 
 .profile-tab {
-  border: 1px solid var(--border-color);
+  border: none;
   background: transparent;
   color: var(--text-secondary);
-  border-radius: 999px;
-  padding: 8px 16px;
+  border-radius: 8px;
+  padding: 10px 20px;
   cursor: pointer;
   font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.profile-tab:hover:not(.active) {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .profile-tab.active {
-  color: var(--text-primary);
-  border-color: var(--primary-color);
-  background: rgba(102, 126, 234, 0.15);
+  color: white;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
+/* Panel principal */
 .profile-panel {
   background: var(--surface-dark);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .profile-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.upload-field {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: #141414;
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 12px;
-}
-
-.upload-field .form-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  font-size: 12px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.upload-badge {
-  background: rgba(34, 197, 94, 0.2);
-  color: #22c55e;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 10px;
-}
-
-.upload-preview {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.upload-image {
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
-  width: 100%;
-}
-
-.upload-empty {
-  padding: 16px;
-  text-align: center;
-  color: var(--text-muted);
-  background: #0f0f0f;
-  border-radius: 8px;
-  border: 1px dashed var(--border-color);
-  font-size: 12px;
+  gap: 20px;
 }
 
 .profile-form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
 }
 
+/* Selectores múltiples */
 .multi-select-row {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
 }
 
@@ -1696,101 +1679,185 @@ html, body, #root {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 .selected-tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: #1a1a1a;
-  border: 1px solid var(--border-color);
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 12px;
-  color: var(--text-secondary);
+  gap: 8px;
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--primary-color);
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.selected-tag:hover {
+  border-color: var(--primary-color);
+  background: rgba(102, 126, 234, 0.2);
 }
 
 .selected-tag button {
   border: none;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 1;
   cursor: pointer;
+  padding: 0 2px;
+  border-radius: 4px;
+  transition: color 0.2s;
 }
 
 .selected-tag button:hover {
-  color: var(--text-primary);
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .selected-empty {
   color: var(--text-muted);
-  font-size: 12px;
-}
-
-.form-textarea {
-  resize: vertical;
-}
-
-.form-select {
-  min-height: 140px;
+  font-size: 13px;
+  font-style: italic;
 }
 
 .profile-actions {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  margin-top: 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
 }
 
 .profile-loading {
   text-align: center;
-  padding: 20px;
+  padding: 40px;
 }
 
 .profile-empty {
   text-align: center;
   color: var(--text-secondary);
-  padding: 20px;
+  padding: 40px;
+  font-size: 15px;
 }
 
+/* Cuadrícula de Mis Juegos */
 .profile-games-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
 }
 
 .profile-game-card {
   background: var(--surface-dark);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-game-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--primary-color);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
 }
 
 .profile-game-link {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   text-decoration: none;
   color: inherit;
 }
 
 .profile-game-cover {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  height: 280px;
   object-fit: cover;
   display: block;
+  border-bottom: 1px solid var(--border-color);
+  transition: transform 0.5s ease;
+}
+
+.profile-game-card:hover .profile-game-cover {
+  transform: scale(1.05);
 }
 
 .profile-game-info {
-  padding: 10px;
+  padding: 16px;
+  background: var(--surface-dark);
+  position: relative;
+  z-index: 2;
+  flex: 1;
 }
 
 .profile-game-info h3 {
-  font-size: 14px;
-  margin-bottom: 4px;
+  font-size: 16px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .profile-game-info p {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-secondary);
+}
+
+/* =========================================
+   RESPONSIVE (MÓVILES Y TABLETS)
+   ========================================= */
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 20px 16px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .profile-panel {
+    padding: 20px;
+  }
+
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .multi-select-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .multi-select-row button {
+    width: 100%;
+    min-height: 44px; /* Mejor área de toque en móviles */
+  }
+
+  .profile-actions {
+    flex-direction: column;
+  }
+  
+  .profile-actions button {
+    width: 100%;
+  }
+
+  .profile-games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+  }
+
+  .profile-game-cover {
+    height: 220px;
+  }
 }
 
 .admin-requests-grid {
