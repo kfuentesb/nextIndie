@@ -2383,6 +2383,18 @@ html, body, #root {
   vertical-align: middle;
 }
 
+/* MODALES - TAMAÑOS RESPONSIVE */
+
+/* Modal de formulario de usuario */
+.admin-modal--user-form {
+  width: min(520px, 92vw);
+}
+
+/* Modal de confirmación de eliminación */
+.admin-modal--confirm {
+  width: min(440px, 92vw);
+}
+
 
 /* =================== RESPONSIVE ===================================== */
 @media (max-width: 768px) {
@@ -2792,4 +2804,103 @@ html, body, #root {
     width: 100%;
   }
 
+  /* Ventanas modales */
+  
+  /* Overlay: menos padding, modal pegado abajo */
+  .admin-modal-overlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  /* Todos los modales: ancho completo, estilo bottom-sheet */
+  .admin-modal,
+  .admin-modal--user-form,
+  .admin-modal--confirm,
+  .admin-modal-sm {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    max-height: 85vh;
+    margin: 0;
+    animation: slideUpModal 0.25s ease-out;
+  }
+
+  /* Animación de entrada desde abajo */
+  @keyframes slideUpModal {
+    from {
+      transform: translateY(100%);
+      opacity: 0.8;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* Header más compacto */
+  .admin-modal-header {
+    padding: 14px 16px 0;
+  }
+
+  .admin-modal-title {
+    font-size: 16px;
+  }
+
+  .admin-modal-close {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  /* Formulario con menos padding */
+  .admin-modal-form {
+    padding: 0 16px 16px;
+    gap: 12px;
+  }
+
+  /* Body con scroll limitado */
+  .admin-modal-body {
+    max-height: 55vh;
+    gap: 12px;
+  }
+
+  /* Inputs compactos, 16px evita zoom en iOS Safari */
+  .admin-modal-body .form-input {
+    padding: 10px 12px;
+    font-size: 16px;
+  }
+
+  .admin-modal-body .form-label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .admin-modal-body .form-group {
+    margin-bottom: 12px;
+  }
+
+  /* Botones apilados, primario abajo (fácil de pulsar) */
+  .admin-modal-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+    padding-top: 8px;
+  }
+
+  .admin-modal-actions .btn {
+    width: 100%;
+    min-width: auto;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  /* Modal de confirmación: texto legible */
+  .admin-modal--confirm .admin-modal-body p {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  /* Select de roles */
+  .admin-modal-body select.form-input {
+    height: 44px;
+  }
 }

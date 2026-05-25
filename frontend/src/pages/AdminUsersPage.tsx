@@ -366,7 +366,7 @@ export function AdminUsersPage() {
                     {isFormModalOpen && (
                         <div className="admin-modal-overlay" onClick={closeFormModal} role="presentation">
                             <div
-                                className="admin-modal"
+                                className="admin-modal admin-modal--user-form"
                                 role="dialog"
                                 aria-modal="true"
                                 aria-labelledby="admin-user-modal-title"
@@ -454,7 +454,7 @@ export function AdminUsersPage() {
                     {isDeleteModalOpen && pendingDelete && (
                         <div className="admin-modal-overlay" onClick={closeDeleteModal} role="presentation">
                             <div
-                                className="admin-modal admin-modal-sm"
+                                className="admin-modal admin-modal--confirm"
                                 role="dialog"
                                 aria-modal="true"
                                 aria-labelledby="admin-delete-modal-title"
