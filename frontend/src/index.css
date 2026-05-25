@@ -2356,6 +2356,33 @@ html, body, #root {
   margin-top: 8px;
 }
 
+/* Contenedor que evita que la tabla rompa el layout general */
+.admin-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  background: var(--surface-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 20px;
+  /* Desplazamiento fluido en iOS */
+  -webkit-overflow-scrolling: touch; 
+}
+
+.admin-table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+/* Evita que los textos se rompan en múltiples líneas dentro de las celdas */
+.admin-table-wrapper th,
+.admin-table-wrapper td {
+  padding: 14px 16px;
+  white-space: nowrap; 
+  vertical-align: middle;
+}
+
 
 /* =================== RESPONSIVE ===================================== */
 @media (max-width: 768px) {
@@ -2622,6 +2649,18 @@ html, body, #root {
     min-width: 420px;
   }
 
+    /* Tabla de usuarios - ancho mínimo propio */
+  .admin-users-table {
+    min-width: 520px;
+  }
+
+  /* Wrapper scrollable para tabla de usuarios */
+  .admin-users-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+  }
+
   .admin-col-franchise,
   .admin-col-status {
     display: none;
@@ -2687,4 +2726,70 @@ html, body, #root {
     padding: 12px 28px;
     font-size: 0.95rem;
   }
+
+  /* TABLA VER USUARIOS */
+    .admin-users-table {
+    min-width: 360px;
+  }
+
+  /* Ocultar columna Email en móvil */
+  .admin-users-table th:nth-child(2),
+  .admin-users-table td:nth-child(2) {
+    display: none;
+  }
+
+  /* Reducir padding de celdas */
+  .admin-users-table th,
+  .admin-users-table td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+
+  /* Ajustar pill de rol */
+  .admin-users-table .role-pill {
+    min-height: 24px;
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+
+  /* Botones de acción en fila, más compactos */
+  .admin-users-table .admin-row-actions {
+    flex-direction: row;
+    gap: 6px;
+  }
+
+  .admin-users-table .table-action {
+    padding: 4px 8px;
+    font-size: 12px;
+    min-height: 28px;
+    border-radius: 4px;
+  }
+
+  /* Header de usuarios apilado */
+  .admin-users-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px;
+  }
+
+  .admin-users-header .profile-tabs {
+    width: 100%;
+  }
+
+  .admin-users-header .profile-tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  /* Toolbar de usuarios */
+  .admin-toolbar-users {
+    justify-content: stretch;
+  }
+
+  .admin-toolbar-users .admin-toolbar-group {
+    width: 100%;
+  }
+
 }

@@ -304,14 +304,14 @@ export function AdminUsersPage() {
                                 </div>
                             ) : (
                                 <>
-                                    <div className="admin-table-wrap">
-                                        <table className="admin-table">
+                                    <div className="admin-table-wrap admin-users-table-wrap">
+                                        <table className="admin-table admin-users-table">
                                             <thead>
                                                 <tr>
-                                                    <th>Usuario</th>
-                                                    <th>Email</th>
-                                                    <th>Rol</th>
-                                                    <th>Acciones</th>
+                                                    <th className="admin-col-user">Usuario</th>
+                                                    <th className="admin-col-email">Email</th>
+                                                    <th className="admin-col-role">Rol</th>
+                                                    <th className="admin-col-actions">Acciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
