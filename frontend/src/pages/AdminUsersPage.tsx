@@ -5,6 +5,7 @@ import { adminUserService } from '../services/adminUserService';
 import { gameService } from '../services/gameService';
 import type { AdminUser, AdminUserRequest, Game, UserRole } from '../types';
 import { getErrorMessage } from '../utils/error';
+import { ForbiddenPage } from './ForbiddenPage';
 
 const roles: UserRole[] = ['ADMIN', 'MODERADOR', 'EMPRESA', 'NORMAL'];
 
@@ -250,12 +251,7 @@ export function AdminUsersPage() {
     }
 
     if (!isAdmin) {
-        return (
-            <div className="admin-page admin-state">
-                <p>No tienes permisos para acceder al panel de administracion.</p>
-                <Link className="btn btn-secondary" to="/">Volver al feed</Link>
-            </div>
-        );
+        return <ForbiddenPage />;
     }
 
     return (

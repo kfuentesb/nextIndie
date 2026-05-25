@@ -2389,6 +2389,48 @@ html, body, #root {
   margin-top: 8px;
 }
 
+/* FORBIDDEN PAGE (403) */
+.forbidden-page {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(circle at top, rgba(239, 68, 68, 0.12), transparent 60%),
+    linear-gradient(135deg, var(--background-dark) 0%, #0a0a0a 100%);
+}
+
+.forbidden-card {
+  background: var(--surface-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 32px;
+  width: min(520px, 92vw);
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.forbidden-code {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  margin: 0 0 12px;
+  color: #ef4444;
+}
+
+.forbidden-title {
+  margin: 0 0 10px;
+  color: var(--text-primary);
+}
+
+.forbidden-subtitle {
+  margin: 0 0 20px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.forbidden-btn {
+  min-width: 200px;
+}
+
 /* Contenedor que evita que la tabla rompa el layout general */
 .admin-table-wrapper {
   width: 100%;

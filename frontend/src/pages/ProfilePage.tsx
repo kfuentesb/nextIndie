@@ -7,6 +7,7 @@ import type { Game, GameRequestCreate, LookupItem } from '../types';
 import { getErrorMessage } from '../utils/error';
 import ImageUploadField from '../components/ImageUpload';
 import questionPlaceholder from '../assets/question_mark.jpg';
+import { ForbiddenPage } from './ForbiddenPage';
 
 type RequestFormState = {
     title: string;
@@ -240,12 +241,7 @@ export function ProfilePage() {
     }
 
     if (!canViewGames) {
-        return (
-            <div className="profile-page profile-state">
-                <p>Esta seccion es exclusiva para empresas.</p>
-                <Link className="btn btn-secondary" to="/">Volver al feed</Link>
-            </div>
-        );
+        return <ForbiddenPage />;
     }
 
     return (

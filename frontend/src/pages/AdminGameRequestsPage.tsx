@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { gameRequestService } from '../services/gameRequestService';
 import type { GameRequestResponse, GameRequestStatus } from '../types';
 import { getErrorMessage } from '../utils/error';
+import { ForbiddenPage } from './ForbiddenPage';
 
 const statusOptions: GameRequestStatus[] = ['PENDING', 'APPROVED', 'REJECTED'];
 
@@ -74,12 +75,7 @@ export function AdminGameRequestsPage() {
     }
 
     if (!isAdmin) {
-        return (
-            <div className="admin-page admin-state">
-                <p>No tienes permisos para acceder a las solicitudes.</p>
-                <Link className="btn btn-secondary" to="/">Volver al feed</Link>
-            </div>
-        );
+        return <ForbiddenPage />;
     }
 
     return (
