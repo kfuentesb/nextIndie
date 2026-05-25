@@ -69,7 +69,8 @@ export function Navbar() {
 
                         {menuOpen && (
                             <div role="menu" className="profile-dropdown">
-                                <button
+                                {user?.role === 'EMPRESA' && (
+                                    <button
                                     type="button"
                                     role="menuitem"
                                     className="dropdown-item"
@@ -78,7 +79,7 @@ export function Navbar() {
                                     <i className="bi bi-joystick"></i>
                                     Mis juegos
                                 </button>
-
+                                )}  
                                 <button
                                     type="button"
                                     role="menuitem"
