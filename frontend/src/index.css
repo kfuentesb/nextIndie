@@ -280,6 +280,7 @@ html, body, #root {
   flex: 1;
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .video-wrapper iframe {
@@ -333,6 +334,7 @@ html, body, #root {
   justify-content: space-between;
   align-items: flex-end;
   gap: 30px;
+  z-index: 3;
 }
 
 .game-details {
@@ -385,6 +387,8 @@ html, body, #root {
   flex-direction: column;
   gap: 16px;
   align-items: center;
+  position: relative;
+  z-index: 4;
 }
 
 .action-btn {
