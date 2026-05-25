@@ -1090,7 +1090,39 @@ html, body, #root {
 .detail-description {
   color: var(--text-secondary);
   line-height: 1.6;
-  margin-bottom: 20px;
+  margin-bottom: 0.25rem; /* Reducido para dejar espacio al botón */
+  display: -webkit-box;
+  -webkit-line-clamp: 5;        /* 3 líneas por defecto */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.3s ease;
+}
+
+/* Descripción expandida */
+.detail-description.expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+/* Botón Leer más / Leer menos */
+.read-more-btn {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px; /* Espacio antes de los botones de acción */
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.read-more-btn:hover {
+  color: var(--secondary-color);
 }
 
 .detail-actions {
@@ -2321,5 +2353,10 @@ html, body, #root {
 
   .profile-game-cover {
     height: 220px;
+  }
+
+  /* Leer más */
+  .detail-description {
+    -webkit-line-clamp: 4; /* Más líneas en móvil si el espacio lo permite */
   }
 }

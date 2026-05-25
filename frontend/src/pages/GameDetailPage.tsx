@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
@@ -41,6 +41,9 @@ export function GameDetailPage() {
     const [commentsCount, setCommentsCount] = useState(0);
     const [isLikeAnimation, setIsLikeAnimation] = useState(false);
     const [isSaveAnimation, setIsSaveAnimation] = useState(false);
+    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+    const [isDescriptionTruncated, setIsDescriptionTruncated] = useState(false);
+    const descriptionRef = useRef<HTMLParagraphElement>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -64,6 +67,15 @@ export function GameDetailPage() {
         };
         void loadGame();
     }, [id]);
+
+    // Texto truncado
+    useEffect(() => {
+        if (!descriptionRef.current || !game) return;
+        
+        const element = descriptionRef.current;
+        // Compara scrollHeight vs clientHeight para saber si hay overflow
+        setIsDescriptionTruncated(element.scrollHeight > element.clientHeight);
+    }, [game]);
 
     const trailerUrl = game?.trailerUrl || '';
     const isYoutubeTrailer = trailerUrl.includes('youtube.com') || trailerUrl.includes('youtu.be') || trailerUrl.includes('/embed/');
@@ -168,7 +180,21 @@ export function GameDetailPage() {
                     <p className="detail-meta">
                         {game.developer} · {new Date(game.releaseDate).toLocaleDateString('es-ES')}
                     </p>
-                    <p className="detail-description">{game.description}</p>
+                    {/* Leer Más */}
+                    <p
+                        ref={descriptionRef}
+                        className={`detail-description ${isDescriptionExpanded ? 'expanded' : ''}`}
+                    >
+                        {game.description}
+                    </p>
+                    {isDescriptionTruncated && (
+                        <button
+                            className="read-more-btn"
+                            onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                        >
+                            {isDescriptionExpanded ? 'Leer menos' : 'Leer más'}
+                        </button>
+                    )}
 
                     <div className="detail-actions">
                         <button className="btn btn-secondary" onClick={toggleLike}>
