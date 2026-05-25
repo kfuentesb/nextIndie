@@ -1,16 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
 import questionPlaceholder from '../assets/question_mark.jpg';
-
-type RankingMonthCache = {
-    monthKey: string;
-    games: Game[];
-};
-
-let rankingMonthCache: RankingMonthCache | null = null;
-let rankingMonthInFlight: Promise<Game[]> | null = null;
 
 function currentMonthKey(): string {
     const now = new Date();
@@ -25,40 +17,27 @@ function getRankClass(index: number): string {
 }
 
 export function RankingPage() {
+    const location = useLocation();
     const [games, setGames] = useState<Game[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const loadRanking = async () => {
-            const monthKey = currentMonthKey();
-            if (rankingMonthCache?.monthKey === monthKey) {
-                setGames(rankingMonthCache.games);
-                setIsLoading(false);
-                return;
-            }
-
             setIsLoading(true);
             setError(null);
             try {
-                const request = rankingMonthInFlight ?? gameService.getCurrentMonthRanking();
-                if (!rankingMonthInFlight) {
-                    rankingMonthInFlight = request;
-                }
-
-                const ranking = await request;
+                const ranking = await gameService.getCurrentMonthRanking();
                 const topFifty = ranking.slice(0, 50);
-                rankingMonthCache = { monthKey, games: topFifty };
                 setGames(topFifty);
             } catch {
                 setError('No se pudo cargar el ranking del mes');
             } finally {
-                rankingMonthInFlight = null;
                 setIsLoading(false);
             }
         };
         void loadRanking();
-    }, []);
+    }, [location.key]);
 
     const monthLabel = useMemo(() => {
         return new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
