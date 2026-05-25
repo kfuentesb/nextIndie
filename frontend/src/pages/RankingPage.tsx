@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
 import questionPlaceholder from '../assets/question_mark.jpg';
 
-function currentMonthKey(): string {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+interface RankingPageProps {
+    refreshIntervalMinutes?: number;
 }
+
+const DEFAULT_REFRESH_MINUTES = 2; // Refresca cada minuto
 
 function getRankClass(index: number): string {
     if (index === 0) return 'gold';
@@ -16,28 +17,39 @@ function getRankClass(index: number): string {
     return '';
 }
 
-export function RankingPage() {
+export function RankingPage({ refreshIntervalMinutes = DEFAULT_REFRESH_MINUTES }: RankingPageProps) {
     const location = useLocation();
     const [games, setGames] = useState<Game[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const loadRanking = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const ranking = await gameService.getCurrentMonthRanking();
+            const topFifty = ranking.slice(0, 50);
+            setGames(topFifty);
+        } catch {
+            setError('No se pudo cargar el ranking del mes');
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
     useEffect(() => {
-        const loadRanking = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const ranking = await gameService.getCurrentMonthRanking();
-                const topFifty = ranking.slice(0, 50);
-                setGames(topFifty);
-            } catch {
-                setError('No se pudo cargar el ranking del mes');
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    // Carga inicial
+    void loadRanking();
+
+    // Configura el intervalo de refresco
+    const intervalMs = refreshIntervalMinutes * 60 * 1000;
+    const intervalId = setInterval(() => {
         void loadRanking();
-    }, [location.key]);
+    }, intervalMs);
+
+    // Limpieza: borra el intervalo al desmontar
+    return () => clearInterval(intervalId);
+}, [location.key, loadRanking, refreshIntervalMinutes]);
 
     const monthLabel = useMemo(() => {
         return new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
