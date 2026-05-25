@@ -1577,6 +1577,20 @@ html, body, #root {
   color: var(--text-secondary);
 }
 
+.admin-game-row {
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.admin-game-row:hover {
+  background: rgba(102, 126, 234, 0.08);
+}
+
+.admin-game-row:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: -2px;
+}
+
 .role-pill {
   display: inline-flex;
   align-items: center;
@@ -2395,7 +2409,12 @@ html, body, #root {
   }
 
   .admin-games-table {
-    min-width: 560px;
+    min-width: 420px;
+  }
+
+  .admin-col-franchise,
+  .admin-col-status {
+    display: none;
   }
 
   .profile-panel {

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { adminUserService } from '../services/adminUserService';
 import { gameService } from '../services/gameService';
@@ -17,6 +17,7 @@ const emptyForm: AdminUserRequest = {
 
 export function AdminUsersPage() {
     const { user, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
     const [users, setUsers] = useState<AdminUser[]>([]);
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
@@ -26,7 +27,7 @@ export function AdminUsersPage() {
     const [error, setError] = useState<string | null>(null);
     const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
     const [formData, setFormData] = useState<AdminUserRequest>(emptyForm);
-    const [activeTab, setActiveTab] = useState<'users' | 'games'>('users');
+    const [activeTab, setActiveTab] = useState<'users' | 'games'>('games');
     const [games, setGames] = useState<Game[]>([]);
     const [gamesPage, setGamesPage] = useState(0);
     const [gamesPageSize, setGamesPageSize] = useState(25);
@@ -197,6 +198,10 @@ export function AdminUsersPage() {
         ? `${totalElements} usuarios registrados`
         : `${totalGames} juegos en la base de datos`;
 
+    const handleGameRowClick = (gameId: number) => {
+        navigate(`/games/${gameId}`);
+    };
+
     if (!isAuthenticated) {
         return (
             <div className="admin-page admin-state">
@@ -225,17 +230,17 @@ export function AdminUsersPage() {
                 <div className="profile-tabs">
                     <button
                         type="button"
-                        className={`profile-tab ${activeTab === 'users' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('users')}
-                    >
-                        Ver usuarios
-                    </button>
-                    <button
-                        type="button"
                         className={`profile-tab ${activeTab === 'games' ? 'active' : ''}`}
                         onClick={() => setActiveTab('games')}
                     >
                         Ver juegos
+                    </button>
+                    <button
+                        type="button"
+                        className={`profile-tab ${activeTab === 'users' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('users')}
+                    >
+                        Ver usuarios
                     </button>
                 </div>
             </header>
@@ -427,21 +432,33 @@ export function AdminUsersPage() {
                                     <table className="admin-table admin-games-table">
                                         <thead>
                                             <tr>
-                                                <th>Titulo</th>
-                                                <th>Desarrolladora</th>
-                                                <th>Franquicia</th>
-                                                <th>Estado</th>
-                                                <th>F. Lanzamiento</th>
+                                                <th className="admin-col-title">Titulo</th>
+                                                <th className="admin-col-developer">Desarrolladora</th>
+                                                <th className="admin-col-franchise">Franquicia</th>
+                                                <th className="admin-col-status">Estado</th>
+                                                <th className="admin-col-date">Lanzamiento</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {pagedGames.map((game) => (
-                                                <tr key={game.id}>
-                                                    <td>{game.title}</td>
-                                                    <td>{game.developer}</td>
-                                                    <td>{game.mainFranchise || 'Sin franquicia'}</td>
-                                                    <td>{game.gameStatus || 'Sin estado'}</td>
-                                                    <td>{new Date(game.releaseDate).toLocaleDateString('es-ES')}</td>
+                                                <tr
+                                                    key={game.id}
+                                                    className="admin-game-row"
+                                                    role="button"
+                                                    tabIndex={0}
+                                                    onClick={() => handleGameRowClick(game.id)}
+                                                    onKeyDown={(event) => {
+                                                        if (event.key === 'Enter' || event.key === ' ') {
+                                                            event.preventDefault();
+                                                            handleGameRowClick(game.id);
+                                                        }
+                                                    }}
+                                                >
+                                                    <td className="admin-col-title">{game.title}</td>
+                                                    <td className="admin-col-developer">{game.developer}</td>
+                                                    <td className="admin-col-franchise">{game.mainFranchise || 'Sin franquicia'}</td>
+                                                    <td className="admin-col-status">{game.gameStatus || 'Sin estado'}</td>
+                                                    <td className="admin-col-date">{new Date(game.releaseDate).toLocaleDateString('es-ES')}</td>
                                                 </tr>
                                             ))}
                                             {pagedGames.length === 0 && (
