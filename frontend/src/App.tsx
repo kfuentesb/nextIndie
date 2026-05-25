@@ -11,6 +11,7 @@ import { AdminUsersPage } from './pages/AdminUsersPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { AdminGameRequestsPage } from './pages/AdminGameRequestsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { ForbiddenPage } from './pages/ForbiddenPage';
 
 function AppContent() {
   return (
@@ -27,6 +28,8 @@ function AppContent() {
             <Route path="/saved" element={<SavedGamesPage />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/admin/game-requests" element={<AdminGameRequestsPage />} />
+            {/* Ruta comodín para páginas no encontradas */}
+            <Route path="/403" element={<ForbiddenPage/>}></Route>
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
