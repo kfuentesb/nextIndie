@@ -532,7 +532,7 @@ export function ProfilePage() {
                         </div>
                     ) : companyGames.length === 0 ? (
                         <div className="profile-empty">
-                            <p>No tienes juegos aprobados todavia.</p>
+                            <p>No tienes juegos aprobados todavía.</p>
                         </div>
                     ) : (
                         <div className="profile-games-grid">
