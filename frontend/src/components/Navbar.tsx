@@ -7,6 +7,7 @@ export function Navbar() {
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState<boolean>(false);
     const menuRef = useRef<HTMLDivElement>(null);
+    const canViewGames = user?.role === 'EMPRESA' || user?.role === 'ADMIN';
 
     useEffect((): (() => void) => {
         if (!menuOpen) return (): void => {};
@@ -69,7 +70,7 @@ export function Navbar() {
 
                         {menuOpen && (
                             <div role="menu" className="profile-dropdown">
-                                {user?.role === 'EMPRESA' && (
+                                {canViewGames && (
                                     <button
                                     type="button"
                                     role="menuitem"

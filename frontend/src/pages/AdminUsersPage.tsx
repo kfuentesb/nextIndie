@@ -24,9 +24,13 @@ export function AdminUsersPage() {
     const [totalElements, setTotalElements] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
     const [formData, setFormData] = useState<AdminUserRequest>(emptyForm);
+    const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [pendingDelete, setPendingDelete] = useState<AdminUser | null>(null);
     const [activeTab, setActiveTab] = useState<'users' | 'games'>('games');
     const [games, setGames] = useState<Game[]>([]);
     const [gamesPage, setGamesPage] = useState(0);
@@ -88,7 +92,14 @@ export function AdminUsersPage() {
         setError(null);
     };
 
-    const startEdit = (selectedUser: AdminUser) => {
+    const openCreateModal = () => {
+        setEditingUser(null);
+        setFormData(emptyForm);
+        setError(null);
+        setIsFormModalOpen(true);
+    };
+
+    const openEditModal = (selectedUser: AdminUser) => {
         setEditingUser(selectedUser);
         setFormData({
             username: selectedUser.username,
@@ -96,6 +107,24 @@ export function AdminUsersPage() {
             password: '',
             role: selectedUser.role
         });
+        setError(null);
+        setIsFormModalOpen(true);
+    };
+
+    const closeFormModal = () => {
+        setIsFormModalOpen(false);
+        resetForm();
+    };
+
+    const openDeleteModal = (selectedUser: AdminUser) => {
+        setPendingDelete(selectedUser);
+        setError(null);
+        setIsDeleteModalOpen(true);
+    };
+
+    const closeDeleteModal = () => {
+        setIsDeleteModalOpen(false);
+        setPendingDelete(null);
         setError(null);
     };
 
@@ -109,6 +138,8 @@ export function AdminUsersPage() {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        const isEditing = Boolean(editingUser);
+        const targetPage = isEditing ? page : 0;
         setIsSaving(true);
         setError(null);
 
@@ -125,8 +156,8 @@ export function AdminUsersPage() {
             } else {
                 await adminUserService.createUser(payload);
             }
-            resetForm();
-            await loadUsers(editingUser ? page : 0);
+            closeFormModal();
+            await loadUsers(targetPage);
         } catch (err: unknown) {
             setError(getErrorMessage(err, 'No se pudo guardar el usuario'));
         } finally {
@@ -134,20 +165,27 @@ export function AdminUsersPage() {
         }
     };
 
-    const handleDelete = async (selectedUser: AdminUser) => {
-        const confirmed = window.confirm(`Eliminar a ${selectedUser.username}?`);
-        if (!confirmed) return;
+    const handleDelete = (selectedUser: AdminUser) => {
+        openDeleteModal(selectedUser);
+    };
 
+    const confirmDelete = async () => {
+        if (!pendingDelete) return;
+
+        setIsDeleting(true);
         setError(null);
         try {
-            await adminUserService.deleteUser(selectedUser.id);
+            await adminUserService.deleteUser(pendingDelete.id);
             const nextPage = users.length === 1 && page > 0 ? page - 1 : page;
             await loadUsers(nextPage);
-            if (editingUser?.id === selectedUser.id) {
-                resetForm();
+            if (editingUser?.id === pendingDelete.id) {
+                closeFormModal();
             }
+            closeDeleteModal();
         } catch (err: unknown) {
             setError(getErrorMessage(err, 'No se pudo eliminar el usuario'));
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -252,14 +290,14 @@ export function AdminUsersPage() {
                 <>
                     <div className="admin-toolbar admin-toolbar-users">
                         <div className="admin-toolbar-group">
-                            <button className="btn btn-secondary" onClick={resetForm}>
+                            <button className="btn btn-secondary" onClick={openCreateModal}>
                                 Nuevo usuario
                             </button>
                         </div>
                     </div>
 
-                    <section className="admin-layout">
-                        <div className="admin-table-panel">
+                    <section className="admin-layout admin-layout-single">
+                        <div className="admin-table-panel admin-table-panel-centered">
                             {isLoading ? (
                                 <div className="admin-table-feedback">
                                     <span className="spinner" />
@@ -284,7 +322,7 @@ export function AdminUsersPage() {
                                                         <td><span className="role-pill">{item.role}</span></td>
                                                         <td>
                                                             <div className="admin-row-actions">
-                                                                <button className="table-action" onClick={() => startEdit(item)}>
+                                                                <button className="table-action" onClick={() => openEditModal(item)}>
                                                                     Editar
                                                                 </button>
                                                                 <button className="table-action danger" onClick={() => handleDelete(item)}>
@@ -323,70 +361,137 @@ export function AdminUsersPage() {
                                 </>
                             )}
                         </div>
-
-                        <form className="admin-form-panel" onSubmit={handleSubmit}>
-                            <h2>{editingUser ? 'Editar usuario' : 'Crear usuario'}</h2>
-
-                            <div className="form-group">
-                                <label className="form-label">Nombre de usuario</label>
-                                <input
-                                    className="form-input"
-                                    name="username"
-                                    value={formData.username}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label className="form-label">Correo electronico</label>
-                                <input
-                                    className="form-input"
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label className="form-label">
-                                    {editingUser ? 'Nueva password' : 'Password'}
-                                </label>
-                                <input
-                                    className="form-input"
-                                    type="password"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    minLength={6}
-                                    required={!editingUser}
-                                    placeholder={editingUser ? 'Dejar en blanco para no cambiar' : ''}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label className="form-label">Rol</label>
-                                <select className="form-input" name="role" value={formData.role} onChange={handleChange}>
-                                    {roles.map((role) => (
-                                        <option key={role} value={role}>{role}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="admin-form-actions">
-                                <button className="btn btn-primary" type="submit" disabled={isSaving}>
-                                    {isSaving ? <span className="spinner-small" /> : 'Guardar'}
-                                </button>
-                                {editingUser && (
-                                    <button className="btn btn-secondary" type="button" onClick={resetForm}>
-                                        Cancelar
-                                    </button>
-                                )}
-                            </div>
-                        </form>
                     </section>
+
+                    {isFormModalOpen && (
+                        <div className="admin-modal-overlay" onClick={closeFormModal} role="presentation">
+                            <div
+                                className="admin-modal"
+                                role="dialog"
+                                aria-modal="true"
+                                aria-labelledby="admin-user-modal-title"
+                                onClick={(event) => event.stopPropagation()}
+                            >
+                                <div className="admin-modal-header">
+                                    <h2 className="admin-modal-title" id="admin-user-modal-title">
+                                        {editingUser ? 'Editar usuario' : 'Crear usuario'}
+                                    </h2>
+                                    <button
+                                        type="button"
+                                        className="admin-modal-close"
+                                        onClick={closeFormModal}
+                                        aria-label="Cerrar"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                                <form className="admin-modal-form" onSubmit={handleSubmit}>
+                                    <div className="admin-modal-body">
+                                        {error && <div className="error-alert">{error}</div>}
+
+                                        <div className="form-group">
+                                            <label className="form-label">Nombre de usuario</label>
+                                            <input
+                                                className="form-input"
+                                                name="username"
+                                                value={formData.username}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label className="form-label">Correo electronico</label>
+                                            <input
+                                                className="form-input"
+                                                type="email"
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label className="form-label">
+                                                {editingUser ? 'Nueva password' : 'Password'}
+                                            </label>
+                                            <input
+                                                className="form-input"
+                                                type="password"
+                                                name="password"
+                                                value={formData.password}
+                                                onChange={handleChange}
+                                                minLength={6}
+                                                required={!editingUser}
+                                                placeholder={editingUser ? 'Dejar en blanco para no cambiar' : ''}
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label className="form-label">Rol</label>
+                                            <select className="form-input" name="role" value={formData.role} onChange={handleChange}>
+                                                {roles.map((role) => (
+                                                    <option key={role} value={role}>{role}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="admin-modal-actions">
+                                        <button className="btn btn-secondary" type="button" onClick={closeFormModal}>
+                                            Cancelar
+                                        </button>
+                                        <button className="btn btn-primary" type="submit" disabled={isSaving}>
+                                            {isSaving ? <span className="spinner-small" /> : 'Guardar'}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {isDeleteModalOpen && pendingDelete && (
+                        <div className="admin-modal-overlay" onClick={closeDeleteModal} role="presentation">
+                            <div
+                                className="admin-modal admin-modal-sm"
+                                role="dialog"
+                                aria-modal="true"
+                                aria-labelledby="admin-delete-modal-title"
+                                onClick={(event) => event.stopPropagation()}
+                            >
+                                <div className="admin-modal-header">
+                                    <h2 className="admin-modal-title" id="admin-delete-modal-title">
+                                        Confirmar eliminacion
+                                    </h2>
+                                    <button
+                                        type="button"
+                                        className="admin-modal-close"
+                                        onClick={closeDeleteModal}
+                                        aria-label="Cerrar"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                                <div className="admin-modal-form">
+                                    <div className="admin-modal-body">
+                                        <p>
+                                            Seguro que quieres borrar a <strong>{pendingDelete.username}</strong>? Esta accion no se puede deshacer.
+                                        </p>
+                                        {error && <div className="error-alert">{error}</div>}
+                                    </div>
+                                    <div className="admin-modal-actions">
+                                        <button className="btn btn-secondary" type="button" onClick={closeDeleteModal}>
+                                            Cancelar
+                                        </button>
+                                        <button className="btn btn-danger" type="button" onClick={confirmDelete} disabled={isDeleting}>
+                                            {isDeleting ? <span className="spinner-small" /> : 'Eliminar'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </>
             )}
 

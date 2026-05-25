@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/company/**").hasRole("EMPRESA")
+                        .requestMatchers("/api/company/**").hasAnyRole("EMPRESA", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/games").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/games/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/comments/game/**").authenticated()

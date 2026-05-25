@@ -42,7 +42,7 @@ const emptyForm: RequestFormState = {
 
 export function ProfilePage() {
     const { user, isAuthenticated } = useAuth();
-    const isCompany = user?.role === 'EMPRESA';
+    const canViewGames = user?.role === 'EMPRESA' || user?.role === 'ADMIN';
     const [activeTab, setActiveTab] = useState<'request' | 'games'>('games');
     const [formData, setFormData] = useState<RequestFormState>(emptyForm);
     const [genres, setGenres] = useState<LookupItem[]>([]);
@@ -60,7 +60,7 @@ export function ProfilePage() {
     const [selectedSimilarId, setSelectedSimilarId] = useState('');
 
     useEffect(() => {
-        if (!isCompany) {
+        if (!canViewGames) {
             setIsLoadingLookups(false);
             return;
         }
@@ -85,10 +85,10 @@ export function ProfilePage() {
         };
 
         void loadLookups();
-    }, [isCompany]);
+    }, [canViewGames]);
 
     useEffect(() => {
-        if (!isCompany || activeTab !== 'games') {
+        if (!canViewGames || activeTab !== 'games') {
             return;
         }
 
@@ -106,7 +106,7 @@ export function ProfilePage() {
         };
 
         void loadMyGames();
-    }, [activeTab, isCompany]);
+    }, [activeTab, canViewGames]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = event.target;
@@ -239,7 +239,7 @@ export function ProfilePage() {
         );
     }
 
-    if (!isCompany) {
+    if (!canViewGames) {
         return (
             <div className="profile-page profile-state">
                 <p>Esta seccion es exclusiva para empresas.</p>

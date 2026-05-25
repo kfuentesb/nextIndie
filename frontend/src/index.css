@@ -94,6 +94,16 @@ html, body, #root {
   color: white;
 }
 
+.btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.25);
+}
+
 /* Botón para GameDetailPage */
 .btn-icon-text {
   display: inline-flex;
@@ -1544,6 +1554,12 @@ html, body, #root {
   padding: 16px;
 }
 
+.admin-table-panel-centered {
+  max-width: 980px;
+  margin: 0 auto;
+  width: 100%;
+}
+
 .admin-table-wrap {
   overflow-x: auto;
 }
@@ -1661,6 +1677,84 @@ html, body, #root {
   text-align: center;
   color: var(--text-muted);
   padding: 32px;
+}
+
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 20, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 500;
+}
+
+.admin-modal {
+  width: min(560px, 100%);
+  background: var(--surface-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.admin-modal-sm {
+  width: min(420px, 100%);
+}
+
+.admin-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 0;
+}
+
+.admin-modal-title {
+  font-size: 18px;
+  margin: 0;
+}
+
+.admin-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.admin-modal-close:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.admin-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 20px 20px;
+}
+
+.admin-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.admin-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 /* 
@@ -2302,6 +2396,11 @@ html, body, #root {
     grid-template-columns: 1fr;
   }
 
+  .admin-row-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .admin-header {
     align-items: flex-start;
     flex-direction: column;
@@ -2309,6 +2408,14 @@ html, body, #root {
 
   .admin-form-panel {
     position: static;
+  }
+
+  .admin-modal-overlay {
+    padding: 16px;
+  }
+
+  .admin-modal {
+    width: 100%;
   }
 
   .saved-games-grid {
