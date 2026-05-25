@@ -10,6 +10,7 @@ import { RankingPage } from './pages/RankingPage';
 import { AdminUsersPage } from './pages/AdminUsersPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { AdminGameRequestsPage } from './pages/AdminGameRequestsPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 function AppContent() {
   return (
@@ -26,6 +27,7 @@ function AppContent() {
             <Route path="/saved" element={<SavedGamesPage />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/admin/game-requests" element={<AdminGameRequestsPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
       </>

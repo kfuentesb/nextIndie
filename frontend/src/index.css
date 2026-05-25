@@ -2160,7 +2160,110 @@ html, body, #root {
   margin: 4px 0;
 }
 
-/* Responsive */
+/* NOT FOUND PAGE (404) */
+.not-found-page {
+  min-height: calc(100vh-60px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, var(--background-dark) 0%, #0a0a0a 100%);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.not-found-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.not-found-content {
+  text-align: center;
+  width: 100%;
+  max-width: 700px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.not-found-image-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.not-found-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+.not-found-image {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  display: block;
+  opacity: 0;
+  filter: drop-shadow(0 20px 40px rgba(102, 126, 234, 0.15));
+  transition: opacity 0.5s ease;
+}
+
+.not-found-image.is-ready {
+  opacity: 0.85;
+}
+
+.not-found-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.not-found-title {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.not-found-subtitle {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 480px;
+  line-height: 1.6;
+}
+
+.not-found-btn {
+  padding: 14px 36px;
+  font-size: 1rem;
+  min-width: 220px;
+  margin-top: 8px;
+}
+
+
+/* =================== RESPONSIVE ===================================== */
 @media (max-width: 768px) {
   .releases-page {
     grid-template-columns: 1fr;
@@ -2456,5 +2559,25 @@ html, body, #root {
   /* Leer más */
   .detail-description {
     -webkit-line-clamp: 4; /* Más líneas en móvil si el espacio lo permite */
+  }
+
+    /* Not Found Page móvil */
+  .not-found-page {
+    padding: 16px;
+  }
+  .not-found-glow {
+    width: 300px;
+    height: 300px;
+  }
+  .not-found-content {
+    gap: 24px;
+  }
+  .not-found-image {
+    max-width: 320px;
+  }
+  .not-found-btn {
+    min-width: 180px;
+    padding: 12px 28px;
+    font-size: 0.95rem;
   }
 }
