@@ -72,6 +72,21 @@ export interface GameRequestCreate {
     similarGameIds?: number[];
 }
 
+export interface GameUpdateRequest {
+    title: string;
+    description: string;
+    trailerUrl: string;
+    developer: string;
+    gameStatus: string;
+    websiteUrl: string;
+    mainFranchise: string;
+    releaseDate: string;
+    imageUrl?: string;
+    genreIds: number[];
+    platformIds: number[];
+    similarGameIds?: number[];
+}
+
 export interface GameRequestResponse {
     id: number;
     title: string;
@@ -131,6 +146,7 @@ export interface Game {
     likedByMe?: boolean;
     savedByMe?: boolean;
     releaseDate: string;
+    requestedBy?: string;
 }
 
 export interface GameFeedResponse {

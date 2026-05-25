@@ -10,5 +10,9 @@ export const commentService = {
     createComment: async (gameId: number, data: CreateCommentRequest): Promise<Comment> => {
         const response = await api.post<Comment>(`/comments/game/${gameId}`, data);
         return response.data;
+    },
+
+    deleteComment: async (commentId: number): Promise<void> => {
+        await api.delete(`/comments/${commentId}`);
     }
 };

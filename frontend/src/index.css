@@ -557,6 +557,32 @@ html, body, #root {
   margin-bottom: 8px;
 }
 
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.comment-delete-btn {
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.comment-delete-btn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.comment-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .username {
   font-weight: 600;
   color: var(--primary-color);
@@ -1139,6 +1165,13 @@ html, body, #root {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+}
+
+.detail-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
 }
 
 .game-detail-grid {

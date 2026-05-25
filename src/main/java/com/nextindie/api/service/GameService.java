@@ -1,21 +1,30 @@
 package com.nextindie.api.service;
 
 import com.nextindie.api.dto.GameDTO;
-import com.nextindie.api.dto.GameImageUrls;
 import com.nextindie.api.dto.GameFeedResponseDTO;
+import com.nextindie.api.dto.GameImageUrls;
+import com.nextindie.api.dto.GameUpdateRequest;
 import com.nextindie.api.model.Game;
+import com.nextindie.api.model.Genre;
+import com.nextindie.api.model.Platform;
 import com.nextindie.api.model.User;
+import com.nextindie.api.model.enums.UserType;
 import com.nextindie.api.repository.CommentRepository;
 import com.nextindie.api.repository.GameRepository;
+import com.nextindie.api.repository.GenreRepository;
+import com.nextindie.api.repository.PlatformRepository;
 import com.nextindie.api.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,15 +39,21 @@ public class GameService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final GenreRepository genreRepository;
+    private final PlatformRepository platformRepository;
     private final IgdbSyncService igdbSyncService;
 
     public GameService(GameRepository gameRepository,
                        UserRepository userRepository,
                        CommentRepository commentRepository,
+                       GenreRepository genreRepository,
+                       PlatformRepository platformRepository,
                        IgdbSyncService igdbSyncService) {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
+        this.genreRepository = genreRepository;
+        this.platformRepository = platformRepository;
         this.igdbSyncService = igdbSyncService;
     }
 
@@ -111,6 +126,65 @@ public class GameService {
         return gameRepository.findByRequestedByUsername(username).stream()
                 .map(game -> convertToDTO(game, username))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public GameDTO updateGame(Long gameId, GameUpdateRequest request, String username) {
+        validateUpdateRequest(request);
+        User user = getUserByUsername(username);
+        Game game = getGameByIdOrThrow(gameId);
+        ensureCanManageGame(user, game);
+
+        List<Long> genreIds = request.getGenreIds();
+        List<Long> platformIds = request.getPlatformIds();
+
+        List<Genre> genres = genreRepository.findAllById(genreIds);
+        if (genres.size() != genreIds.size()) {
+            throw new RuntimeException("Generos invalidos");
+        }
+
+        List<Platform> platforms = platformRepository.findAllById(platformIds);
+        if (platforms.size() != platformIds.size()) {
+            throw new RuntimeException("Plataformas invalidas");
+        }
+
+        Set<String> similarGames = new LinkedHashSet<>();
+        if (request.getSimilarGameIds() != null && !request.getSimilarGameIds().isEmpty()) {
+            List<Game> selectedGames = gameRepository.findAllById(request.getSimilarGameIds());
+            similarGames.addAll(selectedGames.stream().map(Game::getTitle).collect(Collectors.toSet()));
+        }
+
+        game.setTitle(request.getTitle().trim());
+        game.setDescription(request.getDescription().trim());
+        game.setTrailerUrl(request.getTrailerUrl().trim());
+        game.setDeveloper(request.getDeveloper().trim());
+        game.setGameStatus(request.getGameStatus().trim());
+        game.setWebsiteUrl(request.getWebsiteUrl().trim());
+        game.setMainFranchise(request.getMainFranchise().trim());
+        game.setReleaseDate(request.getReleaseDate());
+        game.setImageUrl(StringUtils.hasText(request.getImageUrl()) ? request.getImageUrl().trim() : null);
+
+        game.getGenres().clear();
+        game.getGenres().addAll(genres);
+        game.getPlatforms().clear();
+        game.getPlatforms().addAll(platforms);
+        game.getSimilarGames().clear();
+        game.getSimilarGames().addAll(similarGames);
+
+        Game saved = gameRepository.save(game);
+        return convertToDTO(saved, username);
+    }
+
+    @Transactional
+    public void deleteGame(Long gameId, String username) {
+        User user = getUserByUsername(username);
+        Game game = getGameByIdOrThrow(gameId);
+        ensureCanManageGame(user, game);
+
+        commentRepository.deleteByGameId(gameId);
+        userRepository.deleteLikesByGameId(gameId);
+        userRepository.deleteSavesByGameId(gameId);
+        gameRepository.delete(game);
     }
 
     public GameFeedResponseDTO getFeedPage(int page, int size) {
@@ -259,6 +333,9 @@ public class GameService {
             likedByMe,
             savedByMe
         );
+        if (game.getRequestedBy() != null) {
+            dto.setRequestedBy(game.getRequestedBy().getUsername());
+        }
         dto.setImageUrls(buildImageUrls(game.getImageUrl()));
         return dto;
     }
@@ -343,6 +420,55 @@ public class GameService {
     private User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
+
+    private void ensureCanManageGame(User user, Game game) {
+        if (user.getRole() == UserType.ADMIN) {
+            return;
+        }
+        if (user.getRole() == UserType.EMPRESA && game.getRequestedBy() != null) {
+            String owner = game.getRequestedBy().getUsername();
+            if (user.getUsername().equals(owner)) {
+                return;
+            }
+        }
+        throw new RuntimeException("No tienes permisos para modificar este juego");
+    }
+
+    private void validateUpdateRequest(GameUpdateRequest request) {
+        if (request == null) {
+            throw new RuntimeException("Solicitud invalida");
+        }
+        if (!StringUtils.hasText(request.getTitle())) {
+            throw new RuntimeException("El titulo es obligatorio");
+        }
+        if (!StringUtils.hasText(request.getDescription())) {
+            throw new RuntimeException("La descripcion es obligatoria");
+        }
+        if (!StringUtils.hasText(request.getTrailerUrl())) {
+            throw new RuntimeException("El trailer es obligatorio");
+        }
+        if (!StringUtils.hasText(request.getDeveloper())) {
+            throw new RuntimeException("La desarrolladora es obligatoria");
+        }
+        if (!StringUtils.hasText(request.getGameStatus())) {
+            throw new RuntimeException("El estado es obligatorio");
+        }
+        if (!StringUtils.hasText(request.getWebsiteUrl())) {
+            throw new RuntimeException("El sitio web es obligatorio");
+        }
+        if (!StringUtils.hasText(request.getMainFranchise())) {
+            throw new RuntimeException("La franquicia es obligatoria");
+        }
+        if (request.getReleaseDate() == null) {
+            throw new RuntimeException("La fecha de lanzamiento es obligatoria");
+        }
+        if (request.getGenreIds() == null || request.getGenreIds().isEmpty()) {
+            throw new RuntimeException("Debes seleccionar al menos un genero");
+        }
+        if (request.getPlatformIds() == null || request.getPlatformIds().isEmpty()) {
+            throw new RuntimeException("Debes seleccionar al menos una plataforma");
+        }
     }
 
     private Game getGameByIdOrThrow(Long gameId) {

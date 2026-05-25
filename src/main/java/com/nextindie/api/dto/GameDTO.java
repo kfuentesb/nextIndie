@@ -29,6 +29,7 @@ public class GameDTO {
     private LocalDate releaseDate;
     private boolean likedByMe;
     private boolean savedByMe;
+    private String requestedBy;
 
     public GameDTO(Long id, String title, String description, String trailerUrl, String imageUrl,
                    String developer, String gameStatus, String websiteUrl, String mainFranchise,

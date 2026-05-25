@@ -29,5 +29,16 @@ export function useComments(gameId: number) {
         }
     }, [gameId]);
 
-    return { comments, isLoading, fetchComments, addComment };
+    const deleteComment = useCallback(async (commentId: number) => {
+        try {
+            await commentService.deleteComment(commentId);
+            setComments(prev => prev.filter((comment) => comment.id !== commentId));
+            return true;
+        } catch (err) {
+            console.error('Error al borrar comentario:', err);
+            return false;
+        }
+    }, []);
+
+    return { comments, isLoading, fetchComments, addComment, deleteComment };
 }

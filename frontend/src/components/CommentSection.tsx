@@ -5,13 +5,16 @@ import { useAuth } from '../context/AuthContext';
 interface CommentsSectionProps {
     gameId: number;
     onCountChange?: (count: number) => void;
+    canDelete?: boolean;
 }
 
-export function CommentsSection({ gameId, onCountChange }: CommentsSectionProps) {
-    const { comments, fetchComments, addComment } = useComments(gameId);
+export function CommentsSection({ gameId, onCountChange, canDelete }: CommentsSectionProps) {
+    const { comments, fetchComments, addComment, deleteComment } = useComments(gameId);
     const { isAuthenticated } = useAuth();
     const [newComment, setNewComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [deletingId, setDeletingId] = useState<number | null>(null);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
 
     useEffect(() => {
         fetchComments();
@@ -33,6 +36,20 @@ export function CommentsSection({ gameId, onCountChange }: CommentsSectionProps)
         setIsSubmitting(false);
     };
 
+    const handleDelete = async (commentId: number) => {
+        if (!canDelete || deletingId !== null) return;
+        const confirmed = window.confirm('Eliminar este comentario?');
+        if (!confirmed) return;
+
+        setDeleteError(null);
+        setDeletingId(commentId);
+        const success = await deleteComment(commentId);
+        if (!success) {
+            setDeleteError('No se pudo eliminar el comentario');
+        }
+        setDeletingId(null);
+    };
+
     return (
         <div className="comments-container">
             <div className="comments-header">
@@ -41,6 +58,7 @@ export function CommentsSection({ gameId, onCountChange }: CommentsSectionProps)
             </div>
 
             <div className="comments-list">
+                {deleteError && <div className="error-alert">{deleteError}</div>}
                 {comments.length === 0 ? (
                     <div className="no-comments">
                         <span className="icon"><i className="bi bi-chat-dots-fill"></i></span>
@@ -52,9 +70,21 @@ export function CommentsSection({ gameId, onCountChange }: CommentsSectionProps)
                         <div key={comment.id} className="comment">
                             <div className="comment-header">
                                 <span className="username">@{comment.username}</span>
-                                <span className="date">
-                  {new Date(comment.createdAt).toLocaleDateString()}
-                </span>
+                                <div className="comment-actions">
+                                    <span className="date">
+                                        {new Date(comment.createdAt).toLocaleDateString()}
+                                    </span>
+                                    {canDelete && (
+                                        <button
+                                            type="button"
+                                            className="comment-delete-btn"
+                                            onClick={() => handleDelete(comment.id)}
+                                            disabled={deletingId === comment.id}
+                                        >
+                                            {deletingId === comment.id ? 'Borrando...' : 'Borrar'}
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                             <p className="comment-text">{comment.content}</p>
                         </div>

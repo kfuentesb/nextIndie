@@ -1,5 +1,5 @@
 import api from './api';
-import type { Game, GameFeedResponse } from '../types';
+import type { Game, GameFeedResponse, GameUpdateRequest } from '../types';
 
 export const gameService = {
     getAllGames: async (): Promise<Game[]> => {
@@ -50,5 +50,14 @@ export const gameService = {
     getCurrentMonthRanking: async (): Promise<Game[]> => {
         const response = await api.get<Game[]>('/games/ranking/current-month');
         return response.data;
+    },
+
+    updateGame: async (id: number, payload: GameUpdateRequest): Promise<Game> => {
+        const response = await api.put<Game>(`/company/games/${id}`, payload);
+        return response.data;
+    },
+
+    deleteGame: async (id: number): Promise<void> => {
+        await api.delete(`/company/games/${id}`);
     }
 };

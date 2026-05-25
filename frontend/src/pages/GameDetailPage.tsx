@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import type { Game } from '../types';
+import type { Game, GameUpdateRequest, LookupItem } from '../types';
 import { gameService } from '../services/gameService';
+import { lookupService } from '../services/lookupService';
 import { useAuth } from '../context/AuthContext';
 import { CommentsSection } from '../components/CommentSection';
+import { getErrorMessage } from '../utils/error';
 import questionPlaceholder from '../assets/question_mark.jpg';
 
 const getEmbedUrl = (videoId: string): string => {
@@ -28,9 +30,39 @@ const extractVideoId = (url: string): string => {
     return match ? match[1] : url;
 };
 
+type EditGameFormState = {
+    title: string;
+    description: string;
+    trailerUrl: string;
+    developer: string;
+    gameStatus: string;
+    websiteUrl: string;
+    mainFranchise: string;
+    releaseDate: string;
+    imageUrl: string;
+    genreIds: number[];
+    platformIds: number[];
+    similarGameIds: number[];
+};
+
+const emptyEditForm: EditGameFormState = {
+    title: '',
+    description: '',
+    trailerUrl: '',
+    developer: '',
+    gameStatus: '',
+    websiteUrl: '',
+    mainFranchise: '',
+    releaseDate: '',
+    imageUrl: '',
+    genreIds: [],
+    platformIds: [],
+    similarGameIds: []
+};
+
 export function GameDetailPage() {
     const { id } = useParams();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
     const [game, setGame] = useState<Game | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -45,6 +77,21 @@ export function GameDetailPage() {
     const [isDescriptionTruncated, setIsDescriptionTruncated] = useState(false);
     const descriptionRef = useRef<HTMLParagraphElement>(null);
     const navigate = useNavigate();
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [editForm, setEditForm] = useState<EditGameFormState>(emptyEditForm);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [editError, setEditError] = useState<string | null>(null);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
+    const [genres, setGenres] = useState<LookupItem[]>([]);
+    const [platforms, setPlatforms] = useState<LookupItem[]>([]);
+    const [similarGames, setSimilarGames] = useState<LookupItem[]>([]);
+    const [isLoadingLookups, setIsLoadingLookups] = useState(false);
+    const [selectedGenreId, setSelectedGenreId] = useState('');
+    const [selectedPlatformId, setSelectedPlatformId] = useState('');
+    const [selectedSimilarId, setSelectedSimilarId] = useState('');
+    const [hasSyncedLookups, setHasSyncedLookups] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -68,6 +115,58 @@ export function GameDetailPage() {
         void loadGame();
     }, [id]);
 
+    const isAdmin = user?.role === 'ADMIN';
+    const isCompany = user?.role === 'EMPRESA';
+    const canManageGame = Boolean(game) && (isAdmin || (isCompany && game?.requestedBy === user?.username));
+
+    const genreMap = useMemo(() => new Map(genres.map((item) => [item.id, item.name])), [genres]);
+    const platformMap = useMemo(() => new Map(platforms.map((item) => [item.id, item.name])), [platforms]);
+    const similarGameMap = useMemo(() => new Map(similarGames.map((item) => [item.id, item.name])), [similarGames]);
+
+    const mapNamesToIds = (names: string[], items: LookupItem[]) => {
+        if (!names.length) return [];
+        return items.filter((item) => names.includes(item.name)).map((item) => item.id);
+    };
+
+    useEffect(() => {
+        if (!isEditModalOpen) return;
+        if (genres.length && platforms.length && similarGames.length) return;
+
+        const loadLookups = async () => {
+            setIsLoadingLookups(true);
+            setEditError(null);
+            try {
+                const [genreItems, platformItems, gameItems] = await Promise.all([
+                    lookupService.getGenres(),
+                    lookupService.getPlatforms(),
+                    lookupService.getGames()
+                ]);
+                setGenres(genreItems);
+                setPlatforms(platformItems);
+                setSimilarGames(gameItems);
+            } catch (err: unknown) {
+                setEditError(getErrorMessage(err, 'No se pudieron cargar los datos del formulario'));
+            } finally {
+                setIsLoadingLookups(false);
+            }
+        };
+
+        void loadLookups();
+    }, [isEditModalOpen, genres.length, platforms.length, similarGames.length]);
+
+    useEffect(() => {
+        if (!isEditModalOpen || !game || hasSyncedLookups) return;
+        if (!genres.length || !platforms.length || !similarGames.length) return;
+
+        setEditForm((current) => ({
+            ...current,
+            genreIds: mapNamesToIds(game.genres, genres),
+            platformIds: mapNamesToIds(game.platforms, platforms),
+            similarGameIds: mapNamesToIds(game.similarGames ?? [], similarGames)
+        }));
+        setHasSyncedLookups(true);
+    }, [isEditModalOpen, game, genres, platforms, similarGames, hasSyncedLookups]);
+
     // Texto truncado
     useEffect(() => {
         if (!descriptionRef.current || !game) return;
@@ -76,6 +175,136 @@ export function GameDetailPage() {
         // Compara scrollHeight vs clientHeight para saber si hay overflow
         setIsDescriptionTruncated(element.scrollHeight > element.clientHeight);
     }, [game]);
+
+    const openEditModal = () => {
+        if (!game) return;
+        setEditError(null);
+        setHasSyncedLookups(false);
+        setSelectedGenreId('');
+        setSelectedPlatformId('');
+        setSelectedSimilarId('');
+        setEditForm({
+            title: game.title ?? '',
+            description: game.description ?? '',
+            trailerUrl: game.trailerUrl ?? '',
+            developer: game.developer ?? '',
+            gameStatus: game.gameStatus ?? '',
+            websiteUrl: game.websiteUrl ?? '',
+            mainFranchise: game.mainFranchise ?? '',
+            releaseDate: game.releaseDate ?? '',
+            imageUrl: game.imageUrl ?? '',
+            genreIds: mapNamesToIds(game.genres, genres),
+            platformIds: mapNamesToIds(game.platforms, platforms),
+            similarGameIds: mapNamesToIds(game.similarGames ?? [], similarGames)
+        });
+        setIsEditModalOpen(true);
+    };
+
+    const closeEditModal = () => {
+        setIsEditModalOpen(false);
+        setEditForm(emptyEditForm);
+        setEditError(null);
+        setHasSyncedLookups(false);
+    };
+
+    const openDeleteModal = () => {
+        setDeleteError(null);
+        setIsDeleteModalOpen(true);
+    };
+
+    const closeDeleteModal = () => {
+        setIsDeleteModalOpen(false);
+        setDeleteError(null);
+    };
+
+    const handleEditChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = event.target;
+        setEditForm((current) => ({
+            ...current,
+            [name]: value
+        }));
+    };
+
+    const addSelectedItem = (
+        field: 'genreIds' | 'platformIds' | 'similarGameIds',
+        value: string,
+        reset: (next: string) => void
+    ) => {
+        if (!value) return;
+        const id = Number(value);
+        if (Number.isNaN(id)) return;
+        setEditForm((current) => {
+            if (current[field].includes(id)) {
+                return current;
+            }
+            return {
+                ...current,
+                [field]: [...current[field], id]
+            };
+        });
+        reset('');
+    };
+
+    const removeSelectedItem = (field: 'genreIds' | 'platformIds' | 'similarGameIds', id: number) => {
+        setEditForm((current) => ({
+            ...current,
+            [field]: current[field].filter((item) => item !== id)
+        }));
+    };
+
+    const handleEditSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+        if (!game) return;
+
+        setIsUpdating(true);
+        setEditError(null);
+
+        const payload: GameUpdateRequest = {
+            title: editForm.title.trim(),
+            description: editForm.description.trim(),
+            trailerUrl: editForm.trailerUrl.trim(),
+            developer: editForm.developer.trim(),
+            gameStatus: editForm.gameStatus.trim(),
+            websiteUrl: editForm.websiteUrl.trim(),
+            mainFranchise: editForm.mainFranchise.trim(),
+            releaseDate: editForm.releaseDate,
+            imageUrl: editForm.imageUrl.trim() || undefined,
+            genreIds: editForm.genreIds,
+            platformIds: editForm.platformIds,
+            similarGameIds: editForm.similarGameIds.length ? editForm.similarGameIds : undefined
+        };
+
+        try {
+            const updated = await gameService.updateGame(game.id, payload);
+            setGame(updated);
+            setLikesCount(updated.totalLikes ?? likesCount);
+            setSavedCount(updated.totalSaves ?? savedCount);
+            setCommentsCount(updated.totalComments ?? commentsCount);
+            setIsLiked(Boolean(updated.likedByMe));
+            setIsSaved(Boolean(updated.savedByMe));
+            closeEditModal();
+        } catch (err: unknown) {
+            setEditError(getErrorMessage(err, 'No se pudo actualizar el juego'));
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const handleDeleteGame = async () => {
+        if (!game) return;
+
+        setIsDeleting(true);
+        setDeleteError(null);
+        try {
+            await gameService.deleteGame(game.id);
+            closeDeleteModal();
+            navigate('/');
+        } catch (err: unknown) {
+            setDeleteError(getErrorMessage(err, 'No se pudo eliminar el juego'));
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     const trailerUrl = game?.trailerUrl || '';
     const isYoutubeTrailer = trailerUrl.includes('youtube.com') || trailerUrl.includes('youtu.be') || trailerUrl.includes('/embed/');
@@ -228,6 +457,16 @@ export function GameDetailPage() {
                             </a>
                         )}
                     </div>
+                    {canManageGame && (
+                        <div className="detail-admin-actions">
+                            <button className="btn btn-secondary" type="button" onClick={openEditModal}>
+                                Editar juego
+                            </button>
+                            <button className="btn btn-danger" type="button" onClick={openDeleteModal}>
+                                Eliminar juego
+                            </button>
+                        </div>
+                    )}
                 </div>
             </header>
 
@@ -267,8 +506,312 @@ export function GameDetailPage() {
             </section>
 
             <section id="game-comments" className="game-detail-comments">
-                <CommentsSection gameId={game.id} onCountChange={setCommentsCount} />
+                <CommentsSection gameId={game.id} onCountChange={setCommentsCount} canDelete={canManageGame} />
             </section>
+
+            {isEditModalOpen && (
+                <div className="admin-modal-overlay" onClick={closeEditModal} role="presentation">
+                    <div
+                        className="admin-modal"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="game-edit-modal-title"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <div className="admin-modal-header">
+                            <h2 className="admin-modal-title" id="game-edit-modal-title">Editar juego</h2>
+                            <button
+                                type="button"
+                                className="admin-modal-close"
+                                onClick={closeEditModal}
+                                aria-label="Cerrar"
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <form className="admin-modal-form" onSubmit={handleEditSubmit}>
+                            <div className="admin-modal-body">
+                                {editError && <div className="error-alert">{editError}</div>}
+                                {isLoadingLookups && (
+                                    <div className="admin-table-feedback">
+                                        <span className="spinner" />
+                                    </div>
+                                )}
+
+                                <div className="profile-form-grid">
+                                    <div className="form-group">
+                                        <label className="form-label">Titulo</label>
+                                        <input
+                                            className="form-input"
+                                            name="title"
+                                            value={editForm.title}
+                                            onChange={handleEditChange}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="form-label">Trailer (URL)</label>
+                                        <input
+                                            className="form-input"
+                                            name="trailerUrl"
+                                            value={editForm.trailerUrl}
+                                            onChange={handleEditChange}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="form-label">Sitio web (URL)</label>
+                                        <input
+                                            className="form-input"
+                                            name="websiteUrl"
+                                            value={editForm.websiteUrl}
+                                            onChange={handleEditChange}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="form-label">Desarrolladora</label>
+                                        <input
+                                            className="form-input"
+                                            name="developer"
+                                            value={editForm.developer}
+                                            onChange={handleEditChange}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="form-label">Estado</label>
+                                        <input
+                                            className="form-input"
+                                            name="gameStatus"
+                                            value={editForm.gameStatus}
+                                            onChange={handleEditChange}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="form-label">Franquicia</label>
+                                        <input
+                                            className="form-input"
+                                            name="mainFranchise"
+                                            value={editForm.mainFranchise}
+                                            onChange={handleEditChange}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="form-label">Fecha de lanzamiento</label>
+                                        <input
+                                            className="form-input"
+                                            type="date"
+                                            name="releaseDate"
+                                            value={editForm.releaseDate}
+                                            onChange={handleEditChange}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="form-label">Imagen (URL)</label>
+                                        <input
+                                            className="form-input"
+                                            name="imageUrl"
+                                            value={editForm.imageUrl}
+                                            onChange={handleEditChange}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Descripcion</label>
+                                    <textarea
+                                        className="form-input form-textarea"
+                                        name="description"
+                                        value={editForm.description}
+                                        onChange={handleEditChange}
+                                        rows={5}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="profile-form-grid">
+                                    <div className="form-group">
+                                        <label className="form-label">Generos</label>
+                                        <div className="multi-select-row">
+                                            <select
+                                                className="form-input form-select-single"
+                                                value={selectedGenreId}
+                                                onChange={(event) => setSelectedGenreId(event.target.value)}
+                                            >
+                                                <option value="">Selecciona un genero</option>
+                                                {genres.map((genre) => (
+                                                    <option key={genre.id} value={genre.id}>
+                                                        {genre.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary"
+                                                onClick={() => addSelectedItem('genreIds', selectedGenreId, setSelectedGenreId)}
+                                                disabled={!selectedGenreId || editForm.genreIds.includes(Number(selectedGenreId))}
+                                            >
+                                                Añadir
+                                            </button>
+                                        </div>
+                                        <div className="selected-tags">
+                                            {editForm.genreIds.length === 0 && (
+                                                <span className="selected-empty">Sin generos</span>
+                                            )}
+                                            {editForm.genreIds.map((id) => (
+                                                <span key={id} className="selected-tag">
+                                                    {genreMap.get(id) ?? `#${id}`}
+                                                    <button type="button" onClick={() => removeSelectedItem('genreIds', id)}>
+                                                        ×
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="form-label">Plataformas</label>
+                                        <div className="multi-select-row">
+                                            <select
+                                                className="form-input form-select-single"
+                                                value={selectedPlatformId}
+                                                onChange={(event) => setSelectedPlatformId(event.target.value)}
+                                            >
+                                                <option value="">Selecciona una plataforma</option>
+                                                {platforms.map((platform) => (
+                                                    <option key={platform.id} value={platform.id}>
+                                                        {platform.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary"
+                                                onClick={() => addSelectedItem('platformIds', selectedPlatformId, setSelectedPlatformId)}
+                                                disabled={!selectedPlatformId || editForm.platformIds.includes(Number(selectedPlatformId))}
+                                            >
+                                                Añadir
+                                            </button>
+                                        </div>
+                                        <div className="selected-tags">
+                                            {editForm.platformIds.length === 0 && (
+                                                <span className="selected-empty">Sin plataformas</span>
+                                            )}
+                                            {editForm.platformIds.map((id) => (
+                                                <span key={id} className="selected-tag">
+                                                    {platformMap.get(id) ?? `#${id}`}
+                                                    <button type="button" onClick={() => removeSelectedItem('platformIds', id)}>
+                                                        ×
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="form-label">Juegos similares (opcional)</label>
+                                        <div className="multi-select-row">
+                                            <select
+                                                className="form-input form-select-single"
+                                                value={selectedSimilarId}
+                                                onChange={(event) => setSelectedSimilarId(event.target.value)}
+                                            >
+                                                <option value="">Selecciona un juego</option>
+                                                {similarGames.map((gameItem) => (
+                                                    <option key={gameItem.id} value={gameItem.id}>
+                                                        {gameItem.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary"
+                                                onClick={() => addSelectedItem('similarGameIds', selectedSimilarId, setSelectedSimilarId)}
+                                                disabled={!selectedSimilarId || editForm.similarGameIds.includes(Number(selectedSimilarId))}
+                                            >
+                                                Añadir
+                                            </button>
+                                        </div>
+                                        <div className="selected-tags">
+                                            {editForm.similarGameIds.length === 0 && (
+                                                <span className="selected-empty">Sin similares</span>
+                                            )}
+                                            {editForm.similarGameIds.map((id) => (
+                                                <span key={id} className="selected-tag">
+                                                    {similarGameMap.get(id) ?? `#${id}`}
+                                                    <button type="button" onClick={() => removeSelectedItem('similarGameIds', id)}>
+                                                        ×
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="admin-modal-actions">
+                                <button className="btn btn-secondary" type="button" onClick={closeEditModal}>
+                                    Cancelar
+                                </button>
+                                <button className="btn btn-primary" type="submit" disabled={isUpdating || isLoadingLookups}>
+                                    {isUpdating ? <span className="spinner-small" /> : 'Guardar'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {isDeleteModalOpen && (
+                <div className="admin-modal-overlay" onClick={closeDeleteModal} role="presentation">
+                    <div
+                        className="admin-modal admin-modal-sm"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="game-delete-modal-title"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <div className="admin-modal-header">
+                            <h2 className="admin-modal-title" id="game-delete-modal-title">Confirmar eliminacion</h2>
+                            <button
+                                type="button"
+                                className="admin-modal-close"
+                                onClick={closeDeleteModal}
+                                aria-label="Cerrar"
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <div className="admin-modal-form">
+                            <div className="admin-modal-body">
+                                <p>
+                                    Seguro que quieres borrar <strong>{game.title}</strong>? Esta accion no se puede deshacer.
+                                </p>
+                                {deleteError && <div className="error-alert">{deleteError}</div>}
+                            </div>
+                            <div className="admin-modal-actions">
+                                <button className="btn btn-secondary" type="button" onClick={closeDeleteModal}>
+                                    Cancelar
+                                </button>
+                                <button className="btn btn-danger" type="button" onClick={handleDeleteGame} disabled={isDeleting}>
+                                    {isDeleting ? <span className="spinner-small" /> : 'Eliminar'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -13,4 +13,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     long countDistinctUserIdByGameId(Long gameId);
     long countByGameId(Long gameId);
     void deleteByUserId(Long userId);
+    void deleteByGameId(Long gameId);
 }

@@ -35,4 +35,10 @@ public class CommentController {
 
         return ResponseEntity.ok(commentService.createComment(content, username, gameId));
     }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId, Authentication authentication) {
+        commentService.deleteComment(commentId, authentication.getName());
+        return ResponseEntity.noContent().build();
+    }
 }

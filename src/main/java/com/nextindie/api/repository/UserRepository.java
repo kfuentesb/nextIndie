@@ -2,6 +2,7 @@ package com.nextindie.api.repository;
 
 import com.nextindie.api.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -31,4 +32,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select g from User u join u.savedGames g where u.username = :username")
     List<com.nextindie.api.model.Game> findSavedGamesByUsername(String username);
+
+    @Modifying
+    @Query(value = "delete from user_liked_games where game_id = :gameId", nativeQuery = true)
+    void deleteLikesByGameId(Long gameId);
+
+    @Modifying
+    @Query(value = "delete from user_saved_games where game_id = :gameId", nativeQuery = true)
+    void deleteSavesByGameId(Long gameId);
 }
