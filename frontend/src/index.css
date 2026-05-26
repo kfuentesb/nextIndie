@@ -930,11 +930,14 @@ html, body, #root {
 }
 
 .releases-page {
+  height: calc(100vh - 60px);
   min-height: calc(100vh - 60px);
+  max-height: calc(100vh - 60px);
   display: grid;
   grid-template-columns: 1.1fr 1fr;
   gap: 20px;
   padding: 20px;
+  overflow: hidden;
 }
 
 .calendar-panel,
@@ -943,6 +946,11 @@ html, body, #root {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 16px;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .calendar-header {
@@ -950,21 +958,12 @@ html, body, #root {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .calendar-header h1 {
   font-size: 20px;
   text-transform: capitalize;
-}
-
-.month-nav-btn {
-  width: 36px;
-  height: 36px;
-  background: transparent;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  color: var(--text-primary);
-  cursor: pointer;
 }
 
 .calendar-weekdays {
@@ -973,16 +972,21 @@ html, body, #root {
   margin-bottom: 8px;
   color: var(--text-muted);
   font-size: 12px;
+  flex-shrink: 0;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 6px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .calendar-day {
-  min-height: 72px;
+  min-height: 0;
+  height: 100%;
   border: 1px solid var(--border-color);
   background: #141414;
   border-radius: 6px;
@@ -1009,16 +1013,23 @@ html, body, #root {
   background: rgba(102, 126, 234, 0.15);
 }
 
+.releases-day-panel {
+  display: flex;
+  flex-direction: column;
+}
+
 .releases-day-panel h2 {
   font-size: 18px;
   margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .release-games-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
-  max-height: 420px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 6px;
   scrollbar-gutter: stable;
@@ -1034,6 +1045,8 @@ html, body, #root {
   background: #141414;
   text-decoration: none;
   color: inherit;
+  min-height: 96px;
+  max-height: 96px;
 }
 
 .release-card:hover {
@@ -1050,23 +1063,41 @@ html, body, #root {
 
 .release-card div {
   padding: 8px 8px 8px 0;
+  overflow: hidden;
 }
 
 .release-card h3 {
   font-size: 14px;
   margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .release-card p {
   font-size: 12px;
   color: var(--text-secondary);
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .calendar-feedback {
   margin-top: 12px;
   font-size: 13px;
   color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.month-nav-btn {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  cursor: pointer;
 }
 
 .game-detail-page {
@@ -2715,6 +2746,14 @@ html, body, #root {
   }
 
   /* POPOVER calendario */
+  .calendar-panel {
+    height: auto;
+    max-height: none;
+    overflow: visible !important; 
+    position: relative;
+    z-index: 1;
+  }
+
   .calendar-mobile-wrapper {
     position: relative;
     margin-bottom: 18px;
@@ -3062,4 +3101,5 @@ html, body, #root {
   .admin-modal-body select.form-input {
     height: 44px;
   }
+  
 }
