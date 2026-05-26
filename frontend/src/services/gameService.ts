@@ -52,6 +52,11 @@ export const gameService = {
         return response.data;
     },
 
+    getPromotedGames: async (): Promise<Game[]> => {
+        const response = await api.get<Game[]>('/games/promoted');
+        return response.data;
+    },
+
     updateGame: async (id: number, payload: GameUpdateRequest): Promise<Game> => {
         const response = await api.put<Game>(`/company/games/${id}`, payload);
         return response.data;

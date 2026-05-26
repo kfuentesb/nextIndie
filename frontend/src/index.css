@@ -1361,6 +1361,25 @@ html, body, #root {
   gap: 20px;
 }
 
+.ranking-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.ranking-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.ranking-subheader h2 {
+  font-size: 20px;
+  margin: 0;
+}
+
 .ranking-header h1 {
   font-size: 28px;
   margin-bottom: 4px;
@@ -1442,6 +1461,17 @@ html, body, #root {
 .ranking-list {
   display: grid;
   gap: 8px;
+}
+
+.ranking-empty {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.promoted-games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 18px;
 }
 
 .ranking-row {
@@ -2577,6 +2607,14 @@ html, body, #root {
   .ranking-podium {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .ranking-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .promoted-games-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .admin-page {

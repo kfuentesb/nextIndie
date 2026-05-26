@@ -5,12 +5,16 @@ import com.nextindie.api.dto.GameFeedResponseDTO;
 import com.nextindie.api.dto.GameImageUrls;
 import com.nextindie.api.dto.GameUpdateRequest;
 import com.nextindie.api.model.Game;
+import com.nextindie.api.model.GameRequest;
 import com.nextindie.api.model.Genre;
 import com.nextindie.api.model.Platform;
 import com.nextindie.api.model.User;
+import com.nextindie.api.model.enums.GameRequestStatus;
+import com.nextindie.api.model.enums.GameRequestType;
 import com.nextindie.api.model.enums.UserType;
 import com.nextindie.api.repository.CommentRepository;
 import com.nextindie.api.repository.GameRepository;
+import com.nextindie.api.repository.GameRequestRepository;
 import com.nextindie.api.repository.GenreRepository;
 import com.nextindie.api.repository.PlatformRepository;
 import com.nextindie.api.repository.UserRepository;
@@ -42,19 +46,22 @@ public class GameService {
     private final GenreRepository genreRepository;
     private final PlatformRepository platformRepository;
     private final IgdbSyncService igdbSyncService;
+    private final GameRequestRepository gameRequestRepository;
 
     public GameService(GameRepository gameRepository,
                        UserRepository userRepository,
                        CommentRepository commentRepository,
                        GenreRepository genreRepository,
                        PlatformRepository platformRepository,
-                       IgdbSyncService igdbSyncService) {
+                       IgdbSyncService igdbSyncService,
+                       GameRequestRepository gameRequestRepository) {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.genreRepository = genreRepository;
         this.platformRepository = platformRepository;
         this.igdbSyncService = igdbSyncService;
+        this.gameRequestRepository = gameRequestRepository;
     }
 
     public List<GameDTO> getAllGames() {
@@ -289,6 +296,20 @@ public class GameService {
                 .map(ranked -> convertToDTO(ranked.game(), ranked.likes(), ranked.saves(), ranked.totalComments(), username))
                 .collect(Collectors.toList());
     }
+
+        public List<GameDTO> getPromotedGames(String username) {
+        List<GameRequest> promotedRequests = gameRequestRepository.findByStatusAndRequestTypeOrderByReviewedAtDesc(
+            GameRequestStatus.PROMOTED,
+            GameRequestType.PROMOTION
+        );
+
+        return promotedRequests.stream()
+            .map(GameRequest::getPromotedGame)
+            .filter(game -> game != null)
+            .distinct()
+            .map(game -> convertToDTO(game, username))
+            .collect(Collectors.toList());
+        }
 
     private GameDTO convertToDTO(Game game) {
         return convertToDTO(game, null);
