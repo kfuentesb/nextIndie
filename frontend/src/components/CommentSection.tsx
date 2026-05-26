@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useComments } from '../hooks/useComments';
 import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 interface CommentsSectionProps {
     gameId: number;
@@ -119,7 +120,7 @@ export function CommentsSection({ gameId, onCountChange, canDelete }: CommentsSe
                     </form>
                 ) : (
                     <div className="login-prompt">
-                        <a href="/login">Inicia sesión</a> para comentar
+                        <Link to="/login">Inicia sesión</Link> para comentar
                     </div>
                 )}
             </div>
