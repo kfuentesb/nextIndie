@@ -231,31 +231,54 @@ export function RankingPage({ refreshIntervalMinutes = DEFAULT_REFRESH_MINUTES }
                     ) : activePromotedGame ? (
                         <div className="promoted-game-stage" aria-live="polite">
                             <div className="promoted-game-viewport">
-                                <div
-                                    className="promoted-game-track"
-                                    style={{ transform: `translateX(-${activePromotedIndex * 100}%)` }}
+                                {previousPromotedGame && (
+                                    <article
+                                        key={`${previousPromotedGame.id}-leaving`}
+                                        className="promoted-game-feature promoted-game-feature--leaving"
+                                        aria-hidden="true"
+                                        onAnimationEnd={() => setPreviousPromotedIndex(null)}
+                                    >
+                                        <Link
+                                            className="promoted-game-link"
+                                            to={`/games/${previousPromotedGame.id}`}
+                                            tabIndex={-1}
+                                        >
+                                            <img
+                                                className="promoted-game-cover"
+                                                src={getPromotedImage(previousPromotedGame)}
+                                                alt=""
+                                            />
+                                            <div className="promoted-game-info">
+                                                <h2>{previousPromotedGame.title}</h2>
+                                                <p>{previousPromotedGame.developer}</p>
+                                                <p>{formatReleaseDate(previousPromotedGame.releaseDate)}</p>
+                                            </div>
+                                        </Link>
+                                    </article>
+                                )}
+                                <article
+                                    key={`${activePromotedGame.id}-active`}
+                                    className={`promoted-game-feature ${
+                                        previousPromotedGame ? 'promoted-game-feature--entering' : ''
+                                    }`}
                                 >
-                                    {promotedGames.map((game) => (
-                                        <article key={game.id} className="promoted-game-feature">
-                                            <Link
-                                                className="promoted-game-link"
-                                                to={`/games/${game.id}`}
-                                                aria-label={`Ver detalle de ${game.title}`}
-                                            >
-                                                <img
-                                                    className="promoted-game-cover"
-                                                    src={getPromotedImage(game)}
-                                                    alt={game.title}
-                                                />
-                                                <div className="promoted-game-info">
-                                                    <h2>{game.title}</h2>
-                                                    <p>{game.developer}</p>
-                                                    <p>{formatReleaseDate(game.releaseDate)}</p>
-                                                </div>
-                                            </Link>
-                                        </article>
-                                    ))}
-                                </div>
+                                    <Link
+                                        className="promoted-game-link"
+                                        to={`/games/${activePromotedGame.id}`}
+                                        aria-label={`Ver detalle de ${activePromotedGame.title}`}
+                                    >
+                                        <img
+                                            className="promoted-game-cover"
+                                            src={getPromotedImage(activePromotedGame)}
+                                            alt={activePromotedGame.title}
+                                        />
+                                        <div className="promoted-game-info">
+                                            <h2>{activePromotedGame.title}</h2>
+                                            <p>{activePromotedGame.developer}</p>
+                                            <p>{formatReleaseDate(activePromotedGame.releaseDate)}</p>
+                                        </div>
+                                    </Link>
+                                </article>
                             </div>
                             {promotedGames.length > 1 && (
                                 <div className="promoted-game-indicators" aria-label="Seleccionar juego promocionado">

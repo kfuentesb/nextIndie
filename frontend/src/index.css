@@ -1482,22 +1482,46 @@ html, body, #root {
   width: min(100%, 340px);
   overflow: hidden;
   border-radius: 8px;
-}
-
-.promoted-game-track {
-  display: flex;
-  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
+  position: relative;
 }
 
 .promoted-game-feature {
-  flex: 0 0 100%;
   width: 100%;
   background: var(--surface-dark);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
+}
+
+.promoted-game-feature--entering {
+  animation: promotedSlideInRight 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.promoted-game-feature--leaving {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  animation: promotedSlideOutLeft 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes promotedSlideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes promotedSlideOutLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
 }
 
 .promoted-game-link {
@@ -1562,8 +1586,9 @@ html, body, #root {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .promoted-game-track {
-    transition: none;
+  .promoted-game-feature--entering,
+  .promoted-game-feature--leaving {
+    animation-duration: 1ms;
   }
 }
 
