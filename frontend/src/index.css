@@ -142,6 +142,22 @@ html, body, #root {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+.form-input-error {
+  border-color: #ef4444;
+}
+
+.form-input-error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.form-field-error {
+  margin-top: 6px;
+  color: #ef4444;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .form-input::placeholder {
   color: var(--text-muted);
 }
