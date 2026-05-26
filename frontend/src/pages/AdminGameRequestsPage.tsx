@@ -6,7 +6,7 @@ import type { GameRequestResponse, GameRequestStatus } from '../types';
 import { getErrorMessage } from '../utils/error';
 import { ForbiddenPage } from './ForbiddenPage';
 
-const statusOptions: GameRequestStatus[] = ['PENDING', 'APPROVED', 'PROMOTED', 'REJECTED'];
+const statusOptions: GameRequestStatus[] = ['PENDING', 'APPROVED', 'REJECTED', 'PROMOTED'];
 
 const statusLabels: Record<GameRequestStatus, string> = {
     PENDING: 'Pendientes',
