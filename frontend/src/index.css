@@ -2610,7 +2610,16 @@ html, body, #root {
   }
 
   .ranking-layout {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ranking-column {
+    order: 2;
+  }
+
+  .ranking-promoted {
+    order: 1;
   }
 
   .promoted-games-grid {
