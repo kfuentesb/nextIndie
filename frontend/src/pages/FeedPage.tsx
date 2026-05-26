@@ -102,7 +102,7 @@ export function FeedPage() {
         <div className="feed-container">
             <div
                 className="video-slider"
-                style={{ transform: `translateY(${-currentIndex * 100}vh)` }}
+                style={{ transform: `translateY(${-currentIndex * 100}%)` }}
             >
                 {games.map((game, index) => (
                     <div

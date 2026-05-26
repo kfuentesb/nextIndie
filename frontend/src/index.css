@@ -235,7 +235,8 @@ html, body, #root {
 
 /* Feed */
 .feed-container {
-  height: 100vh;
+  height: calc(100dvh - 60px);
+  min-height: calc(100dvh - 60px);
   width: 100%;
   overflow: hidden;
   position: relative;
@@ -250,7 +251,8 @@ html, body, #root {
 }
 
 .video-slide {
-  height: 100vh;
+  height: 100%;
+  min-height: 100%;
   width: 100%;
   position: relative;
 }
@@ -260,14 +262,16 @@ html, body, #root {
 }
 
 .video-placeholder {
-  height: 100vh;
+  height: 100%;
+  min-height: 100%;
   width: 100%;
   background: #000;
 }
 
 /* Video Container */
 .video-container {
-  height: 100vh;
+  height: 100%;
+  min-height: 100%;
   width: 100%;
   position: relative;
   display: flex;
@@ -477,7 +481,8 @@ html, body, #root {
   border-top: 1px solid var(--border-color);
   z-index: 200;
   animation: slideUp 0.3s ease-out;
-  max-height: 50vh;
+  height: min(60dvh, calc(100% - 120px));
+  max-height: min(60dvh, calc(100% - 120px));
   overflow: hidden;
 }
 
@@ -506,6 +511,7 @@ html, body, #root {
 
 .comments-container {
   height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -542,7 +548,7 @@ html, body, #root {
   overflow-y: auto;
   padding-right: 10px;
   margin-bottom: 15px;
-  max-height: 180px; 
+  min-height: 0;
 }
 
 .comment {
@@ -2624,14 +2630,15 @@ html, body, #root {
   }
 
   .feed-container {
-    height: 100dvh;
+    height: calc(100dvh - 60px);
+    min-height: calc(100dvh - 60px);
   }
 
   .video-slide,
   .video-placeholder,
   .video-container,
   .video-wrapper {
-    height: 100dvh;
+    height: 100%;
   }
 
   .video-info {
@@ -2639,7 +2646,8 @@ html, body, #root {
   }
 
   .comments-overlay {
-    max-height: 70vh;
+    height: min(70dvh, calc(100% - 120px));
+    max-height: min(70dvh, calc(100% - 120px));
   }
 
   .comments-container {
