@@ -89,6 +89,7 @@ export function GameDetailPage() {
     const [isPromoting, setIsPromoting] = useState(false);
     const [promotionError, setPromotionError] = useState<string | null>(null);
     const [promotionSuccess, setPromotionSuccess] = useState<string | null>(null);
+    const [isPromotionActive, setIsPromotionActive] = useState(false);
     const [genres, setGenres] = useState<LookupItem[]>([]);
     const [platforms, setPlatforms] = useState<LookupItem[]>([]);
     const [similarGames, setSimilarGames] = useState<LookupItem[]>([]);
@@ -124,6 +125,31 @@ export function GameDetailPage() {
     const isCompany = user?.role === 'EMPRESA';
     const canManageGame = Boolean(game) && (isAdmin || (isCompany && game?.requestedBy === user?.username));
     const canPromoteGame = Boolean(game) && isCompany && game?.requestedBy === user?.username;
+    const showPromotionButton = canPromoteGame && !isPromotionActive;
+
+    useEffect(() => {
+        if (!game || !canPromoteGame) {
+            setIsPromotionActive(false);
+            return;
+        }
+        let isMounted = true;
+        const loadPromotionStatus = async () => {
+            try {
+                const promotedGames = await gameService.getPromotedGames();
+                if (isMounted) {
+                    setIsPromotionActive(promotedGames.some((item) => item.id === game.id));
+                }
+            } catch {
+                if (isMounted) {
+                    setIsPromotionActive(false);
+                }
+            }
+        };
+        void loadPromotionStatus();
+        return () => {
+            isMounted = false;
+        };
+    }, [game?.id, canPromoteGame]);
 
     const genreMap = useMemo(() => new Map(genres.map((item) => [item.id, item.name])), [genres]);
     const platformMap = useMemo(() => new Map(platforms.map((item) => [item.id, item.name])), [platforms]);
@@ -492,7 +518,7 @@ export function GameDetailPage() {
                     </div>
                     {canManageGame && (
                         <div className="detail-admin-actions">
-                            {canPromoteGame && (
+                            {showPromotionButton && (
                                 <button className="btn btn-primary" type="button" onClick={openPromotionModal}>
                                     Promocionar juego
                                 </button>
@@ -835,7 +861,7 @@ export function GameDetailPage() {
                         <div className="admin-modal-form">
                             <div className="admin-modal-body">
                                 <p>
-                                    Estas seguro de solicitar la promocion de <strong>{game.title}</strong>? Se realizara un cobro ficticio.
+                                    Estas seguro de solicitar la promoción de <strong>{game.title}</strong>? Se realizara el cobro una vez aceptado.
                                 </p>
                                 {promotionError && <div className="error-alert">{promotionError}</div>}
                             </div>

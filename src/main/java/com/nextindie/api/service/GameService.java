@@ -18,6 +18,7 @@ import com.nextindie.api.repository.GameRequestRepository;
 import com.nextindie.api.repository.GenreRepository;
 import com.nextindie.api.repository.PlatformRepository;
 import com.nextindie.api.repository.UserRepository;
+import com.nextindie.api.util.PromotionPolicy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -304,6 +305,7 @@ public class GameService {
         );
 
         return promotedRequests.stream()
+            .filter(request -> PromotionPolicy.isPromotionActive(request.getReviewedAt()))
             .map(GameRequest::getPromotedGame)
             .filter(game -> game != null)
             .distinct()

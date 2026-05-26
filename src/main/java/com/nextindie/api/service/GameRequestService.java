@@ -15,6 +15,7 @@ import com.nextindie.api.repository.GameRequestRepository;
 import com.nextindie.api.repository.GenreRepository;
 import com.nextindie.api.repository.PlatformRepository;
 import com.nextindie.api.repository.UserRepository;
+import com.nextindie.api.util.PromotionPolicy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -103,7 +104,14 @@ public class GameRequestService {
         if (gameRequestRepository.existsByPromotedGameIdAndStatus(gameId, GameRequestStatus.PENDING)) {
             throw new RuntimeException("Ya existe una solicitud de promocion pendiente");
         }
-        if (gameRequestRepository.existsByPromotedGameIdAndStatus(gameId, GameRequestStatus.PROMOTED)) {
+        GameRequest lastPromoted = gameRequestRepository
+                .findTopByPromotedGameIdAndStatusAndRequestTypeOrderByReviewedAtDesc(
+                        gameId,
+                        GameRequestStatus.PROMOTED,
+                        GameRequestType.PROMOTION
+                )
+                .orElse(null);
+        if (lastPromoted != null && PromotionPolicy.isPromotionActive(lastPromoted.getReviewedAt())) {
             throw new RuntimeException("El juego ya esta promocionado");
         }
 
@@ -280,4 +288,5 @@ public class GameRequestService {
     private GameRequestType resolveRequestType(GameRequest request) {
         return request.getRequestType() != null ? request.getRequestType() : GameRequestType.NEW_GAME;
     }
+
 }
