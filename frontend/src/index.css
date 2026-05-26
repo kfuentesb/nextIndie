@@ -1471,6 +1471,7 @@ html, body, #root {
 
 .promoted-game-stage {
   min-height: 540px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1479,7 +1480,10 @@ html, body, #root {
 }
 
 .promoted-game-viewport {
-  width: min(100%, 340px);
+  width: 100%;
+  max-width: 340px;
+  margin-inline: auto;
+  align-self: center;
   overflow: hidden;
   border-radius: 8px;
   position: relative;
@@ -2745,7 +2749,10 @@ html, body, #root {
   }
 
   .promoted-game-viewport {
-    width: min(100%, 320px);
+    width: 100%;
+    max-width: 320px;
+    margin-inline: auto;
+    align-self: center;
   }
 
   .promoted-game-feature {
