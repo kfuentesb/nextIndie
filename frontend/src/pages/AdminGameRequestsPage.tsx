@@ -8,6 +8,12 @@ import { ForbiddenPage } from './ForbiddenPage';
 
 const statusOptions: GameRequestStatus[] = ['PENDING', 'APPROVED', 'REJECTED'];
 
+const statusLabels: Record<GameRequestStatus, string> = {
+    PENDING: 'Pendientes',
+    APPROVED: 'Aprobadas',
+    REJECTED: 'Rechazadas'
+};
+
 export function AdminGameRequestsPage() {
     const { user, isAuthenticated } = useAuth();
     const isAdmin = user?.role === 'ADMIN';
@@ -65,6 +71,8 @@ export function AdminGameRequestsPage() {
         return 'No hay solicitudes rechazadas.';
     }, [statusFilter]);
 
+    const headerSubtitle = `${requests.length} solicitudes ${statusLabels[statusFilter].toLowerCase()}`;
+
     if (!isAuthenticated) {
         return (
             <div className="admin-page admin-state">
@@ -80,22 +88,23 @@ export function AdminGameRequestsPage() {
 
     return (
         <div className="admin-page">
-            <header className="admin-header">
+            <header className="profile-header admin-users-header">
                 <div>
                     <h1>Solicitudes de juegos</h1>
-                    <p>{requests.length} solicitudes</p>
+                    <p>{headerSubtitle}</p>
                 </div>
-                <div className="admin-row-actions">
+                <div className="profile-tabs">
                     {statusOptions.map((status) => (
                         <button
                             key={status}
-                            className={`btn btn-secondary ${statusFilter === status ? 'active' : ''}`}
+                            type="button"
+                            className={`profile-tab ${statusFilter === status ? 'active' : ''}`}
                             onClick={() => {
                                 setStatusFilter(status);
                                 void loadRequests(status);
                             }}
                         >
-                            {status === 'PENDING' ? 'Pendientes' : status === 'APPROVED' ? 'Aprobadas' : 'Rechazadas'}
+                            {statusLabels[status]}
                         </button>
                     ))}
                 </div>
