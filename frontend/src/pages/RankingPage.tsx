@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import type { Game } from '../types';
 import { gameService } from '../services/gameService';
@@ -23,6 +23,8 @@ export function RankingPage({ refreshIntervalMinutes = DEFAULT_REFRESH_MINUTES }
     const [games, setGames] = useState<Game[]>([]);
     const [promotedGames, setPromotedGames] = useState<Game[]>([]);
     const [activePromotedIndex, setActivePromotedIndex] = useState(0);
+    const [previousPromotedIndex, setPreviousPromotedIndex] = useState<number | null>(null);
+    const activePromotedIndexRef = useRef(0);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [promotedError, setPromotedError] = useState<string | null>(null);
@@ -57,6 +59,16 @@ export function RankingPage({ refreshIntervalMinutes = DEFAULT_REFRESH_MINUTES }
         }
     }, []);
 
+    const changePromotedGame = useCallback((index: number) => {
+        if (index === activePromotedIndexRef.current) {
+            return;
+        }
+
+        setPreviousPromotedIndex(activePromotedIndexRef.current);
+        activePromotedIndexRef.current = index;
+        setActivePromotedIndex(index);
+    }, []);
+
     useEffect(() => {
         // Carga inicial
         void loadRanking();
@@ -72,22 +84,24 @@ export function RankingPage({ refreshIntervalMinutes = DEFAULT_REFRESH_MINUTES }
     }, [location.key, loadRanking, refreshIntervalMinutes]);
 
     useEffect(() => {
+        activePromotedIndexRef.current = 0;
         setActivePromotedIndex(0);
+        setPreviousPromotedIndex(null);
 
         if (promotedGames.length <= 1) {
             return;
         }
 
         const intervalId = setInterval(() => {
-            setActivePromotedIndex((currentIndex) => (currentIndex + 1) % promotedGames.length);
+            changePromotedGame((activePromotedIndexRef.current + 1) % promotedGames.length);
         }, PROMOTED_ROTATION_MS);
 
         return () => clearInterval(intervalId);
-    }, [promotedGames]);
+    }, [changePromotedGame, promotedGames]);
 
     const goToPromotedGame = useCallback((index: number) => {
-        setActivePromotedIndex(index);
-    }, []);
+        changePromotedGame(index);
+    }, [changePromotedGame]);
 
     const monthLabel = useMemo(() => {
         return new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
@@ -117,6 +131,7 @@ export function RankingPage({ refreshIntervalMinutes = DEFAULT_REFRESH_MINUTES }
     };
 
     const activePromotedGame = promotedGames[activePromotedIndex] ?? null;
+    const previousPromotedGame = previousPromotedIndex === null ? null : promotedGames[previousPromotedIndex] ?? null;
     //const topThree = games.slice(0, 3);
     //const rest = games.slice(3, 50);
     
