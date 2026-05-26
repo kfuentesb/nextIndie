@@ -8,7 +8,8 @@ interface RankingPageProps {
     refreshIntervalMinutes?: number;
 }
 
-const DEFAULT_REFRESH_MINUTES = 5; // Refresca cada minuto
+const DEFAULT_REFRESH_MINUTES = 5; // Refresca cada 5 minutos
+const PROMOTED_ROTATION_MS = 15000;
 
 function getRankClass(index: number): string {
     if (index === 0) return 'gold';
@@ -21,6 +22,7 @@ export function RankingPage({ refreshIntervalMinutes = DEFAULT_REFRESH_MINUTES }
     const location = useLocation();
     const [games, setGames] = useState<Game[]>([]);
     const [promotedGames, setPromotedGames] = useState<Game[]>([]);
+    const [activePromotedIndex, setActivePromotedIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [promotedError, setPromotedError] = useState<string | null>(null);
@@ -56,18 +58,32 @@ export function RankingPage({ refreshIntervalMinutes = DEFAULT_REFRESH_MINUTES }
     }, []);
 
     useEffect(() => {
-    // Carga inicial
-    void loadRanking();
-
-    // Configura el intervalo de refresco
-    const intervalMs = refreshIntervalMinutes * 60 * 1000;
-    const intervalId = setInterval(() => {
+        // Carga inicial
         void loadRanking();
-    }, intervalMs);
 
-    // Limpieza: borra el intervalo al desmontar
-    return () => clearInterval(intervalId);
-}, [location.key, loadRanking, refreshIntervalMinutes]);
+        // Configura el intervalo de refresco
+        const intervalMs = refreshIntervalMinutes * 60 * 1000;
+        const intervalId = setInterval(() => {
+            void loadRanking();
+        }, intervalMs);
+
+        // Limpieza: borra el intervalo al desmontar
+        return () => clearInterval(intervalId);
+    }, [location.key, loadRanking, refreshIntervalMinutes]);
+
+    useEffect(() => {
+        setActivePromotedIndex(0);
+
+        if (promotedGames.length <= 1) {
+            return;
+        }
+
+        const intervalId = setInterval(() => {
+            setActivePromotedIndex((currentIndex) => (currentIndex + 1) % promotedGames.length);
+        }, PROMOTED_ROTATION_MS);
+
+        return () => clearInterval(intervalId);
+    }, [promotedGames]);
 
     const monthLabel = useMemo(() => {
         return new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
@@ -84,6 +100,19 @@ export function RankingPage({ refreshIntervalMinutes = DEFAULT_REFRESH_MINUTES }
             questionPlaceholder
         );
     };
+
+    const getPromotedImage = (game: Game): string => {
+        return (
+            game.imageUrls?.coverBig ||
+            game.imageUrls?.size720p ||
+            game.imageUrls?.screenshotBig ||
+            game.imageUrls?.coverSmall ||
+            game.imageUrl ||
+            questionPlaceholder
+        );
+    };
+
+    const activePromotedGame = promotedGames[activePromotedIndex] ?? null;
     //const topThree = games.slice(0, 3);
     //const rest = games.slice(3, 50);
     
@@ -180,30 +209,41 @@ export function RankingPage({ refreshIntervalMinutes = DEFAULT_REFRESH_MINUTES }
                         <div className="ranking-empty">
                             <p>No hay juegos promocionados en este momento.</p>
                         </div>
-                    ) : (
-                        <div className="promoted-games-grid">
-                            {promotedGames.map((game) => (
-                                <article key={game.id} className="saved-game-card promoted-game-card">
-                                    <Link
-                                        className="saved-game-link"
-                                        to={`/games/${game.id}`}
-                                        aria-label={`Ver detalle de ${game.title}`}
-                                    >
-                                        <img
-                                            className="saved-game-cover"
-                                            src={getRankingImage(game)}
-                                            alt={game.title}
-                                            loading="lazy"
+                    ) : activePromotedGame ? (
+                        <div className="promoted-game-stage" aria-live="polite">
+                            <article key={activePromotedGame.id} className="promoted-game-feature">
+                                <Link
+                                    className="promoted-game-link"
+                                    to={`/games/${activePromotedGame.id}`}
+                                    aria-label={`Ver detalle de ${activePromotedGame.title}`}
+                                >
+                                    <img
+                                        className="promoted-game-cover"
+                                        src={getPromotedImage(activePromotedGame)}
+                                        alt={activePromotedGame.title}
+                                    />
+                                    <div className="promoted-game-info">
+                                        <h2>{activePromotedGame.title}</h2>
+                                        <p>{activePromotedGame.developer}</p>
+                                        <p>{formatReleaseDate(activePromotedGame.releaseDate)}</p>
+                                    </div>
+                                </Link>
+                            </article>
+                            {promotedGames.length > 1 && (
+                                <div className="promoted-game-indicators" aria-hidden="true">
+                                    {promotedGames.map((game, index) => (
+                                        <span
+                                            key={game.id}
+                                            className={`promoted-game-dot ${
+                                                index === activePromotedIndex ? 'promoted-game-dot--active' : ''
+                                            }`}
                                         />
-                                        <div className="saved-game-info">
-                                            <h2>{game.title}</h2>
-                                            <p>{game.developer}</p>
-                                            <p>{formatReleaseDate(game.releaseDate)}</p>
-                                        </div>
-                                    </Link>
-                                </article>
-                            ))}
+                                    ))}
+                                </div>
+                            )}
                         </div>
+                    ) : (
+                        null
                     )}
                 </section>
             </div>
