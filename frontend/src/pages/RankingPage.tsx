@@ -8,7 +8,7 @@ interface RankingPageProps {
     refreshIntervalMinutes?: number;
 }
 
-const DEFAULT_REFRESH_MINUTES = 2; // Refresca cada minuto
+const DEFAULT_REFRESH_MINUTES = 5; // Refresca cada minuto
 
 function getRankClass(index: number): string {
     if (index === 0) return 'gold';
