@@ -1018,6 +1018,10 @@ html, body, #root {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-gutter: stable;
 }
 
 .release-card {
@@ -2520,6 +2524,7 @@ html, body, #root {
 
   .release-games-grid {
     grid-template-columns: 1fr;
+    max-height: min(70dvh, 840px);
   }
 
   .game-detail-hero {
