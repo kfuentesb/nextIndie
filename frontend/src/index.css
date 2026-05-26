@@ -1028,6 +1028,9 @@ html, body, #root {
 .release-games-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 96px;
+  align-content: start;
+  align-items: start;
   gap: 10px;
   flex: 1;
   min-height: 0;
@@ -1046,8 +1049,7 @@ html, body, #root {
   background: #141414;
   text-decoration: none;
   color: inherit;
-  min-height: 96px;
-  max-height: 96px;
+  height: 96px;
 }
 
 .release-card:hover {
