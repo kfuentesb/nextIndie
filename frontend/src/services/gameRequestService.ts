@@ -7,6 +7,11 @@ export const gameRequestService = {
         return response.data;
     },
 
+    createPromotionRequest: async (gameId: number): Promise<GameRequestResponse> => {
+        const response = await api.post<GameRequestResponse>(`/company/games/${gameId}/promotion-requests`);
+        return response.data;
+    },
+
     getMyGames: async (): Promise<Game[]> => {
         const response = await api.get<Game[]>('/company/games');
         return response.data;

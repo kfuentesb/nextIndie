@@ -6,11 +6,12 @@ import type { GameRequestResponse, GameRequestStatus } from '../types';
 import { getErrorMessage } from '../utils/error';
 import { ForbiddenPage } from './ForbiddenPage';
 
-const statusOptions: GameRequestStatus[] = ['PENDING', 'APPROVED', 'REJECTED'];
+const statusOptions: GameRequestStatus[] = ['PENDING', 'APPROVED', 'PROMOTED', 'REJECTED'];
 
 const statusLabels: Record<GameRequestStatus, string> = {
     PENDING: 'Pendientes',
     APPROVED: 'Aprobadas',
+    PROMOTED: 'Promocionados',
     REJECTED: 'Rechazadas'
 };
 
@@ -68,6 +69,7 @@ export function AdminGameRequestsPage() {
     const emptyLabel = useMemo(() => {
         if (statusFilter === 'PENDING') return 'No hay solicitudes pendientes.';
         if (statusFilter === 'APPROVED') return 'No hay solicitudes aprobadas.';
+        if (statusFilter === 'PROMOTED') return 'No hay solicitudes promocionadas.';
         return 'No hay solicitudes rechazadas.';
     }, [statusFilter]);
 
@@ -122,17 +124,24 @@ export function AdminGameRequestsPage() {
                 </div>
             ) : (
                 <div className="admin-requests-grid">
-                    {requests.map((request) => (
-                        <article key={request.id} className="request-card">
-                            <header>
-                                <div>
-                                    <h3>{request.title}</h3>
-                                    <p>Empresa: {request.requestedBy}</p>
-                                </div>
-                                <span className={`request-status request-status-${request.status.toLowerCase()}`}>
-                                    {request.status}
-                                </span>
-                            </header>
+                    {requests.map((request) => {
+                        const isPromotion = request.requestType === 'PROMOTION';
+                        return (
+                            <article key={request.id} className="request-card">
+                                <header>
+                                    <div>
+                                        <h3>{request.title}</h3>
+                                        <div className="request-subhead">
+                                            <p>Empresa: {request.requestedBy}</p>
+                                            {isPromotion && (
+                                                <span className="request-badge request-badge-promo">Promocion</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <span className={`request-status request-status-${request.status.toLowerCase()}`}>
+                                        {request.status}
+                                    </span>
+                                </header>
 
                             <div className="request-meta">
                                 <p><strong>Fecha:</strong> {new Date(request.releaseDate).toLocaleDateString('es-ES')}</p>
@@ -156,18 +165,19 @@ export function AdminGameRequestsPage() {
                                 </div>
                             </div>
 
-                            {request.status === 'PENDING' && (
-                                <div className="request-actions">
-                                    <button className="btn btn-primary" onClick={() => handleApprove(request.id)}>
-                                        Aprobar
-                                    </button>
-                                    <button className="btn btn-secondary" onClick={() => handleReject(request.id)}>
-                                        Rechazar
-                                    </button>
-                                </div>
-                            )}
-                        </article>
-                    ))}
+                                {request.status === 'PENDING' && (
+                                    <div className="request-actions">
+                                        <button className="btn btn-primary" onClick={() => handleApprove(request.id)}>
+                                            Aprobar
+                                        </button>
+                                        <button className="btn btn-secondary" onClick={() => handleReject(request.id)}>
+                                            Rechazar
+                                        </button>
+                                    </div>
+                                )}
+                            </article>
+                        );
+                    })}
                 </div>
             )}
         </div>

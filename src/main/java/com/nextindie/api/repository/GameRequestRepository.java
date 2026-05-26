@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface GameRequestRepository extends JpaRepository<GameRequest, Long> {
     List<GameRequest> findByStatus(GameRequestStatus status);
+    boolean existsByPromotedGameIdAndStatus(Long gameId, GameRequestStatus status);
 }

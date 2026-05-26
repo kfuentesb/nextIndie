@@ -8,6 +8,8 @@ import com.nextindie.api.model.Genre;
 import com.nextindie.api.model.Platform;
 import com.nextindie.api.model.User;
 import com.nextindie.api.model.enums.GameRequestStatus;
+import com.nextindie.api.model.enums.GameRequestType;
+import com.nextindie.api.model.enums.UserType;
 import com.nextindie.api.repository.GameRepository;
 import com.nextindie.api.repository.GameRequestRepository;
 import com.nextindie.api.repository.GenreRepository;
@@ -80,10 +82,47 @@ public class GameRequestService {
         gameRequest.setReleaseDate(request.getReleaseDate());
         gameRequest.setImageUrl(StringUtils.hasText(request.getImageUrl()) ? request.getImageUrl().trim() : null);
         gameRequest.setRequestedBy(requester);
+        gameRequest.setRequestType(GameRequestType.NEW_GAME);
         gameRequest.setStatus(GameRequestStatus.PENDING);
         gameRequest.getGenres().addAll(genres);
         gameRequest.getPlatforms().addAll(platforms);
         gameRequest.getSimilarGames().addAll(similarGames);
+
+        return toResponse(gameRequestRepository.save(gameRequest));
+    }
+
+    @Transactional
+    public GameRequestResponse createPromotionRequest(Long gameId, String username) {
+        User requester = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new RuntimeException("Juego no encontrado"));
+
+        ensureCanPromoteGame(requester, game);
+
+        if (gameRequestRepository.existsByPromotedGameIdAndStatus(gameId, GameRequestStatus.PENDING)) {
+            throw new RuntimeException("Ya existe una solicitud de promocion pendiente");
+        }
+        if (gameRequestRepository.existsByPromotedGameIdAndStatus(gameId, GameRequestStatus.PROMOTED)) {
+            throw new RuntimeException("El juego ya esta promocionado");
+        }
+
+        GameRequest gameRequest = new GameRequest();
+        gameRequest.setTitle(game.getTitle());
+        gameRequest.setDescription(game.getDescription());
+        gameRequest.setTrailerUrl(game.getTrailerUrl());
+        gameRequest.setDeveloper(game.getDeveloper());
+        gameRequest.setGameStatus(game.getGameStatus());
+        gameRequest.setWebsiteUrl(game.getWebsiteUrl());
+        gameRequest.setMainFranchise(game.getMainFranchise());
+        gameRequest.setReleaseDate(game.getReleaseDate());
+        gameRequest.setImageUrl(game.getImageUrl());
+        gameRequest.setRequestedBy(requester);
+        gameRequest.setPromotedGame(game);
+        gameRequest.setRequestType(GameRequestType.PROMOTION);
+        gameRequest.setStatus(GameRequestStatus.PENDING);
+        gameRequest.getGenres().addAll(game.getGenres());
+        gameRequest.getPlatforms().addAll(game.getPlatforms());
 
         return toResponse(gameRequestRepository.save(gameRequest));
     }
@@ -101,6 +140,12 @@ public class GameRequestService {
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
         if (request.getStatus() != GameRequestStatus.PENDING) {
             throw new RuntimeException("La solicitud ya fue procesada");
+        }
+        GameRequestType requestType = resolveRequestType(request);
+        if (requestType == GameRequestType.PROMOTION) {
+            request.setStatus(GameRequestStatus.PROMOTED);
+            request.setReviewedAt(LocalDateTime.now());
+            return toResponse(gameRequestRepository.save(request));
         }
         if (gameRepository.findByTitleAndReleaseDate(request.getTitle(), request.getReleaseDate()).isPresent()) {
             throw new RuntimeException("Ya existe un juego con ese titulo y fecha");
@@ -127,6 +172,9 @@ public class GameRequestService {
 
         gameRepository.save(game);
 
+        if (request.getRequestType() == null) {
+            request.setRequestType(GameRequestType.NEW_GAME);
+        }
         request.setStatus(GameRequestStatus.APPROVED);
         request.setReviewedAt(LocalDateTime.now());
         return toResponse(gameRequestRepository.save(request));
@@ -206,6 +254,7 @@ public class GameRequestService {
                 request.getReleaseDate(),
                 request.getImageUrl(),
                 request.getStatus().name(),
+                resolveRequestType(request).name(),
                 request.getRequestedBy().getUsername(),
                 request.getCreatedAt(),
                 request.getReviewedAt(),
@@ -213,5 +262,22 @@ public class GameRequestService {
                 platforms,
                 similarGames
         );
+    }
+
+    private void ensureCanPromoteGame(User user, Game game) {
+        if (user.getRole() == UserType.ADMIN) {
+            return;
+        }
+        if (user.getRole() == UserType.EMPRESA && game.getRequestedBy() != null) {
+            String owner = game.getRequestedBy().getUsername();
+            if (user.getUsername().equals(owner)) {
+                return;
+            }
+        }
+        throw new RuntimeException("No tienes permisos para promocionar este juego");
+    }
+
+    private GameRequestType resolveRequestType(GameRequest request) {
+        return request.getRequestType() != null ? request.getRequestType() : GameRequestType.NEW_GAME;
     }
 }

@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import type { Game, GameUpdateRequest, LookupItem } from '../types';
 import { gameService } from '../services/gameService';
 import { lookupService } from '../services/lookupService';
+import { gameRequestService } from '../services/gameRequestService';
 import { useAuth } from '../context/AuthContext';
 import { CommentsSection } from '../components/CommentSection';
 import { getErrorMessage } from '../utils/error';
@@ -84,6 +85,10 @@ export function GameDetailPage() {
     const [isDeleting, setIsDeleting] = useState(false);
     const [editError, setEditError] = useState<string | null>(null);
     const [deleteError, setDeleteError] = useState<string | null>(null);
+    const [isPromotionModalOpen, setIsPromotionModalOpen] = useState(false);
+    const [isPromoting, setIsPromoting] = useState(false);
+    const [promotionError, setPromotionError] = useState<string | null>(null);
+    const [promotionSuccess, setPromotionSuccess] = useState<string | null>(null);
     const [genres, setGenres] = useState<LookupItem[]>([]);
     const [platforms, setPlatforms] = useState<LookupItem[]>([]);
     const [similarGames, setSimilarGames] = useState<LookupItem[]>([]);
@@ -118,6 +123,7 @@ export function GameDetailPage() {
     const isAdmin = user?.role === 'ADMIN';
     const isCompany = user?.role === 'EMPRESA';
     const canManageGame = Boolean(game) && (isAdmin || (isCompany && game?.requestedBy === user?.username));
+    const canPromoteGame = Boolean(game) && isCompany && game?.requestedBy === user?.username;
 
     const genreMap = useMemo(() => new Map(genres.map((item) => [item.id, item.name])), [genres]);
     const platformMap = useMemo(() => new Map(platforms.map((item) => [item.id, item.name])), [platforms]);
@@ -217,6 +223,17 @@ export function GameDetailPage() {
         setDeleteError(null);
     };
 
+    const openPromotionModal = () => {
+        setPromotionError(null);
+        setPromotionSuccess(null);
+        setIsPromotionModalOpen(true);
+    };
+
+    const closePromotionModal = () => {
+        setIsPromotionModalOpen(false);
+        setPromotionError(null);
+    };
+
     const handleEditChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = event.target;
         setEditForm((current) => ({
@@ -303,6 +320,22 @@ export function GameDetailPage() {
             setDeleteError(getErrorMessage(err, 'No se pudo eliminar el juego'));
         } finally {
             setIsDeleting(false);
+        }
+    };
+
+    const handlePromotionRequest = async () => {
+        if (!game) return;
+
+        setIsPromoting(true);
+        setPromotionError(null);
+        try {
+            await gameRequestService.createPromotionRequest(game.id);
+            setPromotionSuccess('Solicitud de promocion enviada. Un administrador revisara el pago.');
+            closePromotionModal();
+        } catch (err: unknown) {
+            setPromotionError(getErrorMessage(err, 'No se pudo enviar la solicitud de promocion'));
+        } finally {
+            setIsPromoting(false);
         }
     };
 
@@ -459,6 +492,11 @@ export function GameDetailPage() {
                     </div>
                     {canManageGame && (
                         <div className="detail-admin-actions">
+                            {canPromoteGame && (
+                                <button className="btn btn-primary" type="button" onClick={openPromotionModal}>
+                                    Promocionar juego
+                                </button>
+                            )}
                             <button className="btn btn-secondary" type="button" onClick={openEditModal}>
                                 Editar juego
                             </button>
@@ -467,6 +505,7 @@ export function GameDetailPage() {
                             </button>
                         </div>
                     )}
+                    {promotionSuccess && <div className="success-alert">{promotionSuccess}</div>}
                 </div>
             </header>
 
@@ -769,6 +808,46 @@ export function GameDetailPage() {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {isPromotionModalOpen && (
+                <div className="admin-modal-overlay" onClick={closePromotionModal} role="presentation">
+                    <div
+                        className="admin-modal admin-modal-sm"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="game-promotion-modal-title"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <div className="admin-modal-header">
+                            <h2 className="admin-modal-title" id="game-promotion-modal-title">Promocionar juego</h2>
+                            <button
+                                type="button"
+                                className="admin-modal-close"
+                                onClick={closePromotionModal}
+                                aria-label="Cerrar"
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <div className="admin-modal-form">
+                            <div className="admin-modal-body">
+                                <p>
+                                    Estas seguro de solicitar la promocion de <strong>{game.title}</strong>? Se realizara un cobro ficticio.
+                                </p>
+                                {promotionError && <div className="error-alert">{promotionError}</div>}
+                            </div>
+                            <div className="admin-modal-actions">
+                                <button className="btn btn-secondary" type="button" onClick={closePromotionModal}>
+                                    Cancelar
+                                </button>
+                                <button className="btn btn-primary" type="button" onClick={handlePromotionRequest} disabled={isPromoting}>
+                                    {isPromoting ? <span className="spinner-small" /> : 'Solicitar promocion'}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

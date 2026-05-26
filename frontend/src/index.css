@@ -2067,6 +2067,17 @@ html, body, #root {
   margin-bottom: 4px;
 }
 
+.request-subhead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.request-subhead p {
+  margin: 0;
+}
+
 .request-status {
   padding: 4px 10px;
   border-radius: 999px;
@@ -2088,6 +2099,26 @@ html, body, #root {
 .request-status-rejected {
   background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
+}
+
+.request-status-promoted {
+  background: rgba(14, 165, 233, 0.15);
+  color: #38bdf8;
+}
+
+.request-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.request-badge-promo {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.35);
 }
 
 .request-meta p {

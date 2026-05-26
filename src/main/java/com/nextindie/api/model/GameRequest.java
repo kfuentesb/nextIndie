@@ -1,6 +1,7 @@
 package com.nextindie.api.model;
 
 import com.nextindie.api.model.enums.GameRequestStatus;
+import com.nextindie.api.model.enums.GameRequestType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -74,6 +75,14 @@ public class GameRequest {
     @JoinColumn(name = "requested_by_id", nullable = false)
     private User requestedBy;
 
+    @ManyToOne
+    @JoinColumn(name = "promoted_game_id")
+    private Game promotedGame;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private GameRequestType requestType;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private GameRequestStatus status;
@@ -85,6 +94,9 @@ public class GameRequest {
     protected void onCreate() {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
+        }
+        if (requestType == null) {
+            requestType = GameRequestType.NEW_GAME;
         }
     }
 }

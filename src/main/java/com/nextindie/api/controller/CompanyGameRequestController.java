@@ -37,6 +37,12 @@ public class CompanyGameRequestController {
         return ResponseEntity.ok(gameRequestService.createRequest(request, authentication.getName()));
     }
 
+    @PostMapping("/games/{id}/promotion-requests")
+    public ResponseEntity<GameRequestResponse> createPromotionRequest(@PathVariable Long id,
+                                                                      Authentication authentication) {
+        return ResponseEntity.ok(gameRequestService.createPromotionRequest(id, authentication.getName()));
+    }
+
     @GetMapping("/games")
     public ResponseEntity<List<GameDTO>> getCompanyGames(Authentication authentication) {
         return ResponseEntity.ok(gameService.getCompanyGames(authentication.getName()));

@@ -55,7 +55,9 @@ export interface LookupItem {
     name: string;
 }
 
-export type GameRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+export type GameRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'PROMOTED';
+
+export type GameRequestType = 'NEW_GAME' | 'PROMOTION';
 
 export interface GameRequestCreate {
     title: string;
@@ -99,6 +101,7 @@ export interface GameRequestResponse {
     releaseDate: string;
     imageUrl?: string;
     status: GameRequestStatus;
+    requestType?: GameRequestType;
     requestedBy: string;
     createdAt: string;
     reviewedAt?: string | null;

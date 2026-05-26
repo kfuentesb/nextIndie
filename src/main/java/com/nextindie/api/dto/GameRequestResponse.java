@@ -25,6 +25,7 @@ public class GameRequestResponse {
     private LocalDate releaseDate;
     private String imageUrl;
     private String status;
+    private String requestType;
     private String requestedBy;
     private LocalDateTime createdAt;
     private LocalDateTime reviewedAt;
