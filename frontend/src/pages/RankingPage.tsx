@@ -85,6 +85,10 @@ export function RankingPage({ refreshIntervalMinutes = DEFAULT_REFRESH_MINUTES }
         return () => clearInterval(intervalId);
     }, [promotedGames]);
 
+    const goToPromotedGame = useCallback((index: number) => {
+        setActivePromotedIndex(index);
+    }, []);
+
     const monthLabel = useMemo(() => {
         return new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
     }, []);
@@ -211,32 +215,45 @@ export function RankingPage({ refreshIntervalMinutes = DEFAULT_REFRESH_MINUTES }
                         </div>
                     ) : activePromotedGame ? (
                         <div className="promoted-game-stage" aria-live="polite">
-                            <article key={activePromotedGame.id} className="promoted-game-feature">
-                                <Link
-                                    className="promoted-game-link"
-                                    to={`/games/${activePromotedGame.id}`}
-                                    aria-label={`Ver detalle de ${activePromotedGame.title}`}
+                            <div className="promoted-game-viewport">
+                                <div
+                                    className="promoted-game-track"
+                                    style={{ transform: `translateX(-${activePromotedIndex * 100}%)` }}
                                 >
-                                    <img
-                                        className="promoted-game-cover"
-                                        src={getPromotedImage(activePromotedGame)}
-                                        alt={activePromotedGame.title}
-                                    />
-                                    <div className="promoted-game-info">
-                                        <h2>{activePromotedGame.title}</h2>
-                                        <p>{activePromotedGame.developer}</p>
-                                        <p>{formatReleaseDate(activePromotedGame.releaseDate)}</p>
-                                    </div>
-                                </Link>
-                            </article>
+                                    {promotedGames.map((game) => (
+                                        <article key={game.id} className="promoted-game-feature">
+                                            <Link
+                                                className="promoted-game-link"
+                                                to={`/games/${game.id}`}
+                                                aria-label={`Ver detalle de ${game.title}`}
+                                            >
+                                                <img
+                                                    className="promoted-game-cover"
+                                                    src={getPromotedImage(game)}
+                                                    alt={game.title}
+                                                />
+                                                <div className="promoted-game-info">
+                                                    <h2>{game.title}</h2>
+                                                    <p>{game.developer}</p>
+                                                    <p>{formatReleaseDate(game.releaseDate)}</p>
+                                                </div>
+                                            </Link>
+                                        </article>
+                                    ))}
+                                </div>
+                            </div>
                             {promotedGames.length > 1 && (
-                                <div className="promoted-game-indicators" aria-hidden="true">
+                                <div className="promoted-game-indicators" aria-label="Seleccionar juego promocionado">
                                     {promotedGames.map((game, index) => (
-                                        <span
+                                        <button
+                                            type="button"
                                             key={game.id}
                                             className={`promoted-game-dot ${
                                                 index === activePromotedIndex ? 'promoted-game-dot--active' : ''
                                             }`}
+                                            aria-label={`Mostrar ${game.title}`}
+                                            aria-current={index === activePromotedIndex}
+                                            onClick={() => goToPromotedGame(index)}
                                         />
                                     ))}
                                 </div>

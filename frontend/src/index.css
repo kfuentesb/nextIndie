@@ -1470,7 +1470,7 @@ html, body, #root {
 }
 
 .promoted-game-stage {
-  min-height: 620px;
+  min-height: 540px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1478,13 +1478,26 @@ html, body, #root {
   gap: 14px;
 }
 
+.promoted-game-viewport {
+  width: min(100%, 340px);
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.promoted-game-track {
+  display: flex;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
 .promoted-game-feature {
-  width: min(100%, 420px);
+  flex: 0 0 100%;
+  width: 100%;
   background: var(--surface-dark);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
 }
 
 .promoted-game-link {
@@ -1506,19 +1519,19 @@ html, body, #root {
 }
 
 .promoted-game-info {
-  padding: 16px;
+  padding: 12px 14px 14px;
   text-align: center;
 }
 
 .promoted-game-info h2 {
-  font-size: 22px;
+  font-size: 19px;
   line-height: 1.2;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .promoted-game-info p {
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .promoted-game-indicators {
@@ -1528,14 +1541,30 @@ html, body, #root {
 }
 
 .promoted-game-dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
   border-radius: 999px;
   background: var(--border-color);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .promoted-game-dot--active {
   background: var(--primary-color);
+  transform: scale(1.2);
+}
+
+.promoted-game-dot:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promoted-game-track {
+    transition: none;
+  }
 }
 
 .ranking-row {
@@ -2690,8 +2719,12 @@ html, body, #root {
     min-height: auto;
   }
 
+  .promoted-game-viewport {
+    width: min(100%, 320px);
+  }
+
   .promoted-game-feature {
-    width: min(100%, 360px);
+    width: 100%;
   }
 
   .admin-page {
